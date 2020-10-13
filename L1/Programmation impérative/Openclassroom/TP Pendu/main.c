@@ -8,26 +8,58 @@
 
 
 int main(int argc, char const *argv[]) {
-  /* initialisation des variables */
+  /* INITIALISATION DES VARIABLES */
   size_t i = 0;
-  int tours = 0;
-  char lettre = 0;
+  int tours = 0, nb_mots = 0, index;
+  char lettre = 0, mot[100];
 
-  /* Selection du mot */
-  char mot[] = "MARRON";
+  /* SELECTION DU MOT */
+  // lecture du fichier dictionnaire
+  FILE * dico = fopen("dictionnaire.txt", "r");
+  // test du flux
+  if (! dico)
+    usage("lecture du dictionnaire impossible");
 
-  /* creation du cache */
+  // comptage du nombre de mot dans le dico
+  nb_mots = compterMots(dico);
+
+  // selection d'un nombre au hasard entre 1 et nb_mots
+  srand(time(NULL));
+  index = (rand() % (nb_mots - 1+1)) + 1;
+
+  // placement dans le Fichier
+  placerCurseur(dico, index);
+
+  // lecture du mot et suppression du saut de ligne a la fin:
+  fgets(mot, 100, dico);
+  mot[strlen(mot) - 1] = '\0';
+
+
+
+  printf("le fichier contient %i mots\n", nb_mots );
+  printf("le mot choisi est %s\n", mot );
+
+
+
+
+
+
+  /* CREATION DU CACHE */
+  // creation d'un pointeur
   char * cache = malloc(sizeof(char) * strlen(mot));
+  // test du pointeur
+  if (! cache)
+    usage("erreur lors de l'initialisation du pointeur");
   for (i = 0 ; i < strlen(mot) ; i++ ){
     cache[i] = '*';
   }
 
 
-  printf("le mot caché est %s\n", cache );
 
-  /* jeu */
+
+  /* BOUCHE DE JEU */
   printf("Bienvenu dans le Pendu !\n");
-  /* boucle de jeu */
+  /* boucle de tours */
   do {
     printf("\nIl vous reste %i coups a jouer\n", tours);
     printf("Quel est le mot secret? %s\n", cache);

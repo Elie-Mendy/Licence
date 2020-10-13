@@ -1,5 +1,11 @@
 /* Fichier regrouppant les fonctions du jeu de pendu par Openclassroom */
 
+void usage (char * message){
+  printf("%s\n", message);
+  exit(1);
+}
+
+
 char lireCaractere(){
   char lettre = toupper(getchar());
   return lettre;
@@ -12,4 +18,27 @@ int diff(char * mot1, char * mot2){
       return(1);
   }
   return 0;
+}
+
+
+int compterMots(FILE * fichier){
+  int i = 0;
+  char c = 0;
+  do {
+    c = fgetc(fichier);
+    if (c == '\n')
+      i++;
+  } while(c != EOF);
+
+  return i;
+}
+
+void placerCurseur(FILE * fichier, int ligne){
+  rewind(fichier);
+  char c = 0;
+  while(ligne){
+    c = fgetc(fichier);
+    if (c == '\n')
+      ligne --;
+  }
 }
