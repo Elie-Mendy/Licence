@@ -36,12 +36,6 @@ int main(int argc, char const *argv[]) {
 
 
 
-  printf("le fichier contient %i mots\n", nb_mots );
-  printf("le mot choisi est %s\n", mot );
-
-
-
-
 
 
   /* CREATION DU CACHE */
@@ -73,9 +67,9 @@ int main(int argc, char const *argv[]) {
     printf("\n");   // saut de ligne
 
 
-} while(diff(mot, cache));
+} while((diff(mot, cache)) && tours);
 
-  printf("\nGagne ! Le mor secret etait bien : %s\n", cache);
+  printf("\nGagne ! Le mot secret etait bien : %s\n", cache);
   free(cache); // liberation de l'espace alloué
   return 0;
 }
