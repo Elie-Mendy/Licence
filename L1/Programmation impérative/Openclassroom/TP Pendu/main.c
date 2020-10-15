@@ -10,7 +10,7 @@
 int main(int argc, char const *argv[]) {
   /* INITIALISATION DES VARIABLES */
   size_t i = 0;
-  int tours = 0, nb_mots = 0, index;
+  int tours = 10, nb_mots = 0, index;
   char lettre = 0, mot[100];
 
   /* SELECTION DU MOT */
@@ -54,21 +54,36 @@ int main(int argc, char const *argv[]) {
   /* BOUCHE DE JEU */
   printf("Bienvenu dans le Pendu !\n");
   /* boucle de tours */
+
+
+
   do {
+    // message a l'utilisateur
     printf("\nIl vous reste %i coups a jouer\n", tours);
     printf("Quel est le mot secret? %s\n", cache);
     printf("Proposez une lettre : ");
     lettre = lireCaractere();
 
+    // parcour du mot pour remplacer etoile si lettre ok
     for (i = 0 ; i < strlen(mot) ; i ++){
       if (lettre == mot[i])
         cache[i] = lettre;
     }
-    tours --;       // decrementation du nb de tours
+
+    //
+    if (tours-- < 1){ // decrementation du nb de tours
+      printf("\nVous n'avez pas réussi à trouver le mot ... \nIl s'agissait du mot : %s\n", mot);
+      exit(0);
+    }
+
     printf("\n");   // saut de ligne
 
 
-} while((diff(mot, cache)) && tours);
+  } while(diff(mot, cache));
+
+
+
+
 
   printf("\nGagne ! Le mot secret etait bien : %s\n", cache);
   free(cache); // liberation de l'espace alloué

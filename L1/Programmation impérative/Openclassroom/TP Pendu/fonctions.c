@@ -8,6 +8,9 @@ void usage (char * message){
 
 char lireCaractere(){
   char lettre = toupper(getchar());
+  // On lit les autres caractères mémorisés un à un jusqu'au \n (pour les effacer)
+  while (getchar() != '\n') ;
+
   return lettre;
 }
 
