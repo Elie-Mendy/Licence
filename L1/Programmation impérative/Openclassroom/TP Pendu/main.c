@@ -72,6 +72,7 @@ int main(int argc, char const *argv[]) {
 
     //
     if (tours-- < 1){ // decrementation du nb de tours
+      // Message de fin de jeu si défaite
       printf("\nVous n'avez pas réussi à trouver le mot ... \nIl s'agissait du mot : %s\n", mot);
       exit(0);
     }
@@ -84,7 +85,7 @@ int main(int argc, char const *argv[]) {
 
 
 
-
+  // Message de fin de jeu Si victoire
   printf("\nGagne ! Le mot secret etait bien : %s\n", cache);
   free(cache); // liberation de l'espace alloué
   return 0;
