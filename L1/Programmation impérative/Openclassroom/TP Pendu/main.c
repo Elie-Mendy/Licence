@@ -85,7 +85,7 @@ int main(int argc, char const *argv[]) {
 
 
 
-  // Message de fin de jeu Si victoire : cool ;)
+  // Message de fin de jeu Si victoire , magique non ?
   printf("\nGagne ! Le mot secret etait bien : %s\n", cache);
   free(cache); // liberation de l'espace alloué
   return 0;
