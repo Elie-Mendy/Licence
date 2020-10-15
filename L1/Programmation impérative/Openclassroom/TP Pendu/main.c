@@ -64,7 +64,7 @@ int main(int argc, char const *argv[]) {
       if (lettre == mot[i])
         cache[i] = lettre;
     }
-    tours --;
+    tours --;       // decrementation du nb de tours
     printf("\n");   // saut de ligne
 
 
