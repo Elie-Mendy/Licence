@@ -45,3 +45,12 @@ void placerCurseur(FILE * fichier, int ligne){
       ligne --;
   }
 }
+void placerCurseur(FILE * fichier, int ligne){
+  rewind(fichier);
+  char c = 0;
+  while(ligne){
+    c = fgetc(fichier);
+    if (c == '\n')
+      ligne --;
+  }
+}

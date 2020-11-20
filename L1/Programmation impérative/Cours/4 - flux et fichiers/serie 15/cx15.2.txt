@@ -1,0 +1,7 @@
+dans le cas d'un mot:
+  - s'arrete de lire les valeurs ...
+    (surement une mauvaise compréhension)
+
+    exemple: tab[10] = {0};
+             scores = 10 45 bidon 458 785 10 0 8 965 10
+             revoi ; 10 45 0 0 0 0 0 0 0 0

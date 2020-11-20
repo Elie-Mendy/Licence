@@ -1,0 +1,17 @@
+si trop d'argument :
+  - n'en lit que 10
+
+si pas assez :
+  - ne lit que ce qu'il y a dans le fichier
+  - les valeurs restante du tableau
+    si elles ne sont pas initialisées à zero sont donc
+    les résidu d'un programme précédent
+    --> veiller a initialiser le tableau a zero
+
+pour avoir le nombre de mots lus on peut:
+  - récupérer la taille du tableau a lire
+    -->   int i = 0;
+          while (tab[i]) i++;
+
+  - incrementer un indice à chaque lecture
+    
