@@ -1,0 +1,432 @@
+/*----------------------------------------------------------------------
+                  PROPTIETEES GENERALES DE LA PAGE
+-----------------------------------------------------------------------*/
+
+
+body, html{
+  height:100%;
+  margin:0;
+  font-size:16px;
+  font-family: sans-serif;
+  font-weight:400;
+  line-height:1.8em;
+  color:#666;
+}
+
+
+
+/*----------------------------------------------------------------------
+                       BANNIERE NUAGEUSE
+-----------------------------------------------------------------------*/
+
+
+.banner{
+   position:relative;
+   opacity:0.70;
+   background-position:center;
+   background-size:cover;
+   background-repeat:no-repeat;
+   background-image: url('../img/concert2.jpg');
+   min-height: 100%;
+   background-attachment: scroll;
+}
+
+.banner .fumée{
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   overflow: hidden;
+}
+
+
+.banner .fumée img{
+   position: absolute;
+   bottom: 0;
+   max-width: 100%;
+   animation: animate calc(8s * var(--i)) linear infinite;
+}
+
+@keyframes animate{
+   0%{
+      transform: translateX(-100%);
+   }
+   100%{
+      transform: translateX(100%);
+   }
+}
+
+.banner-end{
+   position:relative;
+   opacity:0.70;
+   background-position:center;
+   background-size:cover;
+   background-repeat:no-repeat;
+   background-image: url('../img/concert2.jpg');
+   min-height: 100%;
+   background-attachment: fixed;
+
+}
+
+
+/*----------------------------------------------------------------------
+                       GESTION DES ILLUSTRATIONS
+-----------------------------------------------------------------------*/
+
+
+.img2, .img3, .img4{
+  position:relative;
+  opacity:0.70;
+  background-position:center;
+  background-size:cover;
+  background-repeat:no-repeat;
+
+  /* note explicative:
+    fixed = parallax
+    scroll = normal
+  */
+  background-attachment:fixed;
+}
+
+
+
+.img2{
+  background-image:url('../img/image2.jpg');
+  min-height:100%;
+}
+
+.img3{
+  background-image:url('../img/image3.jpg');
+  min-height:100%;
+}
+
+
+.img4{
+  background-image:url('../img/image4.jpg');
+  min-height:100%;
+}
+
+
+
+/*----------------------------------------------------------------------
+                       GESTION DES VIDEOS
+-----------------------------------------------------------------------*/
+
+
+
+.video_1 video{
+   border-radius: 50%;
+   width: 50vh;
+   height: 50vh;
+   background: #f4f4f4;
+   object-fit: cover;
+   box-shadow: 0 0px 50px rgba(0,0,0,.7);
+   float: left;
+   shape-outside: circle();
+   margin: 30px;
+   opacity: 85%;
+}
+
+.video_2 video{
+   border-radius: 50%;
+   width: 40vh;
+   height: 40vh;
+   background: #f4f4f4;
+   object-fit: cover;
+   box-shadow: 0 0px 50px rgba(0,0,0,.7);
+   float: right;
+   shape-outside: circle();
+   margin: 40px;
+   opacity: 85%;
+}
+
+.video_3 video{
+   border-radius: 5%;
+   width: 60vh;
+   height: 40vh;
+   background: #f4f4f4;
+   object-fit: cover;
+   box-shadow: 0 0px 50px rgba(0,0,0,.7);
+   float: left;
+   margin: 50px;
+   opacity: 85%;
+}
+
+
+.video_4 video{
+   border-radius: 5%;
+   width: 60vh;
+   height: 40vh;
+   background: #f4f4f4;
+   object-fit: cover;
+   box-shadow: 0 0px 50px rgba(0,0,0,.7);
+   float:right;
+   margin: 50px;
+   opacity: 85%;
+}
+
+/*----------------------------------------------------------------------
+                       GESTION DU TEXTE (selon sections)
+-----------------------------------------------------------------------*/
+
+
+/* formatage de l'intro */
+.intro{
+  background-color:#fff;
+  color:#;
+  box-shadow: 0 -50px 50px rgba(255,255,255,.7);
+  font-size: 25px;
+  letter-spacing:3px;
+  line-height: 150%;
+}
+
+/* formatage général des sections blanches */
+.section-blanc{
+  background-color:#f4f4f4;
+  color:#;
+  box-shadow: 0 -50px 50px rgba(255,255,255,.7);
+  font-size: 25px;
+  letter-spacing:3px;
+  line-height: 150%;
+}
+
+
+/* formatage général des sections foncées */
+.section-dark{
+  background-color:#282e34;
+  color:#ddd;
+  font-size: 25px;
+  letter-spacing:3px;
+  line-height: 150%;
+}
+
+/* formatage des titres h2*/
+.section h2
+{
+   text-shadow: 2px 2px 2px rgba(104,104,104,0.37);
+}
+
+
+/* formatage général du texte */
+.section{
+  padding:50px 80px;
+}
+
+/* justification des paragraphes*/
+.section p{
+   text-align: justify;
+}
+
+/* formatage paragraphe (section-blanches)*/
+.section-blanc p{
+   margin-bottom: 10%;
+}
+
+
+/* formatage paragraphe (section-foncées)*/
+.section-dark p{
+   margin-top: 10%;
+   margin-bottom: 10%;
+}
+
+
+/* (exception pour la dernière section) */
+.end p
+{
+   margin-bottom: 4%;
+}
+
+
+
+
+
+/* formatage des textes de transition */
+.text_image{
+  position:absolute;
+  top:50%;
+  width:100%;
+  text-align:center;
+  color:#000;
+  font-size:27px;
+  letter-spacing:8px;
+  line-height: 300%;
+  text-transform:uppercase;
+  text-shadow: 2px 2px 2px rgba(91,91,91,0.37);
+}
+
+.text_image .border{
+  background-color:#f4f4f4;
+  opacity: 0.6;
+  color:#000;
+  padding:20px;
+}
+
+
+.text_image .border.trans{
+  background-color:transparent;
+}
+
+
+
+/* cuoleur des liens */
+a
+{
+   color: #ddd;
+   font-weight: bold
+}
+
+
+
+
+
+/*----------------------------------------------------------------------
+         AFFICHAGE SELON LA TAILLE DE L'ECRAN (Media Queries)
+-----------------------------------------------------------------------*/
+
+
+/* Affichage ordinateurs */
+   /* seront appliquées les propriétés par défaut
+
+
+
+/* affichage ordinateurs portables <17"
+modifications:
+   - taille du texte de transition
+   - taille des titres
+   - alignement à gauche des paragraphes
+    */
+@media screen and (max-width: 1400px)
+{
+   .text_image{
+     top: 50%;
+     font-size: 20px;
+     letter-spacing:6px;
+     line-height: 300%;
+   }
+
+   .text_image .border{
+     padding:20px;
+   }
+
+   .section{
+     padding:50px 80px;
+   }
+
+   .section p{
+      text-align: left;
+      font-size: 18px;
+      line-height: 1.9em;
+   }
+
+   .section h2{
+      font-size: 18px;
+      line-height: 1.8em;
+   }
+
+}
+
+
+
+
+/* affichage tablettes
+modifications supplémentaires :
+   - taille du texte de transition
+   - taille des titres
+   - alignement à gauche des paragraphes
+   - taille et emplacement des deux dernières vidéos
+    */
+@media screen and (max-width: 1024px) {
+
+ .text_image{
+   top: 50%;
+   font-size:17px;
+   letter-spacing:4px;
+   line-height: 300%;
+   text-shadow: none;
+ }
+
+ .text_image .border{
+   padding:10px;
+ }
+
+ .video_3 video, .video_4 video{
+    border-radius: 0%;
+    width: 100vh;
+    height: 40vh;
+    background: #f4f4f4;
+    object-fit: cover;
+    box-shadow: 0 0px 50px rgba(0,0,0,.7);
+    opacity: 85%;
+ }
+
+ .section-dark, .end
+ {
+    display: flex;
+    flex-direction: column;
+ }
+
+
+ .section p{
+    text-align: left;
+    font-size: 14px;
+    line-height: 1.8em;
+ }
+
+ .section h2{
+    font-size: 18px;
+    line-height: 1.8em;
+    text-shadow: none;
+ }
+}
+
+
+/* affchage sur smartphones
+modifications supplémentaires
+   - suppréssion de l'effet parallax des
+     illustrations de transition.
+   - suppréssion de l'affichage  de videos
+   - reformatage du texte en général pour un petit écran
+   - suppréssion des ombres appliquées aux titres
+     (affichage plus sobre)
+*/
+
+@media screen and (max-width: 900px) {
+
+   .img2, .img3, .img4{
+     background-attachment:scroll;
+   }
+
+   .video_1 video,
+   .video_2 video,
+   .video_3 video,
+   .video_4 video{
+      display:none;
+   }
+
+   .text_image{
+     top: 50%;
+     font-size:13px;
+     letter-spacing:4px;
+     line-height: 275%;
+     text-shadow: none;
+   }
+
+   .text_image .border{
+     padding:8px;
+   }
+
+   .section{
+     padding:30px 50px;
+   }
+   .section p{
+      text-align: left;
+      font-size: 12px;
+      line-height: 1.8em;
+   }
+
+   .section h2{
+      font-size: 14px;
+      line-height: 1.8em;
+   }
+}
