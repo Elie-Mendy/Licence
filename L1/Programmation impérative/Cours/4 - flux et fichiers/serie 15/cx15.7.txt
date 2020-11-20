@@ -1,0 +1,2 @@
+les nombres sont évalué comme des mots
+exemple 1 2 3 seront lu "1" "2" et "3"

@@ -1,0 +1,12 @@
+Bonjour ce fichier contient
+un text de test pour le fichier 
+afficher_contenu_fichier.c
+
+
+L'affichage de ce present texte
+montre que le fonctionnement 
+est correct
+y compri les saut de lignes 
+Etant donné que :
+fgets() prend le saut de ligne en fin de ligne
+

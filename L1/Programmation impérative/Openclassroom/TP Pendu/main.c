@@ -6,6 +6,14 @@
 #include "fonctions.c"
 
 
+/* REVISIONS:
+  - comparaison de deux chaines
+  - nombre aléatoire
+  - vider buffer
+*/
+
+
+
 
 int main(int argc, char const *argv[]) {
   /* INITIALISATION DES VARIABLES */
@@ -48,6 +56,8 @@ int main(int argc, char const *argv[]) {
     cache[i] = '*';
   }
 
+  // fermeture du fichier
+  fclose(dico);
 
 
 

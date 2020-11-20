@@ -1,0 +1,8 @@
+#! /usr/bin/env sh
+
+inverse 9876543210 azertyuiop qsdfghjklm wxcvbn
+inverse compilé "'(§ et çà !)" '#123[456]7890'
+inverse àé§ïüÿñîöôû
+
+
+
