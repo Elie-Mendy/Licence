@@ -13,6 +13,11 @@ body, html{
   color:#666;
 }
 
+footer{
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 20px;
+}
 
 
 /*----------------------------------------------------------------------
@@ -334,7 +339,7 @@ modifications supplémentaires :
    - taille du texte de transition
    - taille des titres
    - alignement à gauche des paragraphes
-   - taille et emplacement des deux dernières vidéos
+   - taille et emplacement des vidéos
     */
 @media screen and (max-width: 1024px) {
 
@@ -350,10 +355,17 @@ modifications supplémentaires :
    padding:10px;
  }
 
+
+ .video_1 video, .video_2 video{
+   width: 30vh;
+   height: 30vh;
+ }
+
  .video_3 video, .video_4 video{
     border-radius: 0%;
-    width: 100vh;
-    height: 40vh;
+    width: 100%;
+    height: 30vh;
+    margin : auto;
     background: #f4f4f4;
     object-fit: cover;
     box-shadow: 0 0px 50px rgba(0,0,0,.7);
@@ -389,6 +401,8 @@ modifications supplémentaires
    - reformatage du texte en général pour un petit écran
    - suppréssion des ombres appliquées aux titres
      (affichage plus sobre)
+  - adaptation de la dernière illustration (centrage sur personnages)
+  - adaptation du footer (taille de texte)
 */
 
 @media screen and (max-width: 900px) {
@@ -428,5 +442,16 @@ modifications supplémentaires
    .section h2{
       font-size: 14px;
       line-height: 1.8em;
+   }
+
+
+   .img4{
+     background-image:url('../img/image4-cut.jpg');
+     min-height:100%;
+   }
+
+   footer{
+    font-size: 9px;
+    justify-content: flex-end;
    }
 }
