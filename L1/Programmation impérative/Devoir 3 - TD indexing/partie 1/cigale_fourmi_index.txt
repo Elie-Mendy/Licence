@@ -1,0 +1,60 @@
+	 aise : 21
+	 alla : 7
+	 animal : 13
+	 avant : 13
+	 ayant : 1
+	 bien : 22
+	 bise : 4
+	 chantais : 20
+	 chantiez : 21
+	 chanté : 1
+	 chaud : 17
+	 chez : 8
+	 cigale : 1
+	 crier : 7
+	 dansez : 22
+	 dit-elle : 12, 18
+	 défaut : 16
+	 déplaise : 20
+	 dépourvue : 3
+	 emprunteuse : 18
+	 faisiez-vous : 17
+	 famine : 7
+	 foi : 13
+	 fort : 3, 21
+	 fourmi : 8, 15
+	 fut : 4
+	 grain : 10
+	 intérêt : 14
+	 jour : 19
+	 là : 16
+	 maintenant : 22
+	 moindre : 16
+	 morceau : 5
+	 mouche : 6
+	 nouvelle : 11
+	 nuit : 19
+	 oût : 13
+	 paierai : 12
+	 pas : 5, 15
+	 petit : 5
+	 pour : 10
+	 priant : 9
+	 principal : 14
+	 prêter : 9
+	 prêteuse : 15
+	 quand : 4
+	 quelque : 10
+	 saison : 11
+	 seul : 5
+	 subsister : 10
+	 suis : 21
+	 temps : 17
+	 tout : 2, 19
+	 trouva : 3
+	 venant : 19
+	 venue : 4
+	 vermisseau : 6
+	 voisine : 8
+	 à : 11, 18
+	 été : 2
