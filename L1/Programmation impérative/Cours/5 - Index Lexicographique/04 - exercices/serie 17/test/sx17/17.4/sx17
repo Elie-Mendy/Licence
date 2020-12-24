@@ -1,0 +1,11 @@
+#! /bin/tcsh
+
+#cx17 : TEST DE REGRESSION
+#$1 = minor.bugfix update number
+gcc -Wall cx17.$1.c -o cx17.$1
+
+# si la compilation echoue -> fin du programme
+if ($? != 0) exit
+
+# lancement du test
+cx17.$1 indexe-moi.texte > cx17.$1.test
