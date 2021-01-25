@@ -10,7 +10,6 @@
     ((< (car liste) nb) (rplacd liste (inférieurs nb (cdr liste))))
     ((inférieurs nb (cdr liste))) ) )
 
-
 ; Définir une fonction qui modifie une liste en ne gardant que les sous-listes d'une longueur supérieure ou égale à un nombre donné ; exemple :
 (setq liste '((a b) c (d) (e f) (e g x) f))
 
@@ -33,6 +32,8 @@
 
 
 
+
+
 ; EXO 2
 ; Définir une fonction qui ramène la position d'un élément dans une liste,
 ; ou nil si l'élément ne figure pas dans la liste. Pour s'habituer aux conventions usuelles, le premier élément a la position 0.
@@ -40,9 +41,8 @@
 (defun myposition (elt liste &optional (n 0))
   (cond
     ((atom liste) nil)
-    ((equal elt (car liste)) n)
+    ((equal (car liste) elt) n)
     ((myposition elt (cdr liste) (1+ n))) ) )
-
 
 ; Définir une fonction qui ramène le nième cdr d'une liste ; le cdr 0 (zéro) est la liste.
 (defun nièmecdr (nb liste)
@@ -56,12 +56,7 @@
 ; Nil n'est pas à considérer comme un atome, mais comme une liste. Réfléchissez au cas de l'atome en cdr.
 (defun atomes (liste)
   (cond
-    ; fin de la liste
-    ((atom liste)
-      (cond
-        ((equal nil liste) nil)
-        ((list liste)) ) )
-    ; sous liste
+    ((not liste) nil)
+    ((atom liste) (list liste))
     ((listp (car liste)) (append (atomes (car liste)) (atomes (cdr liste))))
-    ; sinon
     ((cons (car liste) (atomes (cdr liste)))) ) )

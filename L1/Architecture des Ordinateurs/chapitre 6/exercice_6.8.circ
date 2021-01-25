@@ -136,21 +136,21 @@ end TCL_Generic;
     <a name="clabelfont" val="SansSerif bold 16"/>
     <a name="circuitnamedbox" val="true"/>
     <a name="circuitvhdlpath" val=""/>
+    <wire from="(450,110)" to="(480,110)"/>
+    <wire from="(530,90)" to="(560,90)"/>
     <wire from="(200,80)" to="(200,160)"/>
     <wire from="(260,50)" to="(260,70)"/>
     <wire from="(450,110)" to="(450,140)"/>
-    <wire from="(100,100)" to="(140,100)"/>
     <wire from="(380,70)" to="(480,70)"/>
+    <wire from="(260,50)" to="(330,50)"/>
+    <wire from="(100,100)" to="(140,100)"/>
     <wire from="(160,80)" to="(200,80)"/>
     <wire from="(260,90)" to="(260,120)"/>
-    <wire from="(160,90)" to="(260,90)"/>
-    <wire from="(160,70)" to="(260,70)"/>
-    <wire from="(450,110)" to="(480,110)"/>
-    <wire from="(530,90)" to="(560,90)"/>
-    <wire from="(260,50)" to="(330,50)"/>
     <wire from="(200,160)" to="(330,160)"/>
+    <wire from="(160,70)" to="(260,70)"/>
     <wire from="(260,120)" to="(330,120)"/>
     <wire from="(260,90)" to="(330,90)"/>
+    <wire from="(160,90)" to="(260,90)"/>
     <wire from="(380,140)" to="(450,140)"/>
     <comp lib="0" loc="(100,100)" name="Pin">
       <a name="width" val="4"/>
@@ -161,11 +161,15 @@ end TCL_Generic;
       <a name="output" val="true"/>
       <a name="labelloc" val="east"/>
     </comp>
+    <comp lib="1" loc="(530,90)" name="OR Gate"/>
+    <comp lib="1" loc="(380,70)" name="AND Gate"/>
     <comp lib="0" loc="(140,100)" name="Splitter">
       <a name="fanout" val="4"/>
       <a name="incoming" val="4"/>
     </comp>
-    <comp lib="1" loc="(530,90)" name="OR Gate"/>
-    <comp lib="1" loc="(380,70)" name="AND Gate"/>
+    <comp lib="8" loc="(232,20)" name="Text">
+      <a name="text" val="Exercice 6.8 : Circuit renvoyant 1 pour tout nombres &gt;= 10 "/>
+      <a name="font" val="SansSerif plain 12"/>
+    </comp>
   </circuit>
 </project>
