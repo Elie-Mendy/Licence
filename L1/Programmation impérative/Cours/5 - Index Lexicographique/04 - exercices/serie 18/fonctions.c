@@ -50,12 +50,12 @@ void putlist(list L){
 
 
 // RENVOI LA TAILLE D'UNE LISTE
-int lenght(list L){
+int length(list L){
   int n = 0;
   if (L->car) n++;
   while (L->cdr){
     L = L->cdr;
     n++;
     }
-    return n;
+  return n;
   }

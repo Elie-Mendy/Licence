@@ -10,8 +10,6 @@ struct node{
   struct node * cdr;
   };
 
-
-
 #define max_mots 128                                // nombre maximum d'éléments dans la table de mots
 
 
@@ -31,6 +29,9 @@ int length(list L);
 // CONVERSION Table en Liste
 list table_to_list(char **);
 
+// CONVERSION List en Table
+char ** list_to_table(list);
+
 
 
 
@@ -42,26 +43,40 @@ int main(int argc, char *argv[]) {
   char * code [] = { "papa", "alpha", "zulu", "hotel", "charlie", nil };
 
   list L = table_to_list(code);
-  list ldc = table_to_list(argv);
+
+  char ** v = list_to_table(L);
 
   // exemple d'affichage de listes
-  putlist(L);
-  putlist(ldc);
+  int n = length(L), i;
+  for( i = 0 ; i < n; i++){
+    printf("%s ",v[i]);
+  }
 
 
-  // exemple de comptage de listes
-  printf("La taille de la liste est de : %i\n", length(ldc));
-  printf("La taille de la ligne de commande est de : %i\n", length(ldc));
+  puts("");
   return 0;
 }
 
 
 
 
+// CONVERSION List en Table
+char ** list_to_table(list L){
+  // recuperation de la taillede la liste
+  int n = length(L), i;
 
+  // allocation dynamique d'une tableaude mots
+  char **v;
+  v = malloc(max_mots * sizeof(*v));
+  if (! v) usage("usage : impossible d'allouer l'espace en mémoire pour stoquer les éléments de la liste");
 
-
-
+  // remplissage de la table
+  for (i = n -1 ; i >= 0 ; i--){
+    v[i] = strdup(L-> car);
+    L = L-> cdr;
+  }
+  return v;
+}
 
 // CONVERSION Table en Liste
 list table_to_list(char * table[]){
@@ -84,8 +99,6 @@ void usage(char * message) {
   exit(1);
 }
 
-
-
 // CONSTRUCTION D'UNE LISTE
 list cons(char * car, list L){
   list new = malloc(sizeof(node));
@@ -93,16 +106,6 @@ list cons(char * car, list L){
   new -> car = car;
   new -> cdr = L;
   return new; }
-
-/*
-// AFFICHAGE D'UNE LISTE (ecriture façon lisp)
-void putlist(list L){
-  if (!L) return;            // nil : fin de la liste
-  printf("%c ", L-> car) ;
-  putlist(L -> cdr) ;
-}*/
-
-
 
 // AFFICHAGE D'UNE LISTE (a l'endroit)
 void putlist(list L){
@@ -118,6 +121,7 @@ void putlist(list L){
   // boucle de lecture de la liste
   for (i = n -1 ; i >= 0 ; i--){
     v[i] = strdup(L-> car);
+    printf("%s\n", v[i] );
     L = L-> cdr;
   }
   // affichage des elements récupérés

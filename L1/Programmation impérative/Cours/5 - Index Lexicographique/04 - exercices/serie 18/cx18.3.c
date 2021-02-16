@@ -37,6 +37,6 @@ int main(int argc, char const *argv[]) {
   // changer le renvoi de putlist par %i au lieu de %c
   putlist(L);
 
-  printf("la taille de la liste est de %i \n", lenght(L));
+  printf("la taille de la liste est de %i \n", length(L));
   return 0;
 }

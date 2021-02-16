@@ -19,6 +19,9 @@ int main(int argc, char const *argv[]) {
   // lecture du fichier (avec fgets)
   while (fgets(ligne, TAILLE_LIGNE, fichier)) puts(ligne);
 
+  // technique pour supprimer le saut de ligne
+  // char * fin_chaine  = strchr(ligne, '\n');   // suppression du '\n' causé par fgets
+  // *fin_chaine = '\0';
 
   // fermeture du flux
   fclose(fichier);

@@ -3,7 +3,7 @@
 #include <string.h>
 
 typedef unsigned idx ;                              // definition du type idx
-typedef char * str;                                 // definirion du type str
+typedef char * str;                                 // definition du type str
 typedef enum {False, True} bool ;                   // definition du type bool
 
 

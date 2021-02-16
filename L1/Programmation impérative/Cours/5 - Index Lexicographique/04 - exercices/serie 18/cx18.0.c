@@ -16,7 +16,7 @@ struct node {
 
 
 int main(void){
-  // definition d'un car et d'un cdr à nil
+  // definition de deux adresses vides de listes
   list L, top = nil
 
   // remplissage de la liste par huit caracteres

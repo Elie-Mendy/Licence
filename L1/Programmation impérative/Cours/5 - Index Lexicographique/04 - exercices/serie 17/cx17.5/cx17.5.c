@@ -6,7 +6,7 @@
 
 
 #define max_mots 128                                // nombre maximum d'éléments dans la table de mots
-#define max_refs 16                                 // nombre maximum de ref par mots
+#define max_refs 20                                 // nombre maximum de ref par mots
 #define maximum 4096                                // nombre maximal de caractères composant un mot
 #define taille_mot 1024
 
@@ -15,8 +15,19 @@
 typedef unsigned idx ;                              // definition du type idx
 typedef char * str;                                 // definirion du type str
 typedef enum {False, True} bool ;                   // definition du type bool
+
+
+// definition de la structure node
+#define nil NULL
+
+typedef struct node node, *list;
+struct node{
+  idx car;
+  struct node * cdr;
+  };
+
 // definition d'un nouveau type pour emuler un index
-typedef struct { str mot ; idx ref_libre ; idx refs[max_refs] ; } ndex ;
+typedef struct { str mot ; list refs ; } ndex ;
 
 
 
@@ -49,13 +60,16 @@ int main(int k, char const *argv[]) {
 
   // ouverture du flux
   FILE * fichier = fopen(argv[1], "r");
-
-  // test de validité des flux
   if ( ! fichier) usage(" fichier illisible");
+
+
+
 
   /* TRAITEMENT */
   // lecture des mots de la STOPLIST
   lire_stoplist("stoplist.txt");
+
+
 
   // boucle d'indexation de chaque ligne
   idx i = 0;                                // i represente le numéro de ligne
@@ -63,12 +77,18 @@ int main(int k, char const *argv[]) {
     indexe(ligne, ++i);
 
 
+
   // fermeture du flux
   fclose(fichier);
-
   // tri de la table
   qsort(mots, mot_libre, sizeof(ndex), compare);
 
+  /*
+  puts("test");
+
+  printf("mot 16 : %s\n", mots[15].mot);
+
+  putlist(mots[15].refs);*/
   // affichage de l'indexe
   dump (mot_libre);
 
@@ -109,6 +129,7 @@ void lire_stoplist(char * liste){
 
 
 
+
 // INDEXATION D'UNE LIGNE DE TEXTE
 void indexe( char * ligne, idx ref){
   // capture du premier mot et de la ligne en mémoire
@@ -116,11 +137,11 @@ void indexe( char * ligne, idx ref){
   // si ce n'est pas la chaine vide
   while (mot){
 
-    int s = exclure(mot);                      // verificaton de la présence du mot dans l'index
-    if (s < 0){                                     // si le mot n'est pas a exclure
+    int s = exclure(mot);                       // verificaton de la présence du mot dans l'index
+    if (s < 0){                                 // si le mot n'est pas a exclure
       int x = indice(mot);                      // verificaton de la présence du mot dans l'index
-      if (x < 0)  ajoute_mot(mot_libre, mot, ref);    // ajout a la suite si nouveau mot
-      else ajoute_ref (x, ref);                       // sinon ajoute juste la nouvelle ref
+      if (x < 0) ajoute_mot(mot_libre, mot, ref);   // ajout a la suite si nouveau mot
+      else ajoute_ref (x, ref);                     // sinon ajoute juste la nouvelle ref
     }
     mot = strtok(NULL, split_chars);                // continuer sur le mot suivant
   }
@@ -148,25 +169,19 @@ int indice(str mot){                // modification du type
 
 // AJOUT d'UN NOUVEAU MOT
 void ajoute_mot(idx x, str mot, idx ref){
-  mots[x].mot = mot;      // ajout du nouveau mot dans l'index
-  mots[x].refs[0] = ref;   // ajout de sa reference
-  ++mots[x].ref_libre;     // incrémentation de la ref libre pour ce mot
-  ++mot_libre ;       // incrémentation de l'emplacement d'un nouveau mot
+  mots[x].mot = mot;              // ajout du nouveau mot dans l'index
+  mots[x].refs = cons(ref, nil);  // ajout de sa reference
+  ++mot_libre ;                   // incrémentation de l'emplacement d'un nouveau mot
 }
 
 
 // AJOUT d'UNE REF (si mot déja indexé)
 void ajoute_ref(idx x, idx ref){
-  idx i = 0;
-  int n = 0;
-  for (i = 0 ; mots[x].refs[i] ; i++){
-    if (mots[x].refs[i] == ref) n = 1;
-  }
+  // verification de la présence de la ref dans la liste refs
+  int n = in(ref , mots[x].refs);
 
   if (!n){
-    idx r = mots[x].ref_libre;                   // recupération de l'indice de l'emplacement de nouvelle ref
-    mots[x].refs[r] = ref;                       // ajout de la nouvelle ref
-    ++mots[x].ref_libre;                         // incrémentation de la ref_libre pour ce mot
+    mots[x].refs = cons(ref, mots[x].refs);       // ajout de la nouvelle ref
   }
 }
 
@@ -180,12 +195,70 @@ int compare(ndex * E1, ndex * E2) { return strcasecmp(E1 -> mot, E2 -> mot); }
 
 // AFFICHAGE DES VALEURS DE L'INDEX
 void dump(idx k){
-  idx x , z;
+  idx x;
   for (x = 0 ; x < k ; ++x){
     printf("%s :", mots[x].mot);
-    for (z = 0 ; mots[x].refs[z] ; ++z){
-      printf(" %i", mots[x].refs[z]);
-    }
+    // affichage des references
+    putlist(mots[x].refs);
     printf("\n");
   }
+}
+
+
+// CONSTRUCTION D'UNE LISTE
+list cons(idx car, list L){
+  list new = malloc(sizeof(node));
+  if (!new) usage("cons : manque de RAM") ;
+  new -> car = car;
+  new -> cdr = L;
+  return new; }
+
+
+
+
+// FONCTION 'IN'
+// vérifie la présence d'une ref dans une liste
+// affichage des valeurs de la liste
+int in(int ref ,list L){
+  while(L){
+    if (L -> car == ref) return 1;
+    L = L->cdr;
+  }
+  return 0;
+}
+
+// RENVOI LA TAILLE D'UNE LISTE
+int length(list L){
+  int n = 0;
+  if (L->car) n++;
+  while (L->cdr){
+    L = L->cdr;
+    n++;
+    }
+    return n;
+  }
+
+
+// AFFICHAGE D'UNE LISTE (a l'endroit)
+void putlist(list L){
+  // recuperation de la taille de la liste
+  int n = length(L), i;
+
+
+  // allocation dynalique d'un vecteur qui contiendra les elements de la liste
+  idx *v;
+  v = malloc(max_refs * sizeof(*v));
+  if (! v) usage("usage : impossible d'allouer l'espace en mémoire pour stoquer les éléments de la liste");
+
+  // boucle de lecture de la liste
+  for (i = n -1 ; i >= 0 ; i--){
+    v[i] = L-> car;
+    L = L-> cdr;
+  }
+  // affichage des elements récupérés
+  for( i = 0 ; i < n; i++){
+    printf("%d ",v[i]);
+  }
+
+
 }

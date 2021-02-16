@@ -66,6 +66,9 @@ int main(int k, char const *argv[]) {
   // fermeture du flux
   fclose(fichier);
 
+  // tri de la table
+  qsort(mots, mot_libre, sizeof(ndex), compare);
+
   // affichage de l'indexe
   dump (mot_libre);
 
@@ -178,7 +181,6 @@ int compare(ndex * E1, ndex * E2) { return strcasecmp(E1 -> mot, E2 -> mot); }
 // AFFICHAGE DES VALEURS DE L'INDEX
 void dump(idx k){
   idx x , z;
-  qsort(mots, mot_libre, sizeof(ndex), compare);
   for (x = 0 ; x < k ; ++x){
     printf("%s :", mots[x].mot);
     for (z = 0 ; mots[x].refs[z] ; ++z){

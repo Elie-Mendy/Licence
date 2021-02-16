@@ -23,7 +23,7 @@ int main (int argc, char * argv[]){
 
 
   // fgets
-  rewind(fichier);       // repositionnement du curseur
+  //rewind(fichier);       // repositionnement du curseur
   // fseek(fichier,0 ,0)   similaire
   char chaine[100];     // allocation d'espace
   fgets(chaine, 100, fichier);
