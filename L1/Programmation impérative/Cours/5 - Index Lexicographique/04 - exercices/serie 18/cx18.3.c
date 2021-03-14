@@ -4,9 +4,6 @@
 // definition de nil
 #define nil NULL;
 
-#define car(node) ((node)->car)
-#define cdr(node) ((node)->cdr)
-
 // Definition du type node et list
 typedef struct node { void * car ; struct node * cdr ; } node , *list;
 
@@ -15,19 +12,13 @@ list cons (void * car, list cdr);
 void putlist(list L);
 void usage(char *);
 int length(list L);
-list arrayToList(void * tab);
+list arrayToList(void * tab, int taille);
 
 
 int main(void) {
-
-  // declaration d'un tableau 
-  int entiers [] = { 0, 2, 4, 6, 8, 1, 3, 5, 7, 9 };
-  
-  
-  
-  list L = arrayToList(&entiers);
-  
-  putlist(L);
+  int entiers [] = { 1, 2, 4, 6, 8, 1, 3, 5, 7, 9 };  // declaration d'un tableau
+  list L = arrayToList(entiers, 10);                  // conversion du tableau en liste
+  putlist(L);                                         // affichage de la liste
   return 0;
 }
 
@@ -52,58 +43,59 @@ int length(list L){
     return n;
 }
 
-
-list arrayToList(void * tab){
+// FONCTION DE CONVERSION d'UNE TABLE EN LISTE
+list arrayToList(void * tab , int taille){
     // definition d'un pointeur type
-    int **  p = tab;
-    int * pi = *p;
-    // definition d'une liste 
+    int *p = tab;
+
+    // definition d'une liste
     list L = nil;
     // recuperation des valeurs du tableau
-    while(*pi){
-        printf("%i ", *pi++);
-    } 
+    int n = 0;
+    while(n++ < taille){
+        // printf("%i ", *p++);
+        L = cons(p++, L);
+    }
+
     return L;
 }
+
+
+
+
+
 
 list cons(void * car, list cdr){
   list L = malloc(sizeof(node));
   if (!L) usage("espace insufisant");
 
-  car(L) = car;
-  cdr(L) = cdr;
+  L -> car = car;
+  L -> cdr = cdr;
 
   return L;
 }
 
 
-
-/*FONCTION POUR S'INSPIRER DANS LA MODIFICATION DE L'affichage à l'endroit*/
-// AFFICHAGE D'UNE LISTE (a l'endroit)
 void putlist(list L){
-
   int * P = malloc(sizeof(int));
-  // recuperation de la taille de la liste
-  int n = 0, i;
-  list Copy = L;
-  while (Copy){ n ++; Copy = Copy->cdr;
-  }
+  int nb = length(L);           // récupération de la taillede la liste
 
-  // allocation dynalique d'un vecteur qui contiendra les elements de la liste
-  char * v = malloc(sizeof(char) * n);
-  if (! v) usage("usage : impossible d'allouer l'espace en mémoire pour stoquer les éléments de la liste");
+  // création d'un Pointeur sur une liste
+  list Copy = nil;
 
-  // boucle de lecture de la liste
-  for (i = n -1 ; i >= 0 ; i--){
-    P = L->car;
-    v[i] = *P;
-    L = L-> cdr;
-  }
-  // affichage des elements récupérés
-  for( i = 0 ; i < n; i++){
-    printf("%c ",v[i]);
+  while (nb--){
+    int i = 0;
+    // Copie de la liste L
+    Copy = L;
+    // parcour de la liste Copy
+    while(i++ <= nb){
+      //L = L->cdr;
+      P = Copy->car;
+      Copy = Copy->cdr;
+    }
+    // affichage de la valeur
+
+    printf("%i ", *P);
   }
   puts("");
 }
-
-
