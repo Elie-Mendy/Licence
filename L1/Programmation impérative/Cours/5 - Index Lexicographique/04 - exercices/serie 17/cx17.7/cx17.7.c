@@ -38,9 +38,90 @@ struct ndex{
   list refs ;
 };
 
-#include "fonctions.h"                              // Header des fonctions du programme
-#include "liste_int.c"
-#include "liste_mots.c"
+// #include "fonctions.h"                              // Header des fonctions du programme
+
+// imprime un message d'erreur sur le flux fprintf
+void usage(char * message);
+
+// LECTURE D'UNE STOPLIST
+stp lire_stoplist(char * stoplist);
+
+// INDEXATION D'UNE LIGNE DE TEXTE
+void indexe( char * ligne, idx ref);
+
+// EXCLUSION D'UN MOT (si présent dans la stoplist)
+int exclure(str mot);
+
+// RECUPERATION DE L'INDICE (mot indéxé)
+int indice(str mot);
+
+// AJOUT d'UN NOUVEAU MOT
+void ajoute_mot(idx x, str mot, idx ref);
+
+
+// AJOUT d'UNE REF (mot existant)
+void ajoute_ref(idx x, idx ref);
+
+// COMPARAISON DE DEUX CHAINES
+bool pareil(str x, str y);
+
+// FOCNTION DE TRI DE DEUX MOTS
+int compare(void const *E1, void const *E2);
+
+// AFFICHAGE DES VALEURS DE L'INDEX
+void dump(idx k);
+
+// PASSAGE EN MAJUSCULE D'UN MOT
+void majuscule(char *chaine);
+
+
+
+
+
+
+// #include "liste_int.c"
+// CONSTRUCTION D'UNE LISTE
+list cons(idx car, list L);
+
+// FONCTION 'IN'
+// vérifie la présence d'une ref dans une liste
+// affichage des valeurs de la liste
+int in(int ref ,list L);
+
+// RENVOI LA TAILLE D'UNE LISTE
+int length(list L);
+
+// AFFICHAGE D'UNE LISTE (a l'endroit)
+void putlist(list L);
+
+
+
+
+
+// #include "liste_mots.c"
+
+// CONSTRUCTION D'UNE LISTE
+stp cons_w(char * car, stp L);
+
+// FONCTION 'IN'
+// vérifie la présence d'une ref dans une liste
+// affichage des valeurs de la liste
+int in_w(char* mot ,stp L);
+
+// RENVOI LA TAILLE D'UNE LISTE
+int length_w(stp L);
+
+// AFFICHAGE D'UNE LISTE (a l'endroit)
+void putlist_w(stp L);
+
+// CONVERSION Table en Liste
+stp table_to_list_w(char * table[]);
+
+
+
+
+
+
 
 // allocation d'espace pour:
 ndex mots[max_mots];                // --> la structure contenant les mots indexé et leurs references associées

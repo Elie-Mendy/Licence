@@ -1,30 +1,31 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// mise en place du nil
-#define nil NULL
+// definition de nil
+#define nil NULL;
 
+#define car(node) ((node)->car)
+#define cdr(node) ((node)->cdr)
 
-// construction des doublets et listes
-typedef struct node node, *list;
-struct node{
-  int car;
-  node * cdr;
-};
+// Definition du type node et list
+typedef struct node { void * car ; struct node * cdr ; } node , *list;
 
-// prototype des fonctions utilisées
+// prototype desfonctions
+list cons (void * car, list cdr);
 void putlist(list L);
-list cons(int , list);
 void usage(char *);
 
+int main(void) {
 
-int main(void){      // k utilisé comme local
-  int k;
+  int i;
   list L = nil;
-  // remplissage de la liste
-  for (k = 'a' ; k < 'i' ; k++){
-    L = cons(k, L);}
-  // affichage de la liste
+  for (i = 'a'; i < 'i'; i++){
+    //printf("%i\n", k);
+    int * k = malloc(sizeof(int));
+    *k = i;
+    L = cons(k , L);
+  }
+
   putlist(L);
   return 0;
 }
@@ -32,38 +33,32 @@ int main(void){      // k utilisé comme local
 
 
 
+// declaration de des fonctions
 
-// MESSAGE D'ERREUR (sur flux stderr)
-void usage(char * message) {
-  fprintf(stderr, "%s\n", message);
-  exit(1);
+// IMPRESSION DE MESSAGE D'ERREUR (sur flux stderr)
+void usage(char * message){ fprintf(stderr, "Usage : %s\n", message), exit(1) ;}
+
+list cons(void * car, list cdr){
+  list L = malloc(sizeof(node));
+  if (!L) usage("espace insufisant");
+
+  car(L) = car;
+  cdr(L) = cdr;
+
+  return L;
 }
 
-// CONSTRUCTION D'UNE LISTE
-list cons(int car, list L){
-  list new = malloc(sizeof(node));
-  if (!new) usage("cons : manque de RAM") ;
-  new -> car = car;
-  new -> cdr = L;
-  return new; }
-
-/*
-// AFFICHAGE D'UNE LISTE (ecriture façon lisp)
-void putlist(list L){
-  if (!L) return;            // nil : fin de la liste
-  printf("%c ", L-> car) ;
-  putlist(L -> cdr) ;
-}*/
 
 
+/*FONCTION POUR S'INSPIRER DANS LA MODIFICATION DE L'affichage à l'endroit*/
 // AFFICHAGE D'UNE LISTE (a l'endroit)
 void putlist(list L){
+
+  int * P = malloc(sizeof(int));
   // recuperation de la taille de la liste
   int n = 0, i;
   list Copy = L;
-  while (Copy){
-    n ++;
-    Copy = Copy->cdr;
+  while (Copy){ n ++; Copy = Copy->cdr;
   }
 
   // allocation dynalique d'un vecteur qui contiendra les elements de la liste
@@ -72,7 +67,8 @@ void putlist(list L){
 
   // boucle de lecture de la liste
   for (i = n -1 ; i >= 0 ; i--){
-    v[i] = L-> car;
+    P = L->car;
+    v[i] = *P;
     L = L-> cdr;
   }
   // affichage des elements récupérés
@@ -81,3 +77,15 @@ void putlist(list L){
   }
   puts("");
 }
+
+/*
+void putlist(list L){
+  int * P = malloc(sizeof(int));
+    // definir un pointeur transitoire
+    while(L){
+      P = L->car;
+      printf("%c ", *P);
+      L = L->cdr;
+    }
+}
+*/

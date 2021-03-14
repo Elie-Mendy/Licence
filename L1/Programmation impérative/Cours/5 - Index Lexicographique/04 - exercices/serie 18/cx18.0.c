@@ -1,38 +1,43 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-// definition du nil
+
+
+// definition de nil
 #define nil NULL;
 
-// definition de deux structures
-  // les doublet (node)
-  // les listes --> reference un doublet
-typedef struct node node, *list;
-struct node {
-  int car;
-  struct node * cdr;
-};
+// Definition du type node et list
+typedef struct node { int car ; struct node * cdr ; } node , *list;
 
 
 
-int main(void){
-  // definition de deux adresses vides de listes
-  list L, top = nil
+int main(void) {
 
-  // remplissage de la liste par huit caracteres
+  list L, top = nil;
   int x;
-  for (x = 'Z' ; x > 'Q' ; x--){
+
+
+
+
+  // remplissage de liste
+  for (x = 'a' ; x < 'i' ; x++){
     L = malloc(sizeof(node));
-    L->car = x;
-    L->cdr = top;
+    L -> car = x;
+    L -> cdr = top;
     top = L;
   }
 
 
-  // affichage des valeurs de la liste
+
+
+  // affichage (vidage de liste)
   while(L){
-    printf("%c\n", L->car);
-    L = L->cdr;
+    printf("%c ", L -> car);
+    L = L -> cdr;
   }
+
+  puts("");
+
   return 0;
 }
