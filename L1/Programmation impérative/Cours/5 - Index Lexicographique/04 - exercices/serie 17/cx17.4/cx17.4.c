@@ -175,8 +175,13 @@ bool pareil(str x, str y) { return strcasecmp(x,y) ? False : True ; }
 
 
 // FOCNTION DE TRI DE DEUX MOTS
-int compare(ndex * E1, ndex * E2) { return strcasecmp(E1 -> mot, E2 -> mot); }
+int compare(void const *E1, void const *E2){
 
+  ndex const * pE1 = E1;
+  ndex const * pE2 = E2;
+
+  return strcmp(pE1 -> mot, pE2 -> mot);
+}
 
 // AFFICHAGE DES VALEURS DE L'INDEX
 void dump(idx k){

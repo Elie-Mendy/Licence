@@ -17,6 +17,7 @@ void putlist(list L, Type);
 int length(list L);
 list arrayToList(void * tab, int taille, Type);
 void listToArray(list L);
+int in(void * elt  ,list L, Type t);
 
 
 int main(int argc, char * argv[]) {
@@ -177,4 +178,28 @@ void putlist(list L, Type t){
 
 
   puts("");
+}
+
+
+// FONCTION 'IN'
+// vérifie la présence d'une ref dans une liste
+// affichage des valeurs de la liste
+int in(void * elt  ,list L, Type t){
+  if (t == INT){
+    int * P = malloc(sizeof(int));  // allocation d'un pointeur
+    P = elt;
+    while(L){
+      if (L -> car == P) return 1;
+      L = L->cdr;
+    }
+    return 0;
+  } else {
+    char * P = malloc(sizeof(char));  // allocation d'un pointeur
+    P = elt;
+    while(L){
+      if (L -> car == P) return 1;
+      L = L->cdr;
+    }
+    return 0;
+  }
 }

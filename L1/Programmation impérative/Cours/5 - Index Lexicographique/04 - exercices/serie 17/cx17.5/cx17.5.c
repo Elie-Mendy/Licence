@@ -17,14 +17,13 @@ typedef char * str;                                 // definirion du type str
 typedef enum {False, True} bool ;                   // definition du type bool
 
 
-// definition de la structure node
+// definition de nil
 #define nil NULL
 
-typedef struct node node, *list;
-struct node{
-  idx car;
-  struct node * cdr;
-  };
+// Definition du type node et list
+typedef struct node { void * car ; struct node * cdr ; } node , *list;
+// Indication de typage à donner aux fonctions de traitement de liste
+typedef enum Type {INT , MOTS} Type;
 
 // definition d'un nouveau type pour emuler un index
 typedef struct { str mot ; list refs ; } ndex ;
@@ -83,13 +82,6 @@ int main(int k, char const *argv[]) {
   // tri de la table
   qsort(mots, mot_libre, sizeof(ndex), compare);
 
-  /*
-  puts("test");
-
-  printf("mot 16 : %s\n", mots[15].mot);
-
-  putlist(mots[15].refs);*/
-  // affichage de l'indexe
   dump (mot_libre);
 
   return 0;
@@ -170,7 +162,7 @@ int indice(str mot){                // modification du type
 // AJOUT d'UN NOUVEAU MOT
 void ajoute_mot(idx x, str mot, idx ref){
   mots[x].mot = mot;              // ajout du nouveau mot dans l'index
-  mots[x].refs = cons(ref, nil);  // ajout de sa reference
+  mots[x].refs = cons(&ref, nil);  // ajout de sa reference
   ++mot_libre ;                   // incrémentation de l'emplacement d'un nouveau mot
 }
 
@@ -178,10 +170,10 @@ void ajoute_mot(idx x, str mot, idx ref){
 // AJOUT d'UNE REF (si mot déja indexé)
 void ajoute_ref(idx x, idx ref){
   // verification de la présence de la ref dans la liste refs
-  int n = in(ref , mots[x].refs);
+  int n = in(&ref , mots[x].refs, INT);
 
   if (!n){
-    mots[x].refs = cons(ref, mots[x].refs);       // ajout de la nouvelle ref
+    mots[x].refs = cons(&ref, mots[x].refs);       // ajout de la nouvelle ref
   }
 }
 
@@ -190,7 +182,13 @@ bool pareil(str x, str y) { return strcasecmp(x,y) ? False : True ; }
 
 
 // FOCNTION DE TRI DE DEUX MOTS
-int compare(ndex * E1, ndex * E2) { return strcasecmp(E1 -> mot, E2 -> mot); }
+int compare(void const *E1, void const *E2){
+
+  ndex const * pE1 = E1;
+  ndex const * pE2 = E2;
+
+  return strcmp(pE1 -> mot, pE2 -> mot);
+}
 
 
 // AFFICHAGE DES VALEURS DE L'INDEX
@@ -199,32 +197,46 @@ void dump(idx k){
   for (x = 0 ; x < k ; ++x){
     printf("%s :", mots[x].mot);
     // affichage des references
-    putlist(mots[x].refs);
+    putlist(mots[x].refs, INT);
     printf("\n");
   }
 }
 
 
-// CONSTRUCTION D'UNE LISTE
-list cons(idx car, list L){
-  list new = malloc(sizeof(node));
-  if (!new) usage("cons : manque de RAM") ;
-  new -> car = car;
-  new -> cdr = L;
-  return new; }
+// CONSTRUCTION D'UN DOUBLET
+list cons(void * car, list cdr){
+  list L = malloc(sizeof(node));
+  if (!L) usage("espace insufisant");
 
+  L -> car = car;
+  L -> cdr = cdr;
+
+  return L;
+}
 
 
 
 // FONCTION 'IN'
 // vérifie la présence d'une ref dans une liste
 // affichage des valeurs de la liste
-int in(int ref ,list L){
-  while(L){
-    if (L -> car == ref) return 1;
-    L = L->cdr;
+int in(void * elt  ,list L, Type t){
+  if (t == INT){
+    int * P = malloc(sizeof(int));  // allocation d'un pointeur
+    P = elt;
+    while(L){
+      if (L -> car == P) return 1;
+      L = L->cdr;
+    }
+    return 0;
+  } else {
+    char * P = malloc(sizeof(char));  // allocation d'un pointeur
+    P = elt;
+    while(L){
+      if (L -> car == P) return 1;
+      L = L->cdr;
+    }
+    return 0;
   }
-  return 0;
 }
 
 // RENVOI LA TAILLE D'UNE LISTE
@@ -239,26 +251,46 @@ int length(list L){
   }
 
 
-// AFFICHAGE D'UNE LISTE (a l'endroit)
-void putlist(list L){
-  // recuperation de la taille de la liste
-  int n = length(L), i;
 
+  // AFFICHAGE D'UNE LISTE
+  void putlist(list L, Type t){
+    // récupération de la taillede la liste
+    int nb = length(L);
+    // création d'un Pointeur sur une liste
+    list Copy = nil;
 
-  // allocation dynalique d'un vecteur qui contiendra les elements de la liste
-  idx *v;
-  v = malloc(max_refs * sizeof(*v));
-  if (! v) usage("usage : impossible d'allouer l'espace en mémoire pour stoquer les éléments de la liste");
+    if (t == INT){
+      int * P = malloc(sizeof(int));  // allocation d'un pointeur
 
-  // boucle de lecture de la liste
-  for (i = n -1 ; i >= 0 ; i--){
-    v[i] = L-> car;
-    L = L-> cdr;
+      while (nb--){
+        int i = 0;
+        // Copie de la liste L
+        Copy = L;
+        // parcour de la liste Copy
+        while(i++ <= nb){
+          //L = L->cdr;
+          P = Copy->car;
+          Copy = Copy->cdr;
+        }
+        // affichage de la valeur
+        printf("%i ", *P);
+      }
+
+    } else {
+      char * P = malloc(sizeof(char));  // allocation d'un pointeur
+
+      while (nb--){
+        int i = 0;
+        // Copie de la liste L
+        Copy = L;
+        // parcour de la liste Copy
+        while(i++ <= nb){
+          //L = L->cdr;
+          P = Copy->car;
+          Copy = Copy->cdr;
+        }
+        // affichage de la valeur
+        printf("%s ", P);
+      }
+    }
   }
-  // affichage des elements récupérés
-  for( i = 0 ; i < n; i++){
-    printf("%d ",v[i]);
-  }
-
-
-}

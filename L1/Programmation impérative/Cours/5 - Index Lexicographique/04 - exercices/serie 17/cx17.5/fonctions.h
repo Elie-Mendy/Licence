@@ -26,23 +26,16 @@ void ajoute_ref(idx x, idx ref);
 bool pareil(str x, str y);
 
 // FOCNTION DE TRI DE DEUX MOTS
-int compare(ndex *, ndex *);
+int compare(void const *E1, void const *E2);
 
 // AFFICHAGE DES VALEURS DE L'INDEX
 void dump(idx k);
 
-// CONSTRUCTION D'UNE LISTE
-list cons(idx car, list L);
-
-
-// RENVOI LA TAILLE D'UNE LISTE
+// prototype desfonctions
+void usage(char *);
+list cons (void * car, list cdr);
+void putlist(list L, Type);
 int length(list L);
-
-// FONCTION 'IN'
-// vérifie la présence d'une ref dans une liste
-// affichage des valeurs de la liste
-int in(int ref ,list L);
-
-
-// AFFICHAGE D'UNE LISTE (a l'endroit)
-void putlist(list L);
+list arrayToList(void * tab, int taille, Type);
+void listToArray(list L);
+int in(void * elt  ,list L, Type t);
