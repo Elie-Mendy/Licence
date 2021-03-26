@@ -11,6 +11,9 @@ enum {
   StackSize = 1024, // taille de la pile
 };
 
+
+
+/* le contexte d'un thread */
 struct Ctxt {
   int ebp;      // frame pointer
   int esp;      // stack pointer
@@ -20,7 +23,7 @@ struct Ctxt {
   int stack[StackSize] ;  // de l'espace pour la pile
 };
 
-Ctxt ctxt[2];   // deux threads
+Ctxt ctxt[2];       // deux threads
 Ctxt * curthread;   // le thread courant
 Ctxt original;      // le thread original
 
@@ -29,3 +32,19 @@ void restore(Ctxt*);
 
 
 void sched(void);   // dans la suite du code
+void createthread(int num, void * ( * fun) (void), char * name);
+void run(void);
+static void endthread(void)
+
+
+int globi = 0;
+
+/* principal --> un thread elementaire  */
+void principal(){
+  int i;
+
+  for (i = 0; i < 5; i++) {
+    printf("Jesuis %s, i vaut %d, globi %d\n", curthread->name, i, globi++);
+    sched();
+  }
+}
