@@ -56,7 +56,7 @@ int main(int argc, char * argv[]) {
 
 
   // LANCEMENT DU PREMIER PROCESSUS
-  t = spawn1(p1[0], p1);
+  t = spawn(p1[0], p1);
   if (t < 0){
     error("fork - premier processus");
   }
@@ -70,7 +70,7 @@ int main(int argc, char * argv[]) {
   }
 
   // LANCEMENT DU DEUXIEME PROCESSUS
-  t = spawn1(p2[0], p2);
+  t = spawn(p2[0], p2);
   if (t < 0){
     error("fork - deuxieme processus");
   }
@@ -93,7 +93,7 @@ int main(int argc, char * argv[]) {
 /* FONCTION spawn1()
   --> lance un processus qui execute le fichier
 */
-int spawn1 (char * fichier, char * arg[]){
+int spawn (char * fichier, char * arg[]){
   int t;
   t = fork();
   // ERREUR fork
