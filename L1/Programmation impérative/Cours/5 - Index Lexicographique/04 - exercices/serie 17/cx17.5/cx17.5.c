@@ -6,9 +6,11 @@
 
 
 #define max_mots 128                                // nombre maximum d'éléments dans la table de mots
+#define max_lignes 4000                             // nombre maximim de ligne pour un texte a indexer
 #define max_refs 20                                 // nombre maximum de ref par mots
 #define maximum 4096                                // nombre maximal de caractères composant un mot
 #define taille_mot 1024
+
 
 
 
@@ -38,6 +40,7 @@ ndex mots[max_mots];                // --> la structure contenant les mots index
 char ligne[maximum];                // --> la ligne de texte a indexer
 idx mot_libre = 0;                  // --> l'index indiquant le mot libre (au départ 0)
 char * stop[max_mots];              // --> une table contenant les mots a exclure de l'index
+int numLignes[max_lignes];                // --> table qui acceuillera les numéro de lignes
 
 // definition d'une liste de caractères a exclure
 // on se sert de ces caractères pour découper la ligne de texte
@@ -124,6 +127,8 @@ void lire_stoplist(char * liste){
 
 // INDEXATION D'UNE LIGNE DE TEXTE
 void indexe( char * ligne, idx ref){
+  // notation du numéro de ligne
+  numLignes[ref] = ref;
   // capture du premier mot et de la ligne en mémoire
   str mot = strtok(strdup(ligne), split_chars);
   // si ce n'est pas la chaine vide
@@ -162,7 +167,7 @@ int indice(str mot){                // modification du type
 // AJOUT d'UN NOUVEAU MOT
 void ajoute_mot(idx x, str mot, idx ref){
   mots[x].mot = mot;              // ajout du nouveau mot dans l'index
-  mots[x].refs = cons(&ref, nil);  // ajout de sa reference
+  mots[x].refs = cons(&numLignes[ref], nil);  // ajout de sa reference
   ++mot_libre ;                   // incrémentation de l'emplacement d'un nouveau mot
 }
 
@@ -173,7 +178,7 @@ void ajoute_ref(idx x, idx ref){
   int n = in(&ref , mots[x].refs, INT);
 
   if (!n){
-    mots[x].refs = cons(&ref, mots[x].refs);       // ajout de la nouvelle ref
+    mots[x].refs = cons(&numLignes[ref], mots[x].refs);       // ajout de la nouvelle ref
   }
 }
 
