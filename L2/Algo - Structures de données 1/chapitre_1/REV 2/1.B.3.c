@@ -13,6 +13,7 @@
 #include<stdlib.h>
 #include<string.h>
 
+#define TAILLE 256
 
 int main(int argc, char const *argv[])
 {
@@ -21,14 +22,17 @@ int main(int argc, char const *argv[])
   if (! fichier) exit(1);
 
   // récupération de la chaine de caractère
-  char texte[];
-  fscanf(fichier, "%s ", &texte);
+  char texte[TAILLE];
+  fscanf(fichier, "%s ", texte);
+
 
   // allocation dynamique d'un pointeur
-  char * P = malloc(strlen(texte)/sizeof(char));
+  char * P = malloc(strlen(texte) * sizeof(char));
+  P = texte;
 
 
   // affichage des caractères
   while (*P) { printf("%i ", (int) *P++);}
+  puts("");
   return 0;
 }

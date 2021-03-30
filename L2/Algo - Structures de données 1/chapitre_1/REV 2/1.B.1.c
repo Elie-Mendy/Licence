@@ -17,33 +17,74 @@
 
 int main(int argc, char const *argv[])
 {
-    // declarations de variables
-    int var1 = 1;
-    int var2 = 8;
-    char var3 = 'e';
-    float var4 = 4.9;
-    char var5[5] = "test";
-
-    printf("Avec affectation:\n");
-    printf("variable 1: %p \n", &var1);
-    printf("variable 2: %p \n", &var2);
-    printf("variable 3: %p \n", &var3);
-    printf("variable 4: %p \n", &var4);
-    printf("variable 5: %p \n", &var5);
-
-    int var6 ;
-    int var7 ;
-    char var8 ;
-    float var9 ;
-    char var10[5] ;
 
 
-    printf("\nSans affectation:\n");
-    printf("variable 6: %p \n", &var6);
-    printf("variable 7: %p \n", &var7);
-    printf("variable 8: %p \n", &var8);
-    printf("variable 9: %p \n", &var9);
-    printf("variable 10: %p \n", &var10);
 
-    return 0;
+  // declarer des entiers sans init
+  int i1;
+  int i2;
+  int i3;
+
+  // declaration d'entiers avec init
+  int i4 = 102;
+  int i5 = 5;
+  int i6 = 12;
+
+  // declarer de flottants sans init
+  float f1;
+  float f2;
+  float f3;
+
+  // declaration de flottants avec init
+  float f4 = 3.14;
+  float f5 = 78.6;
+  float f6 = 8.2;
+
+
+  // declarer de char sans init
+  char c1;
+  char c2;
+  char c3;
+
+  // declaration de char avec init
+  char c4 = 'A';
+  char c5 = 'z';
+  char c6 = 'f';
+
+
+
+  // affichage des adresses
+  printf("\n\nCHARS:\n");
+  printf("c1 : %p\n", &c1);
+  printf("c2 : %p\n", &c2);
+  printf("c3 : %p\n", &c3);
+  puts("");
+  printf("c4 : %p\n", &c4);
+  printf("c5 : %p\n", &c5);
+  printf("c6 : %p\n", &c6);
+
+  printf("\nENTIERS:\n");
+  printf("i1 : %p\n", &i1);
+  printf("i2 : %p\n", &i2);
+  printf("i3 : %p\n", &i3);
+  puts("");
+  printf("i4 : %p\n", &i4);
+  printf("i5 : %p\n", &i5);
+  printf("i6 : %p\n", &i6);
+
+  printf("\nFLOTTANTS:\n");
+  printf("f1 : %p\n", &f1);
+  printf("f2 : %p\n", &f2);
+  printf("f3 : %p\n", &f3);
+  puts("");
+  printf("f4 : %p\n", &f4);
+  printf("f5 : %p\n", &f5);
+  printf("f6 : %p\n", &f6);
+
+
+
+
+  return 0;
 }
+// variable rangées par type dans la mémoire
+// qu'elle soit initialisée ou pas l'ordre ne varie pas
