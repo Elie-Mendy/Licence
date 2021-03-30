@@ -103,9 +103,6 @@ list arrayToList(void * tab , int taille, Type t){
           L = cons(*p++, L);
       }
     }
-
-
-
     return L;
 }
 
