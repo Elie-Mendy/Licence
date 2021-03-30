@@ -1,5 +1,10 @@
-/* cd−fork−wait.c
-lancer un processus, attendre qu'il se termine
+/*
+Nom: MENDY
+Prenom: Elie
+n°etudiant: 19004664
+
+Ecrivez une commande mon-if qui lance un premier
+processus, puis en lancera un second si le premier a réussi
 */
 
 
@@ -20,7 +25,7 @@ int main(void) {
   int etat;   // compte rendu de wait
 
 
-  printf("Je Suis le Processus de départ\n");
+  printf("P1 : Je Suis le Processus de départ\n");
 
 
   // lancement du premier pricessus P2
@@ -38,23 +43,23 @@ int main(void) {
     // lancement du deuxieme processus P3
     tt = fork();
     // ERREUR
-    if (tt == -1) {                                                                          // si forkl renvoi -1 --> ERROR
+    if (tt == -1) {
       perror("fork");
       return 1;
     }
 
     // ENFANT P3
     else if  (tt == 0) {
-      printf("P3: j'attend 10 secondes\n");                                              // si fork renvoi 0 --> Processus ENFANT
+      printf("\t\tP3: j'attend 10 secondes\n");
       sleep(10);
-      printf("enfant: je termine\n");
+      printf("\t\tP3: je termine\n");
       return 0;
     }
 
     else {
-      printf("enfantP2: j'attend 20 secondes\n");                                              // si fork renvoi 0 --> Processus ENFANT
+      printf("\tP2: j'attend 20 secondes\n");
       sleep(20);
-      printf("enfant: je termine\n");
+      printf("\tP2: je termine\n");
       return 0;
     }
   }
@@ -62,18 +67,18 @@ int main(void) {
   // PARENT P1
   else {
     // in s'agit du processus parent
-    for (;;){                                                                            // sinon il renvoi le PID du PARENT
+    for (;;){
       pid = wait(&etat);
       if (pid == t)
         break;
-      printf("parent : wait a rendu la valeur %d, j'attend encore \n", pid );
+      printf("P1: wait a rendu la valeur %d, j'attend encore \n", pid );
       if (pid == -1)
         perror("wait");
 
     }
 
-    printf("parent : l'enfant s'est terminé avec la valeur %d\n", etat );
-    printf("parent : je termine\n");
+    printf("P1: l'enfant s'est terminé avec la valeur %d\n", etat );
+    printf("P1: je termine\n");
   }
 
   return 0;

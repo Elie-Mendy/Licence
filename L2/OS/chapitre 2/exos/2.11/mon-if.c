@@ -90,7 +90,7 @@ int main(int argc, char * argv[]) {
 
 
 
-/* FONCTION spawn1()
+/* FONCTION spawn()
   --> lance un processus qui execute le fichier
 */
 int spawn (char * fichier, char * arg[]){
