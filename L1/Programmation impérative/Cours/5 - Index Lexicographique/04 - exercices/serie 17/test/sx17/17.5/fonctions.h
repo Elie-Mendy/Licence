@@ -3,7 +3,7 @@
 void usage(char * message);
 
 // LECTURE D'UNE STOPLIST
-int lire_stoplist(char * liste);
+void lire_stoplist(char * liste);
 
 
 // INDEXATION D'UNE LIGNE DE TEXTE
@@ -30,7 +30,6 @@ int compare(void const *E1, void const *E2);
 
 // AFFICHAGE DES VALEURS DE L'INDEX
 void dump(idx k);
-
 
 // prototype desfonctions
 void usage(char *);

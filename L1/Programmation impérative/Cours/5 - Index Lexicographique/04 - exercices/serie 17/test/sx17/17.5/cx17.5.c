@@ -40,8 +40,7 @@ ndex mots[max_mots];                // --> la structure contenant les mots index
 char ligne[maximum];                // --> la ligne de texte a indexer
 idx mot_libre = 0;                  // --> l'index indiquant le mot libre (au départ 0)
 char * stop[max_mots];              // --> une table contenant les mots a exclure de l'index
-list stoplist = nil;                // --> liste elastique contenant les mot a exclure
-int numLignes[max_lignes];          // --> table qui acceuillera les numéro de lignes
+int numLignes[max_lignes];                // --> table qui acceuillera les numéro de lignes
 
 // definition d'une liste de caractères a exclure
 // on se sert de ces caractères pour découper la ligne de texte
@@ -70,15 +69,15 @@ int main(int k, char const *argv[]) {
 
   /* TRAITEMENT */
   // lecture des mots de la STOPLIST
-  int n = lire_stoplist("stoplist.txt");
-  // conversion de stop en liste elastique
-  stoplist = arrayToList(stop, n, MOTS);
+  lire_stoplist("stoplist.txt");
+
 
 
   // boucle d'indexation de chaque ligne
   idx i = 0;                                // i represente le numéro de ligne
   while (fgets(ligne, maximum, fichier))
     indexe(ligne, ++i);
+
 
 
   // fermeture du flux
@@ -105,8 +104,7 @@ void usage(char * message){ fprintf(stderr, "Usage : %s\n", message), exit(1) ;}
 
 
 // LECTURE D'UNE STOPLIST
-int lire_stoplist(char * liste){
-  int n = 0;                      // un compteur de mots
+void lire_stoplist(char * liste){
   // ouverture du flux
   FILE * fichier = fopen(liste, "r");
   if (! fichier) usage(" stoplist illisible");
@@ -119,10 +117,8 @@ int lire_stoplist(char * liste){
     if (lu != EOF){
       stop[i++] = strdup(sas);
       }
-      n ++;
     }
   fclose(fichier);
-  return n-1;
 }
 
 
@@ -303,33 +299,3 @@ int length(list L){
       }
     }
   }
-
-
-
-// CONVERTIR UNE TABLE EN LISTE
-list arrayToList(void * tab , int taille, Type t){
-  // definition d'une liste
-  list L = nil;
-
-  if (t == INT){
-    // definition d'un pointeur type
-    int *p = tab;
-    // recuperation des entiers
-    int n = 0;
-    while(n++ < taille){
-        // printf("%i ", *p++);
-        L = cons(p++, L);
-    }
-
-  } else {
-    // definition d'un pointeur type
-    char **p = tab;
-    // recuperation des mots
-    int n = 0;
-    while(n++ < taille){
-        // printf("%i ", *p++);
-        L = cons(*p++, L);
-    }
-  }
-  return L;
-}
