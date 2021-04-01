@@ -9,7 +9,7 @@ Programme: mon-if.c:
 
 
 
-#define MAX_PARAM 1000  // nb de parametre autorisé pour une commande
+#define MAX_PARAM 1000  // nb de parametres autorisés pour une commande
 
 
 // IMPORTS
@@ -39,7 +39,7 @@ int main(int argc, char * argv[]) {
     exit(1);
   }
 
-  // definition des variable qui acceuilleront les PID
+  // definition des variables qui acceuilleront les PID
   int t;
   int tt;
   int etat;

@@ -1,6 +1,13 @@
 /*
-Boucle principale du shell
+NOM: MENDY
+PRENOM : Elie
+n°etudiant: 19004664
+
+Programme: mon-if.c:
+--> Ecrivez cette fois une commande interne moncd dans notre
+shell qui est complètement fonctionnelle.
 */
+
 
 
 // IMPORTS DE BIBLIOTEQUES
@@ -24,6 +31,7 @@ enum {
 // PROTOTYPE FONCTIONS INTERNES
 int decouper(char *, char*, char**, int);
 int moncd(int argc, char ** argv);
+void monexit();
 
 
 // DEFINITION DU PROMPT
@@ -75,11 +83,9 @@ int main(int argc, char *argv[]) {
       continue;
     }
 
-    // exit
-    if (! strcmp(mot[0] , "exit")) {
-      printf("Bye\n");
-      exit(0);
-    }
+    // sortie du programme par mot clé 'exit'
+    if (! strcmp(mot[0] , "exit"))
+      monexit();
     /*================================================*/
 
 
@@ -134,7 +140,10 @@ int decouper (char * ligne, char * separ, char * mot[], int maxmot) {
 
 
 
-
+/* FONCTION moncd():
+  --> ordonne le changement de repertoire courant
+      (modification de la valeur de la variable d'environnement PATH)
+*/
 int moncd(int argc, char ** ldc) {
   char * dir;
   int t;
@@ -159,6 +168,10 @@ int moncd(int argc, char ** ldc) {
 return 0;
 }
 
-/*
-Solution : Parce que l’appel système chdir s’est fait dans le processus enfant. Le
-répertoire courant du shell (le parent) ne change pas.*/
+/* FONCTION moncd():
+  --> quitte le programme en affichant un message de sortie
+*/
+void monexit() {
+  printf("Bye\n");
+  exit(0);
+}
