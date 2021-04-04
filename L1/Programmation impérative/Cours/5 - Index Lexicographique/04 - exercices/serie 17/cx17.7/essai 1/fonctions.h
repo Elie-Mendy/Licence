@@ -3,8 +3,7 @@
 void usage(char * message);
 
 // LECTURE D'UNE STOPLIST
-int lire_stoplist(char * liste);
-
+stp lire_stoplist(char * stoplist);
 
 // INDEXATION D'UNE LIGNE DE TEXTE
 void indexe( char * ligne, idx ref);
@@ -31,11 +30,5 @@ int compare(void const *E1, void const *E2);
 // AFFICHAGE DES VALEURS DE L'INDEX
 void dump(idx k);
 
-
-// prototype desfonctions
-list cons (void * car, list cdr);
-void putlist(list L, Type);
-int length(list L);
-list arrayToList(void * tab, int taille, Type);
-void listToArray(list L);
-int in(void * elt  ,list L, Type t);
+// PASSAGE EN MAJUSCULE D'UN MOT
+void majuscule(char *chaine);
