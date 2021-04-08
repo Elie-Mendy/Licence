@@ -39,7 +39,7 @@ int main(int argc, char * argv[]) {
     exit(1);
   }
 
-  // definition des variables qui acceuilleront les PID
+  // definition des variables
   int t;
   int tt;
   int etat;

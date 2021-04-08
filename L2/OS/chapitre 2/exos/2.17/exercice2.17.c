@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
       execv(pathname, mot);
     }
 
-    // partie du programme non sensé s'executer sauf Erreur d'execv
+    // partie du programme non censé s'executer sauf Erreur d'execv
     fprintf(stderr, "%s: not found\n", mot[0]);
     exit(1);
   }

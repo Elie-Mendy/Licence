@@ -52,7 +52,7 @@ int spawn (char * fichier, char * arg[]){
   // ENFANT
   if(t == 0) {
     execvp(fichier ,arg);
-    // ERREUR execl
+    // ERREUR execvp
     exit(1);
   }
 

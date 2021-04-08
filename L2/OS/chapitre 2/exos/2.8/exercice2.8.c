@@ -21,7 +21,7 @@ int main(void) {
 
   int t;      // valeur de retour du fork
   int tt;
-  int pid;    // contiendra la valeur de t si le
+  int pid;
   int etat;   // compte rendu de wait
 
 
@@ -66,7 +66,7 @@ int main(void) {
 
   // PARENT P1
   else {
-    // in s'agit du processus parent
+    // il s'agit du processus parent
     for (;;){
       pid = wait(&etat);
       if (pid == t)
