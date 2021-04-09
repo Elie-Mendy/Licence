@@ -17,14 +17,12 @@
 
 int main(int argc, char const *argv[])
 {
-
-
-
   // declarer des entiers sans init
   int i1;
   int i2;
   int i3;
 
+  
   // declaration d'entiers avec init
   int i4 = 102;
   int i5 = 5;
@@ -82,9 +80,5 @@ int main(int argc, char const *argv[])
   printf("f6 : %p\n", &f6);
 
 
-
-
   return 0;
 }
-// variable rangées par type dans la mémoire
-// qu'elle soit initialisée ou pas l'ordre ne varie pas
