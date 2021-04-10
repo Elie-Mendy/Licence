@@ -172,8 +172,6 @@ void putlist(list L, Type t){
       printf("%s ", P);
     }
   }
-
-
   puts("");
 }
 

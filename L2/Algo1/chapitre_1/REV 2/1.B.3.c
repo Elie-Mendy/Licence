@@ -34,5 +34,11 @@ int main(int argc, char const *argv[])
   // affichage des caractères
   while (*P) { printf("%i ", (int) *P++);}
   puts("");
+
+
+  // fermeture du fichier
+  fclose(fichier);
+
+  
   return 0;
 }

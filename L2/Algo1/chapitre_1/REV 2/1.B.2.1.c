@@ -15,7 +15,7 @@
 #include<string.h>
 
 
-#define VAR1
+//#define VAR1
 #define VAR2
 
 int main(int argc, char *argv[])
@@ -27,6 +27,7 @@ int main(int argc, char *argv[])
 
     #ifdef VAR1 // parcour de la chaine à partir de son nom
     int i = 0;
+    printf("Variante 1:\n");
     while(argv[1][i]){
       printf("%c ", argv[1][i++]);
     }
@@ -35,6 +36,7 @@ int main(int argc, char *argv[])
 
     #ifdef VAR2 // parcour de la chaine à partir d'un pointeur
     char * p = argv[1]; // argv1
+    printf("Variante 2:\n");
     while(*p) { printf("%c ", *p++); };
     #endif
     puts("");
