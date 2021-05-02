@@ -5,11 +5,11 @@
 
 
 
-#define max_mots 128                                // nombre maximum d'éléments dans la table de mots
-#define max_lignes 4000                             // nombre maximim de ligne pour un texte a indexer
-#define max_refs 20                                 // nombre maximum de ref par mots
+#define max_mots 10000                              // nombre maximum d'éléments dans la table de mots
+#define max_lignes 4096                             // nombre maximim de ligne pour un texte a indexer
+#define max_refs 4096                                 // nombre maximum de ref par mots
 #define maximum 4096                                // nombre maximal de caractères composant un mot
-#define taille_mot 1024
+#define taille_mot 2048  
 
 
 
@@ -47,7 +47,8 @@ int numLignes[max_lignes];          // --> table qui acceuillera les numéro de 
 // on se sert de ces caractères pour découper la ligne de texte
 const str split_chars =  " ().&%,;:!?/*~_-+[]{}=<>@`\"\'0123456789$€“”«»·\n\t";
 
-
+// option que le programme acceptera
+char option[3];
 
 #include "fonctions.h"                              // Header des fonctions du programme
 
@@ -58,15 +59,15 @@ const str split_chars =  " ().&%,;:!?/*~_-+[]{}=<>@`\"\'0123456789$€“”«»
 
 int main(int k, char  *argv[]) {
   // options acceptées par le programme
-  str option_S = "-s";
-  str option_G = "-g";
   int indexFichier = 1; // indice par défaut fichier à indexer sur la lcd
 
   // test du nombre d'arguments
   if (k < 2) usage(" veuillez indiquer le nom du fichier a lire");
 
   // detection de l'option -s 
-  if (pareil(argv[1], option_S) || pareil(argv[1], option_G)) {
+  if (pareil(argv[1], "-s") || pareil(argv[1], "-g")) {
+    // capture de l'option
+    strcpy(option, argv[1]);
 
     // test du nombre d'arguments
     if (k < 4) usage(" veuillez indiquer le nom du fichier a lire ainsi que la stoplist");
@@ -152,18 +153,20 @@ void indexe(str ligne, idx ref){
 
 // EXCLUSION D'UN MOT si présent dans la stoplist
 int exclure(str mot){                // modification du type
-  
-  char maj[taille_mot];
-  strcpy(maj , mot);
 
-  if (in(maj , stoplist, STR)){
-    
-    return 1;
-  }
   // exclusion des mots de moins de deux lettres
   if (strlen(mot) < 2) return 1;
-  
-  return -1;
+  if (pareil(option, "-g")){         // detection de l'option -g
+    if (in(mot , stoplist, STR))        // si on utilise une goliste
+      return -1;                        // on ne garde que les mots qui sont dedans
+    else 
+      return 1;
+  } else {                              // si on utilise une stoplist
+    if (in(mot , stoplist, STR))        // on exclue les mots en faisant partie
+      return 1;
+    else 
+      return -1;
+  }
 }
 
 // RECUPERATION DE L'INDICE d'un mot dans une table donnée

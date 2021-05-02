@@ -19,13 +19,11 @@ all : $(EXEC)
 $(EXEC) : $(SRC) $(LIBNAME)
 	$(CC) $(CFLsAGS) $(SRC) $(LIBNAME)  -o $(EXEC)
 
-
 # Generation de la librairie
 # 	ar -r lib18.a cx18.5.lib.o
-$(LIBNAME) : $(LIB)
+$(LIBNAME) : $(OBJ)
 	ar -r $(LIBNAME) $(OBJ)
  
-
 # Generafion du fichier objets de la librairie
-$(OBJ) : %.c $(LIB) 
+$(OBJ) :  $(LIB) 
 	$(CC) -o $(OBJ) -c $(LIB) 

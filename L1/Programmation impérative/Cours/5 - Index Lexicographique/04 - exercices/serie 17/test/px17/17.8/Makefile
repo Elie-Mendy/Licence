@@ -2,30 +2,28 @@
 CC = gcc
 CFLAGS = -Wall
 
-EXEC = cx17.8
-SRC = cx17.8.c
+EXEC = cx17.7
+SRC = cx17.7.c 
 
 LIB = cx18.5.lib.c
-LIBNAME = lib18.so
-LDFLAGS = -fpic -shared
+LIBNAME = lib18.a
 
+OBJ = cx18.5.lib.o
 
 # regle all
 all : $(EXEC)
 
 
-
 # creation de l'executable
-# 	gcc -Wall cx17.8.c lib18.so  -o cx17.8
+# 	gcc -Wall cx18.5.o lib18.a -o cx17.7
 $(EXEC) : $(SRC) $(LIBNAME)
-	$(CC) $(CFLAGS) $(SRC) $(LIBNAME)  -o $(EXEC)
-
+	$(CC) $(CFLsAGS) $(SRC) $(LIBNAME)  -o $(EXEC)
 
 # Generation de la librairie
-# 	gcc -Wall -fpic -shared cx18.5.lib.c -o lib18.so
-$(LIBNAME) : $(LIB)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(LIB) -o $(LIBNAME)
+# 	ar -r lib18.a cx18.5.lib.o
+$(LIBNAME) : $(OBJ)
+	ar -r $(LIBNAME) $(OBJ)
  
-
-# au lancement 
-# LD_LIBRARY_PATH=. cx17.8 indexe-moi.texte 
+# Generafion du fichier objets de la librairie
+$(OBJ) :  $(LIB) 
+	$(CC) -o $(OBJ) -c $(LIB) 

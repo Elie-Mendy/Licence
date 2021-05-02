@@ -1,0 +1,25 @@
+#! /usr/bin/env python3
+
+#import de modules
+import sys, os
+
+# cx17 : TEST DE REGRESSION
+# argv[1] = minor.bugfix version number
+prog = 'cx17.' + sys.argv[1]
+compile = f'gcc -Wall {prog}.c -o {prog}'
+
+# si la compilation echoue -> fin du programme
+if os.system(compile) != 0 : exit
+
+
+# lantement du jeu de test stoplist
+run = f'{prog} indexe-moi.texte > {prog}.test'
+os.system(run)
+
+# lantement du jeu de test stoplist
+run = f'{prog} indexe-moi.texte > {prog}.test'
+os.system(run)
+
+# lantement du jeu de test stoplist
+run = f'{prog} indexe-moi.texte > {prog}.test'
+os.system(run)

@@ -5,11 +5,11 @@
 
 
 
-#define max_mots 128                                // nombre maximum d'éléments dans la table de mots
-#define max_lignes 4000                             // nombre maximim de ligne pour un texte a indexer
-#define max_refs 20                                 // nombre maximum de ref par mots
+#define max_mots 10000                              // nombre maximum d'éléments dans la table de mots
+#define max_lignes 4096                             // nombre maximim de ligne pour un texte a indexer
+#define max_refs 4096                                 // nombre maximum de ref par mots
 #define maximum 4096                                // nombre maximal de caractères composant un mot
-#define taille_mot 1024
+#define taille_mot 2048  
 
 
 
@@ -25,7 +25,7 @@ typedef enum {False, True} bool ;                   // definition du type bool
 // Definition du type node et list
 typedef struct node { void * car ; struct node * cdr ; } node , *list;
 // Indication de typage à donner aux fonctions de traitement de liste
-typedef enum Type {INT , MOTS} Type;
+typedef enum Type {INT , STR} Type;
 
 // definition d'un nouveau type pour emuler un index
 typedef struct { str mot ; list refs ; } ndex ;
@@ -39,7 +39,7 @@ typedef struct { str mot ; list refs ; } ndex ;
 ndex mots[max_mots];                // --> la structure contenant les mots indexé et leurs references associées
 char ligne[maximum];                // --> la ligne de texte a indexer
 idx mot_libre = 0;                  // --> l'index indiquant le mot libre (au départ 0)
-char * stop[max_mots];              // --> une table contenant les mots a exclure de l'index
+str stop[max_mots];                 // --> une table contenant les mots a exclure de l'index
 list stoplist = nil;                // --> liste elastique contenant les mot a exclure
 int numLignes[max_lignes];          // --> table qui acceuillera les numéro de lignes
 
@@ -47,7 +47,8 @@ int numLignes[max_lignes];          // --> table qui acceuillera les numéro de 
 // on se sert de ces caractères pour découper la ligne de texte
 const str split_chars =  " ().&%,;:!?/*~_-+[]{}=<>@`\"\'0123456789$€“”«»·\n\t";
 
-
+// option que le programme acceptera
+char option[3];
 
 #include "fonctions.h"                              // Header des fonctions du programme
 
@@ -56,24 +57,41 @@ const str split_chars =  " ().&%,;:!?/*~_-+[]{}=<>@`\"\'0123456789$€“”«»
 
 
 
-int main(int k, char const *argv[]) {
+int main(int k, char  *argv[]) {
+  // options acceptées par le programme
+  int indexFichier = 1; // indice par défaut fichier à indexer sur la lcd
 
   // test du nombre d'arguments
   if (k < 2) usage(" veuillez indiquer le nom du fichier a lire");
 
+  // detection de l'option -s 
+  if (pareil(argv[1], "-s") || pareil(argv[1], "-g")) {
+    // capture de l'option
+    strcpy(option, argv[1]);
+
+    // test du nombre d'arguments
+    if (k < 4) usage(" veuillez indiquer le nom du fichier a lire ainsi que la stoplist");
+
+    // lecture des mots de la STOPLIST indiquée
+    int n = lire_stoplist(argv[3]);
+
+    // conversion de stop en liste elastique
+    stoplist = arrayToList(stop, n, STR);
+
+    indexFichier = 2;
+
+  } else {
+    // lecture des mots de la STOPLIST par défaut
+    int n = lire_stoplist("stoplist.txt");
+
+    // conversion de stop en liste elastique
+    stoplist = arrayToList(stop, n, STR);
+  }
+
+
   // ouverture du flux
-  FILE * fichier = fopen(argv[1], "r");
+  FILE * fichier = fopen(argv[indexFichier], "r");
   if ( ! fichier) usage(" fichier illisible");
-
-
-
-
-  /* TRAITEMENT */
-  // lecture des mots de la STOPLIST
-  int n = lire_stoplist("stoplist.txt");
-  // conversion de stop en liste elastique
-  stoplist = arrayToList(stop, n, MOTS);
-
 
   // boucle d'indexation de chaque ligne
   idx i = 0;                                // i represente le numéro de ligne
@@ -93,7 +111,7 @@ int main(int k, char const *argv[]) {
 
 
 // LECTURE D'UNE STOPLIST
-int lire_stoplist(char * liste){
+int lire_stoplist(str liste){
   int n = 0;                      // un compteur de mots
   // ouverture du flux
   FILE * fichier = fopen(liste, "r");
@@ -114,16 +132,17 @@ int lire_stoplist(char * liste){
 }
 
 // INDEXATION D'UNE LIGNE DE TEXTE
-void indexe( char * ligne, idx ref){
+void indexe( str ligne, idx ref){
   // notation du numéro de ligne
   numLignes[ref] = ref;
   // capture du premier mot et de la ligne en mémoire
   str mot = strtok(strdup(ligne), split_chars);
   // si ce n'est pas la chaine vide
   while (mot){
-
+    
     int s = exclure(mot);                       // verificaton de la présence du mot dans l'index
     if (s < 0){                                 // si le mot n'est pas a exclure
+      
       int x = indice(mot);                      // verificaton de la présence du mot dans l'index
       if (x < 0) ajoute_mot(mot_libre, mot, ref);   // ajout a la suite si nouveau mot
       else ajoute_ref (x, ref);                     // sinon ajoute juste la nouvelle ref
@@ -134,11 +153,20 @@ void indexe( char * ligne, idx ref){
 
 // EXCLUSION D'UN MOT si présent dans la stoplist
 int exclure(str mot){                // modification du type
-  idx i = 0;
-  for (i = 0; stop[i]; i++){
-    if (pareil(mot, stop[i])) return i;
+
+  // exclusion des mots de moins de deux lettres
+  if (strlen(mot) < 2) return 1;
+  if (pareil(option, "-g")){         // detection de l'option -g
+    if (in(mot , stoplist, STR))        // si on utilise une goliste
+      return -1;                        // on ne garde que les mots qui sont dedans
+    else 
+      return 1;
+  } else {                              // si on utilise une stoplist
+    if (in(mot , stoplist, STR))        // on exclue les mots en faisant partie
+      return 1;
+    else 
+      return -1;
   }
-  return -1;
 }
 
 // RECUPERATION DE L'INDICE d'un mot dans une table donnée
@@ -167,11 +195,8 @@ void ajoute_ref(idx x, idx ref){
   }
 }
 
-// COMPARAISON DE DEUX CHAINES
-bool pareil(str x, str y) { return strcasecmp(x,y) ? False : True ; }
 
-
-// FOCNTION DE TRI DE DEUX MOTS
+// FOCNTION DE TRI DE DEUX STR
 int compare(void const *E1, void const *E2){
 
   ndex const * pE1 = E1;

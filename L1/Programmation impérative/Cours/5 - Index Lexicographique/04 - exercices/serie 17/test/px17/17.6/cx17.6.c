@@ -5,11 +5,11 @@
 
 
 
-#define max_mots 128                                // nombre maximum d'éléments dans la table de mots
-#define max_lignes 4000                             // nombre maximim de ligne pour un texte a indexer
-#define max_refs 20                                 // nombre maximum de ref par mots
+#define max_mots 10000                              // nombre maximum d'éléments dans la table de mots
+#define max_lignes 4096                             // nombre maximim de ligne pour un texte a indexer
+#define max_refs 4096                                 // nombre maximum de ref par mots
 #define maximum 4096                                // nombre maximal de caractères composant un mot
-#define taille_mot 1024
+#define taille_mot 2048                 
 
 
 
@@ -25,7 +25,7 @@ typedef enum {False, True} bool ;                   // definition du type bool
 // Definition du type node et list
 typedef struct node { void * car ; struct node * cdr ; } node , *list;
 // Indication de typage à donner aux fonctions de traitement de liste
-typedef enum Type {INT , MOTS} Type;
+typedef enum Type {INT , STR} Type;
 
 // definition d'un nouveau type pour emuler un index
 typedef struct { str mot ; list refs ; } ndex ;
@@ -39,18 +39,19 @@ typedef struct { str mot ; list refs ; } ndex ;
 ndex mots[max_mots];                // --> la structure contenant les mots indexé et leurs references associées
 char ligne[maximum];                // --> la ligne de texte a indexer
 idx mot_libre = 0;                  // --> l'index indiquant le mot libre (au départ 0)
-str stop[max_mots];              // --> une table contenant les mots a exclure de l'index
+str stop[max_mots];                 // --> une table contenant les mots a exclure de l'index
 list stoplist = nil;                // --> liste elastique contenant les mot a exclure
 int numLignes[max_lignes];          // --> table qui acceuillera les numéro de ligne
 
-// options acceptées par le programme
-str opition_S = "-s";
-str opition_G = "-g";
+
 
 // definition d'une liste de caractères a exclure
 // on se sert de ces caractères pour découper la ligne de texte
 const str split_chars =  " ().&%,;:!?/*~_-+[]{}=<>@`\"\'0123456789$€“”«»·\n\t";
 
+
+// option que le programme acceptera
+char option[3];
 
 
 #include "fonctions.h"                              // Header des fonctions du programme
@@ -60,33 +61,46 @@ const str split_chars =  " ().&%,;:!?/*~_-+[]{}=<>@`\"\'0123456789$€“”«»
 
 
 
-int main(int k, char const *argv[]) {
+int main(int k, char  *argv[]) {
+  // options acceptées par le programme
+  
+  int indexFichier = 1; // indice par défaut fichier à indexer sur la lcd
 
   // test du nombre d'arguments
   if (k < 2) usage(" veuillez indiquer le nom du fichier a lire");
 
   // detection de l'option -s 
-  printf(argv[1]);
-  if (pareil(argv[1], option_S) || pareil(argv[1], option_G)) {
+  if (pareil(argv[1], "-s") || pareil(argv[1], "-g")) {
+    // capture de l'option
+    strcpy(option, argv[1]);
+
     // test du nombre d'arguments
     if (k < 4) usage(" veuillez indiquer le nom du fichier a lire ainsi que la stoplist");
+
     // lecture des mots de la STOPLIST indiquée
-    int n = lire_stoplist(argv[2]);
+    int n = lire_stoplist(argv[3]);
+
     // conversion de stop en liste elastique
-    stoplist = arrayToList(stop, n, MOTS);
+    stoplist = arrayToList(stop, n, STR);
+
+    indexFichier = 2;
 
   } else {
     // lecture des mots de la STOPLIST par défaut
     int n = lire_stoplist("stoplist.txt");
-    // conversion de stop en liste elastique
-    stoplist = arrayToList(stop, n, MOTS);
 
+    // conversion de stop en liste elastique
+    stoplist = arrayToList(stop, n, STR);
   }
+
+
   // ouverture du flux
-  FILE * fichier = fopen(argv[1], "r");
+  FILE * fichier = fopen(argv[indexFichier], "r");
   if ( ! fichier) usage(" fichier illisible");
 
 
+
+  
   // boucle d'indexation de chaque ligne
   idx i = 0;                                // i represente le numéro de ligne
   while (fgets(ligne, maximum, fichier))
@@ -149,7 +163,6 @@ void indexe( str ligne, idx ref){
   str mot = strtok(strdup(ligne), split_chars);
   // si ce n'est pas la chaine vide
   while (mot){
-
     int s = exclure(mot);                       // verificaton de la présence du mot dans l'index
     if (s < 0){                                 // si le mot n'est pas a exclure
       int x = indice(mot);                      // verificaton de la présence du mot dans l'index
@@ -163,16 +176,20 @@ void indexe( str ligne, idx ref){
 
 // EXCLUSION D'UN MOT si présent dans la stoplist
 int exclure(str mot){                // modification du type
-  char maj[taille_mot];
-  strcpy(maj , mot);
 
-  if (in(maj , stoplist, STR)){
-    return 1;
-  }
   // exclusion des mots de moins de deux lettres
   if (strlen(mot) < 2) return 1;
-  
-  return -1;
+  if (pareil(option, "-g")){         // detection de l'option -g
+    if (in(mot , stoplist, STR))        // si on utilise une goliste
+      return -1;                        // on ne garde que les mots qui sont dedans
+    else 
+      return 1;
+  } else {                              // si on utilise une stoplist
+    if (in(mot , stoplist, STR))        // on exclue les mots en faisant partie
+      return 1;
+    else 
+      return -1;
+  }
 }
 
 // RECUPERATION DE L'INDICE d'un mot dans une table donnée
@@ -207,7 +224,7 @@ void ajoute_ref(idx x, idx ref){
 bool pareil(str x, str y) { return strcasecmp(x,y) ? False : True ; }
 
 
-// FOCNTION DE TRI DE DEUX MOTS
+// FOCNTION DE TRI DE DEUX STR
 int compare(void const *E1, void const *E2){
 
   ndex const * pE1 = E1;
@@ -241,7 +258,6 @@ list cons(void * car, list cdr){
 }
 
 
-
 // FONCTION 'IN'
 // vérifie la présence d'une ref dans une liste
 // affichage des valeurs de la liste
@@ -258,7 +274,7 @@ int in(void * elt  ,list L, Type t){
     str P = malloc(sizeof(char));  // allocation d'un pointeur
     P = elt;
     while(L){
-      if (strcasecmp(L -> car; P) return 1;
+      if (pareil(L -> car , P)) return 1;
       L = L->cdr;
     }
     return 0;
