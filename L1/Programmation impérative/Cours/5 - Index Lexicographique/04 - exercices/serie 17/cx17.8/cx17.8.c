@@ -56,23 +56,41 @@ const str split_chars =  " ().&%,;:!?/*~_-+[]{}=<>@`\"\'0123456789$€“”«»
 
 
 
-int main(int k, char const *argv[]) {
+int main(int k, char  *argv[]) {
+  // options acceptées par le programme
+  str option_S = "-s";
+  str option_G = "-g";
+  int indexFichier = 1; // indice par défaut fichier à indexer sur la lcd
 
   // test du nombre d'arguments
   if (k < 2) usage(" veuillez indiquer le nom du fichier a lire");
 
+  // detection de l'option -s 
+  if (pareil(argv[1], option_S) || pareil(argv[1], option_G)) {
+
+    // test du nombre d'arguments
+    if (k < 4) usage(" veuillez indiquer le nom du fichier a lire ainsi que la stoplist");
+
+    // lecture des mots de la STOPLIST indiquée
+    int n = lire_stoplist(argv[3]);
+
+    // conversion de stop en liste elastique
+    stoplist = arrayToList(stop, n, STR);
+
+    indexFichier = 2;
+
+  } else {
+    // lecture des mots de la STOPLIST par défaut
+    int n = lire_stoplist("stoplist.txt");
+
+    // conversion de stop en liste elastique
+    stoplist = arrayToList(stop, n, STR);
+  }
+
+
   // ouverture du flux
-  FILE * fichier = fopen(argv[1], "r");
+  FILE * fichier = fopen(argv[indexFichier], "r");
   if ( ! fichier) usage(" fichier illisible");
-
-
-
-
-  /* TRAITEMENT */
-  // lecture des mots de la STOPLIST
-  int n = lire_stoplist("stoplist.txt");
-  // conversion de stop en liste elastique
-  stoplist = arrayToList(stop, n, STR);
 
 
   // boucle d'indexation de chaque ligne
