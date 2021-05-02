@@ -15,7 +15,7 @@
 
 
 typedef unsigned idx ;                              // definition du type idx
-typedef char * str;                                 // definition du type str
+typedef char * str;                                 // definirion du type str
 typedef enum {False, True} bool ;                   // definition du type bool
 
 
@@ -39,9 +39,11 @@ typedef struct { str mot ; list refs ; } ndex ;
 ndex mots[max_mots];                // --> la structure contenant les mots indexé et leurs references associées
 char ligne[maximum];                // --> la ligne de texte a indexer
 idx mot_libre = 0;                  // --> l'index indiquant le mot libre (au départ 0)
-char * stop[max_mots];              // --> une table contenant les mots a exclure de l'index
+str stop[max_mots];              // --> une table contenant les mots a exclure de l'index
 list stoplist = nil;                // --> liste elastique contenant les mot a exclure
-int numLignes[max_lignes];          // --> table qui acceuillera les numéro de lignes
+int numLignes[max_lignes];          // --> table qui acceuillera les numéro de ligne
+
+
 
 // definition d'une liste de caractères a exclure
 // on se sert de ces caractères pour découper la ligne de texte
@@ -56,26 +58,43 @@ const str split_chars =  " ().&%,;:!?/*~_-+[]{}=<>@`\"\'0123456789$€“”«»
 
 
 
-int main(int k, char const *argv[]) {
+int main(int k, char  *argv[]) {
+  // options acceptées par le programme
+  str option_S = "-s";
+  str option_G = "-g";
+  int indexFichier = 1; // indice par défaut fichier à indexer sur la lcd
 
   // test du nombre d'arguments
   if (k < 2) usage(" veuillez indiquer le nom du fichier a lire");
 
+  // detection de l'option -s 
+  if (pareil(argv[1], option_S) || pareil(argv[1], option_G)) {
+
+    // test du nombre d'arguments
+    if (k < 4) usage(" veuillez indiquer le nom du fichier a lire ainsi que la stoplist");
+
+    // lecture des mots de la STOPLIST indiquée
+    int n = lire_stoplist(argv[3]);
+
+    // conversion de stop en liste elastique
+    stoplist = arrayToList(stop, n, STR);
+
+    indexFichier = 2;
+
+  } else {
+    // lecture des mots de la STOPLIST par défaut
+    int n = lire_stoplist("stoplist.txt");
+
+    // conversion de stop en liste elastique
+    stoplist = arrayToList(stop, n, STR);
+  }
+
+
   // ouverture du flux
-  FILE * fichier = fopen(argv[1], "r");
+  FILE * fichier = fopen(argv[indexFichier], "r");
   if ( ! fichier) usage(" fichier illisible");
 
 
-
-
-  /* TRAITEMENT */
-  // lecture des mots de la STOPLIST
-  int n = lire_stoplist("stoplist.txt");
-  // conversion de stop en liste elastique
-  stoplist = arrayToList(stop, n, STR);
-
-
-  
   // boucle d'indexation de chaque ligne
   idx i = 0;                                // i represente le numéro de ligne
   while (fgets(ligne, maximum, fichier))
@@ -88,7 +107,7 @@ int main(int k, char const *argv[]) {
   qsort(mots, mot_libre, sizeof(ndex), compare);
 
   dump (mot_libre);
-  
+
   return 0;
 }
 
@@ -131,7 +150,7 @@ int lire_stoplist(str liste){
 
 
 // INDEXATION D'UNE LIGNE DE TEXTE
-void indexe( char * ligne, idx ref){
+void indexe( str ligne, idx ref){
   // notation du numéro de ligne
   numLignes[ref] = ref;
   // capture du premier mot et de la ligne en mémoire
@@ -150,8 +169,6 @@ void indexe( char * ligne, idx ref){
 }
 
 
-
-
 // EXCLUSION D'UN MOT si présent dans la stoplist
 int exclure(str mot){                // modification du type
   char maj[taille_mot];
@@ -165,7 +182,6 @@ int exclure(str mot){                // modification du type
   
   return -1;
 }
-
 
 // RECUPERATION DE L'INDICE d'un mot dans une table donnée
 int indice(str mot){                // modification du type
@@ -231,7 +247,6 @@ list cons(void * car, list cdr){
 
   return L;
 }
-
 
 
 // FONCTION 'IN'
@@ -332,7 +347,7 @@ list arrayToList(void * tab , int taille, Type t){
 
   } else {
     // definition d'un pointeur type
-    str *p = tab;
+    str * p = tab;
     // recuperation des mots
     int n = 0;
     while(n++ < taille){
@@ -342,3 +357,5 @@ list arrayToList(void * tab , int taille, Type t){
   }
   return L;
 }
+
+

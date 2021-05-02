@@ -41,7 +41,11 @@ char ligne[maximum];                // --> la ligne de texte a indexer
 idx mot_libre = 0;                  // --> l'index indiquant le mot libre (au départ 0)
 str stop[max_mots];              // --> une table contenant les mots a exclure de l'index
 list stoplist = nil;                // --> liste elastique contenant les mot a exclure
-int numLignes[max_lignes];          // --> table qui acceuillera les numéro de lignes
+int numLignes[max_lignes];          // --> table qui acceuillera les numéro de ligne
+
+// options acceptées par le programme
+str opition_S = "-s";
+str opition_G = "-g";
 
 // definition d'une liste de caractères a exclure
 // on se sert de ces caractères pour découper la ligne de texte
@@ -61,18 +65,26 @@ int main(int k, char const *argv[]) {
   // test du nombre d'arguments
   if (k < 2) usage(" veuillez indiquer le nom du fichier a lire");
 
+  // detection de l'option -s 
+  printf(argv[1]);
+  if (pareil(argv[1], option_S) || pareil(argv[1], option_G)) {
+    // test du nombre d'arguments
+    if (k < 4) usage(" veuillez indiquer le nom du fichier a lire ainsi que la stoplist");
+    // lecture des mots de la STOPLIST indiquée
+    int n = lire_stoplist(argv[2]);
+    // conversion de stop en liste elastique
+    stoplist = arrayToList(stop, n, MOTS);
+
+  } else {
+    // lecture des mots de la STOPLIST par défaut
+    int n = lire_stoplist("stoplist.txt");
+    // conversion de stop en liste elastique
+    stoplist = arrayToList(stop, n, MOTS);
+
+  }
   // ouverture du flux
   FILE * fichier = fopen(argv[1], "r");
   if ( ! fichier) usage(" fichier illisible");
-
-
-
-
-  /* TRAITEMENT */
-  // lecture des mots de la STOPLIST
-  int n = lire_stoplist("stoplist.txt");
-  // conversion de stop en liste elastique
-  stoplist = arrayToList(stop, n, MOTS);
 
 
   // boucle d'indexation de chaque ligne
@@ -338,3 +350,5 @@ list arrayToList(void * tab , int taille, Type t){
   }
   return L;
 }
+
+
