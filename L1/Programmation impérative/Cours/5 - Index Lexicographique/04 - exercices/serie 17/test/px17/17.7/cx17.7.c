@@ -134,10 +134,15 @@ void indexe( char * ligne, idx ref){
 
 // EXCLUSION D'UN MOT si présent dans la stoplist
 int exclure(str mot){                // modification du type
-  idx i = 0;
-  for (i = 0; stop[i]; i++){
-    if (pareil(mot, stop[i])) return i;
+  char maj[taille_mot];
+  strcpy(maj , mot);
+
+  if (in(maj , stoplist, STR)){
+    return 1;
   }
+  // exclusion des mots de moins de deux lettres
+  if (strlen(mot) < 2) return 1;
+  
   return -1;
 }
 

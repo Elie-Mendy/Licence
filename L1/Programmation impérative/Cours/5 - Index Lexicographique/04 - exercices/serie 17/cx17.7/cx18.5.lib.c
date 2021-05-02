@@ -6,11 +6,20 @@
 #define nil NULL
 
 // Definition du type node et list
+typedef char * str;                                 // definirion du type str
+typedef enum {False, True} bool ;                   // definition du type bool
 typedef struct node { void * car ; struct node * cdr ; } node , *list;
 // Indication de typage à donner aux fonctions de traitement de liste
 typedef enum Type {INT , MOTS} Type;
 // IMPRESSION DE MESSAGE D'ERREUR (sur flux stderr)
 void usage(char * message){ fprintf(stderr, "Usage : %s\n", message), exit(1) ;}
+
+
+// COMPARAISON DE DEUX CHAINES
+bool pareil(str x, str y) { return strcasecmp(x,y) ? False : True ; }
+
+
+
 
 // RENVOI LA TAILLE D'UNE LISTE
 int length(list L){
@@ -54,7 +63,6 @@ list arrayToList(void * tab , int taille, Type t){
       // recuperation des mots
       int n = 0;
       while(n++ < taille){
-          // printf("%i ", *p++);
           L = cons(*p++, L);
       }
     }
@@ -143,10 +151,10 @@ int in(void * elt  ,list L, Type t){
     }
     return 0;
   } else {
-    char * P = malloc(sizeof(char));  // allocation d'un pointeur
+    str P = malloc(sizeof(char));  // allocation d'un pointeur
     P = elt;
     while(L){
-      if (L -> car == P) return 1;
+      if (pareil(L -> car , P)) return 1;
       L = L->cdr;
     }
     return 0;

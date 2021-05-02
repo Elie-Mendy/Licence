@@ -25,7 +25,7 @@ typedef enum {False, True} bool ;                   // definition du type bool
 // Definition du type node et list
 typedef struct node { void * car ; struct node * cdr ; } node , *list;
 // Indication de typage à donner aux fonctions de traitement de liste
-typedef enum Type {INT , MOTS} Type;
+typedef enum Type {INT , STR} Type;
 
 // definition d'un nouveau type pour emuler un index
 typedef struct { str mot ; list refs ; } ndex ;
@@ -72,7 +72,7 @@ int main(int k, char const *argv[]) {
   // lecture des mots de la STOPLIST
   int n = lire_stoplist("stoplist.txt");
   // conversion de stop en liste elastique
-  stoplist = arrayToList(stop, n, MOTS);
+  stoplist = arrayToList(stop, n, STR);
 
 
   // boucle d'indexation de chaque ligne
@@ -93,7 +93,7 @@ int main(int k, char const *argv[]) {
 
 
 // LECTURE D'UNE STOPLIST
-int lire_stoplist(char * liste){
+int lire_stoplist(str liste){
   int n = 0;                      // un compteur de mots
   // ouverture du flux
   FILE * fichier = fopen(liste, "r");
@@ -114,7 +114,7 @@ int lire_stoplist(char * liste){
 }
 
 // INDEXATION D'UNE LIGNE DE TEXTE
-void indexe( char * ligne, idx ref){
+void indexe(str ligne, idx ref){
   // notation du numéro de ligne
   numLignes[ref] = ref;
   // capture du premier mot et de la ligne en mémoire
@@ -134,10 +134,17 @@ void indexe( char * ligne, idx ref){
 
 // EXCLUSION D'UN MOT si présent dans la stoplist
 int exclure(str mot){                // modification du type
-  idx i = 0;
-  for (i = 0; stop[i]; i++){
-    if (pareil(mot, stop[i])) return i;
+  
+  char maj[taille_mot];
+  strcpy(maj , mot);
+
+  if (in(maj , stoplist, STR)){
+    
+    return 1;
   }
+  // exclusion des mots de moins de deux lettres
+  if (strlen(mot) < 2) return 1;
+  
   return -1;
 }
 
@@ -171,7 +178,7 @@ void ajoute_ref(idx x, idx ref){
 bool pareil(str x, str y) { return strcasecmp(x,y) ? False : True ; }
 
 
-// FOCNTION DE TRI DE DEUX MOTS
+// FOCNTION DE TRI DE DEUX STR
 int compare(void const *E1, void const *E2){
 
   ndex const * pE1 = E1;
