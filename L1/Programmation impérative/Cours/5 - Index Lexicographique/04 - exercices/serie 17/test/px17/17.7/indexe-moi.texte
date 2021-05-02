@@ -1,0 +1,5 @@
+petit Pour la fonction pareil(), j'ai créé un nouveau type, bool, qui indique clairement que cette fonction ne
+peut retourner que 0 ou 1. Ce type est une ÉNUMÉRATION , qui a pour effet de définir des symboles en
+leur affectant une valeur entière!: 0 pour la première, 1 pour la deuxième, et ainsi de suite... enum ne
+peut gérer que des valeurs entières (éventuellement négatives).
+ou positive

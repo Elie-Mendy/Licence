@@ -39,7 +39,7 @@ typedef struct { str mot ; list refs ; } ndex ;
 ndex mots[max_mots];                // --> la structure contenant les mots indexé et leurs references associées
 char ligne[maximum];                // --> la ligne de texte a indexer
 idx mot_libre = 0;                  // --> l'index indiquant le mot libre (au départ 0)
-str stop[max_mots];              // --> une table contenant les mots a exclure de l'index
+char * stop[max_mots];              // --> une table contenant les mots a exclure de l'index
 list stoplist = nil;                // --> liste elastique contenant les mot a exclure
 int numLignes[max_lignes];          // --> table qui acceuillera les numéro de lignes
 
@@ -92,20 +92,8 @@ int main(int k, char const *argv[]) {
 }
 
 
-
-
-
-
-
-
-
-// IMPRESSION DE MESSAGE D'ERREUR (sur flux stderr)
-void usage(str message){ fprintf(stderr, "Usage : %s\n", message), exit(1) ;}
-
-
-
 // LECTURE D'UNE STOPLIST
-int lire_stoplist(str liste){
+int lire_stoplist(char * liste){
   int n = 0;                      // un compteur de mots
   // ouverture du flux
   FILE * fichier = fopen(liste, "r");
@@ -125,12 +113,8 @@ int lire_stoplist(str liste){
   return n-1;
 }
 
-
-
-
-
 // INDEXATION D'UNE LIGNE DE TEXTE
-void indexe( str ligne, idx ref){
+void indexe( char * ligne, idx ref){
   // notation du numéro de ligne
   numLignes[ref] = ref;
   // capture du premier mot et de la ligne en mémoire
@@ -148,18 +132,12 @@ void indexe( str ligne, idx ref){
   }
 }
 
-
 // EXCLUSION D'UN MOT si présent dans la stoplist
 int exclure(str mot){                // modification du type
-  char maj[taille_mot];
-  strcpy(maj , mot);
-
-  if (in(maj , stoplist, STR)){
-    return 1;
+  idx i = 0;
+  for (i = 0; stop[i]; i++){
+    if (pareil(mot, stop[i])) return i;
   }
-  // exclusion des mots de moins de deux lettres
-  if (strlen(mot) < 2) return 1;
-  
   return -1;
 }
 
@@ -172,14 +150,12 @@ int indice(str mot){                // modification du type
   return -1;
 }
 
-
 // AJOUT d'UN NOUVEAU MOT
 void ajoute_mot(idx x, str mot, idx ref){
   mots[x].mot = mot;              // ajout du nouveau mot dans l'index
   mots[x].refs = cons(&numLignes[ref], nil);  // ajout de sa reference
   ++mot_libre ;                   // incrémentation de l'emplacement d'un nouveau mot
 }
-
 
 // AJOUT d'UNE REF (si mot déja indexé)
 void ajoute_ref(idx x, idx ref){
@@ -216,125 +192,3 @@ void dump(idx k){
   }
 }
 
-
-// CONSTRUCTION D'UN DOUBLET
-list cons(void * car, list cdr){
-  list L = malloc(sizeof(node));
-  if (!L) usage("espace insufisant");
-
-  L -> car = car;
-  L -> cdr = cdr;
-
-  return L;
-}
-
-
-
-// FONCTION 'IN'
-// vérifie la présence d'une ref dans une liste
-// affichage des valeurs de la liste
-int in(void * elt  ,list L, Type t){
-  if (t == INT){
-    int * P = malloc(sizeof(int));  // allocation d'un pointeur
-    P = elt;
-    while(L){
-      if (L -> car == P) return 1;
-      L = L->cdr;
-    }
-    return 0;
-  } else {
-    str P = malloc(sizeof(char));  // allocation d'un pointeur
-    P = elt;
-    while(L){
-      if (strcasecmp(L -> car; P) return 1;
-      L = L->cdr;
-    }
-    return 0;
-  }
-}
-
-// RENVOI LA TAILLE D'UNE LISTE
-int length(list L){
-  int n = 0;
-  if (L->car) n++;
-  while (L->cdr){
-    L = L->cdr;
-    n++;
-    }
-    return n;
-  }
-
-
-
-  // AFFICHAGE D'UNE LISTE
-  void putlist(list L, Type t){
-    // récupération de la taillede la liste
-    int nb = length(L);
-    // création d'un Pointeur sur une liste
-    list Copy = nil;
-
-    if (t == INT){
-      int * P = malloc(sizeof(int));  // allocation d'un pointeur
-
-      while (nb--){
-        int i = 0;
-        // Copie de la liste L
-        Copy = L;
-        // parcour de la liste Copy
-        while(i++ <= nb){
-          //L = L->cdr;
-          P = Copy->car;
-          Copy = Copy->cdr;
-        }
-        // affichage de la valeur
-        printf("%i ", *P);
-      }
-
-    } else {
-      str P = malloc(sizeof(char));  // allocation d'un pointeur
-
-      while (nb--){
-        int i = 0;
-        // Copie de la liste L
-        Copy = L;
-        // parcour de la liste Copy
-        while(i++ <= nb){
-          //L = L->cdr;
-          P = Copy->car;
-          Copy = Copy->cdr;
-        }
-        // affichage de la valeur
-        printf("%s ", P);
-      }
-    }
-  }
-
-
-
-// CONVERTIR UNE TABLE EN LISTE
-list arrayToList(void * tab , int taille, Type t){
-  // definition d'une liste
-  list L = nil;
-
-  if (t == INT){
-    // definition d'un pointeur type
-    int *p = tab;
-    // recuperation des entiers
-    int n = 0;
-    while(n++ < taille){
-        // printf("%i ", *p++);
-        L = cons(p++, L);
-    }
-
-  } else {
-    // definition d'un pointeur type
-    str * p = tab;
-    // recuperation des mots
-    int n = 0;
-    while(n++ < taille){
-        // printf("%i ", *p++);
-        L = cons(*p++, L);
-    }
-  }
-  return L;
-}

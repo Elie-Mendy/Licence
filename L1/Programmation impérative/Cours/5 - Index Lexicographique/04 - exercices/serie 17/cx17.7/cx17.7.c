@@ -39,7 +39,7 @@ typedef struct { str mot ; list refs ; } ndex ;
 ndex mots[max_mots];                // --> la structure contenant les mots indexé et leurs references associées
 char ligne[maximum];                // --> la ligne de texte a indexer
 idx mot_libre = 0;                  // --> l'index indiquant le mot libre (au départ 0)
-char * stop[max_mots];              // --> une table contenant les mots a exclure de l'index
+str stop[max_mots];              // --> une table contenant les mots a exclure de l'index
 list stoplist = nil;                // --> liste elastique contenant les mot a exclure
 int numLignes[max_lignes];          // --> table qui acceuillera les numéro de lignes
 
@@ -93,7 +93,7 @@ int main(int k, char const *argv[]) {
 
 
 // LECTURE D'UNE STOPLIST
-int lire_stoplist(char * liste){
+int lire_stoplist(str liste){
   int n = 0;                      // un compteur de mots
   // ouverture du flux
   FILE * fichier = fopen(liste, "r");
@@ -114,7 +114,7 @@ int lire_stoplist(char * liste){
 }
 
 // INDEXATION D'UNE LIGNE DE TEXTE
-void indexe( char * ligne, idx ref){
+void indexe( str ligne, idx ref){
   // notation du numéro de ligne
   numLignes[ref] = ref;
   // capture du premier mot et de la ligne en mémoire
