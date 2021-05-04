@@ -15,23 +15,19 @@ typedef enum Type {INT , MOTS} Type;
 void usage(char * message){ fprintf(stderr, "Usage : %s\n", message), exit(1) ;}
 
 
-// COMPARAISON DE DEUX CHAINES
+/*  fonction: pareil()
+    objectif: compare deux mots
+    parametres: 
+      - une string (le premier mot)
+      - une string (le deuxieme mot)*/
 bool pareil(str x, str y) { return strcasecmp(x,y) ? False : True ; }
 
 
-
-
-// RENVOI LA TAILLE D'UNE LISTE
-int length(list L){
-    int n = 0;
-    while(L) {
-        n++;
-        L = L->cdr;
-    }
-    return n;
-}
-
-// CONSTRUCTION D'UN DOUBLET
+/*  fonction: cons()
+    objectif: construit un doublet 
+    parametres: 
+      - l'adresse du car
+      - l'adresse de la list cdr*/
 list cons(void * car, list cdr){
   list L = malloc(sizeof(node));
   if (!L) usage("espace insufisant");
@@ -42,59 +38,52 @@ list cons(void * car, list cdr){
   return L;
 }
 
-// CONVERTIR UNE TABLE EN LISTE
-list arrayToList(void * tab , int taille, Type t){
-    // definition d'une liste
-    list L = nil;
 
-    if (t == INT){
-      // definition d'un pointeur type
-      int *p = tab;
-      // recuperation des entiers
-      int n = 0;
-      while(n++ < taille){
-          // printf("%i ", *p++);
-          L = cons(p++, L);
-      }
-
-    } else {
-      // definition d'un pointeur type
-      char **p = tab;
-      // recuperation des mots
-      int n = 0;
-      while(n++ < taille){
-          L = cons(*p++, L);
-      }
+/*  fonction: in()
+    objectif: verifie la présence d'un element dans une liste 
+    parametres: 
+      - l'adresse de l'element à identifier
+      - la liste a parcourir
+      - le type de l'element*/
+int in(void * elt  ,list L, Type t){
+  if (t == INT){
+    int * P = malloc(sizeof(int));  // allocation d'un pointeur
+    P = elt;
+    while(L){
+      if (L -> car == P) return 1;
+      L = L->cdr;
     }
-    return L;
+    return 0;
+  } else {
+    str P = malloc(sizeof(char));  // allocation d'un pointeur
+    P = elt;
+    while(L){
+      if (pareil(L -> car , P)) return 1;
+      L = L->cdr;
+    }
+    return 0;
+  }
 }
 
-//CONVERTIR UNE LISTE EN Table
-void listToArray(list L){
-  // recuperation de la taille de la liste
-  int n = length(L);
 
-  // allocation dynalique d'un vecteur qui contiendra les elements de la liste
-  char **v = malloc(n * sizeof(char *));
-  if (! v) usage("usage : impossible d'allouer l'espace en mémoire pour stoquer les éléments de la liste");
-
-  // boucle de lecture de la liste
-  int i = 0;
-  char * P;
-  for (i = n -1 ; i >= 0 ; i--){
-    P = L -> car;
-    v[i] = strdup(P);
-    L = L-> cdr;
-  }
-  // affichage des elements récupérés
-  for( i = 0 ; i < n; i++){
-    printf("%s ",v[i]);
-  }
-  puts("");
-
+/*  fonction: length()
+    objectif: renvoi la taille d'une liste
+    parametres: la liste a parcourir*/
+int length(list L){
+    int n = 0;
+    while(L) {
+        n++;
+        L = L->cdr;
+    }
+    return n;
 }
 
-// AFFICHAGE D'UNE LISTE
+
+/*  fonction: putlist()
+  objectif: affiche le contenu d'une liste verifie 
+  parametres: 
+    - la liste a parcourir
+    - le type des élements qu'elle contient*/
 void putlist(list L, Type t){
   // récupération de la taillede la liste
   int nb = length(L);
@@ -138,25 +127,36 @@ void putlist(list L, Type t){
 }
 
 
-// FONCTION 'IN'
-// vérifie la présence d'une ref dans une liste
-// affichage des valeurs de la liste
-int in(void * elt  ,list L, Type t){
-  if (t == INT){
-    int * P = malloc(sizeof(int));  // allocation d'un pointeur
-    P = elt;
-    while(L){
-      if (L -> car == P) return 1;
-      L = L->cdr;
+/*  fonction: arrayToList()
+  objectif: affiche le contenu d'une liste verifie 
+  parametres: 
+    - l'adresse du tableau à parcourir
+    - la liste a parcourir
+    - le type des élements du tableau*/
+list arrayToList(void * tab , int taille, Type t){
+    // definition d'une liste
+    list L = nil;
+
+    if (t == INT){
+      // definition d'un pointeur type
+      int *p = tab;
+      // recuperation des entiers
+      int n = 0;
+      while(n++ < taille){
+          // printf("%i ", *p++);
+          L = cons(p++, L);
+      }
+
+    } else {
+      // definition d'un pointeur type
+      char **p = tab;
+      // recuperation des mots
+      int n = 0;
+      while(n++ < taille){
+          L = cons(*p++, L);
+      }
     }
-    return 0;
-  } else {
-    str P = malloc(sizeof(char));  // allocation d'un pointeur
-    P = elt;
-    while(L){
-      if (pareil(L -> car , P)) return 1;
-      L = L->cdr;
-    }
-    return 0;
-  }
+    return L;
 }
+
+

@@ -7,11 +7,9 @@ typedef char * str;                                 // definirion du type str
 typedef enum {False, True} bool ;                   // definition du type bool
 
 
-#define max_mots 128                                // nombre maximum d'éléments dans la table de mots
-#define max_refs 16                                 // nombre maximum de ref par mots
-#define maximum 4096                                // taille d'acceuil d'une ligne
-
-
+#define max_mots 10000                              // nombre maximum d'éléments dans la table de mots
+#define max_refs 4096                                 // nombre maximum de ref par mots
+#define maximum 4096                                // nombre maximal de caractères composant un mot
 
 // allocation d'espace pour:
 char * mots[max_mots];              // --> l'index de mots

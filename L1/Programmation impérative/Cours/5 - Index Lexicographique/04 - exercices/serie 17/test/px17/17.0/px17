@@ -4,14 +4,53 @@
 import sys, os
 
 # cx17 : TEST DE REGRESSION
-# argv[1] = minor.bugfix version number
-prog = 'cx17.' + sys.argv[1]
-compile = f'gcc -Wall {prog}.c -o {prog}'
-
-# si la compilation echoue -> fin du programme
-if os.system(compile) != 0 : exit
 
 
-# lantement du test
-run = f'{prog} indexe-moi.texte > {prog}.test'
-os.system(run)
+def alertErrorSaisie():
+    print("veuillez indiquer:")
+    print("\tun numero de script a tester")
+    exit()
+
+
+# controle du nombre d'arguments
+if len(sys.argv) < 2:
+    alertErrorSaisie()
+
+# lecture de la ldc des options
+numScript = sys.argv[1]
+
+#si une option est lancée
+if len(sys.argv) is in range(2,5):
+    option = sys.argv[2]
+
+    if option == "-s" or option == "-g" :
+
+        # controle du nombre d'arguments
+        if len(sys.argv) < 5:
+            alertErrorSaisie()
+        
+        prog = 'cx17.' + numScript
+        fichier = sys.argv[3]
+        stop_golist = sys.argv[4]
+        
+        #lancement selon une option
+        print(prog)
+
+        print(option)
+
+        print(fichier)
+
+        print(stop_golist)
+
+
+        run = f'{prog} {option} {fichier} {stop_golist}> resultats_tests/{prog}-{fichier}.test'
+        os.system(run)
+
+
+#lancement par défaut sur le texte le plus simple
+else:
+    prog = 'cx17.' + numScript
+    run = f'{prog} le_dormeur_du_val.txt > resultats_tests/{prog}.test'
+    os.system(run)
+
+    
