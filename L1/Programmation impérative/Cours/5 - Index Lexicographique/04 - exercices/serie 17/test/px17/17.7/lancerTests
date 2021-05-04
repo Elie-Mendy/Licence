@@ -1,0 +1,30 @@
+#! /usr/bin/bash
+
+# lancement test par defaut
+px17 $1
+# lancement test stoplist
+px17 $1 -s le_dormeur_du_val stoplist.txt
+
+# lancement test golist 
+px17 $1 -g le_dormeur_du_val stoplist.txt
+
+
+#TEST SUR TEXTE LONG
+# lancement test stoplist
+px17 $1 -s le_horla stoplist.txt
+
+# lancement test golist 
+px17 $1 -g le_horla stoplist.txt
+
+#TEST SUR PAGE HTML
+# lancement test stoplist
+px17 $1 -s programmation.html balisesHtml
+
+# lancement test golist 
+px17 $1 -g programmation.html balisesHtml
+
+
+
+
+
+    

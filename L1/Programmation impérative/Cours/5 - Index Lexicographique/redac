@@ -1,0 +1,347 @@
+exo 1
+// AJOUT d'UNE REF (si mot déja indexé)
+void ajoute_ref(idx x, idx ref){
+  idx i = 0;                                
+  int n = 0;
+  for (i = 0 ; refs[x][i] ; i++){
+    if (refs[x][i] == ref) n = 1;
+  }
+  
+  if (!n){
+    idx r = ref_libre[x];                // recupération de l'indice de l'emplacement de nouvelle ref
+    refs[x][r] = ref;                    // ajout de la nouvelle ref
+    ++ref_libre[x];                      // incrémentation de la ref_libre pour ce mot
+  }
+}
+
+
+eco 2
+// LECTURE D'UNE STOPLIST
+void lire_stoplist(char * liste){
+  // ouverture du flux
+  FILE * fichier = fopen(liste, "r");
+  if (! fichier) usage(" stoplist illisible");
+
+  idx i = 0;
+  char lu = '\0';
+  while (i < max_mots && lu != EOF){
+    char sas[taille_mot];                          
+    lu = fscanf(fichier, "%s ", sas);
+    if (lu != EOF){
+      stop[i++] = strdup(sas);
+      }
+    }
+  fclose(fichier);
+}
+
+exo 3
+
+typedef struct { str mot ; idx ref_libre ; idx refs[max_refs] ; } ndex ;
+
+ndex mots[max_mots];  
+
+int exclure(str mot){                
+  idx i = 0;
+  for (i = 0; stop[i]; i++){
+    if (pareil(mot, stop[i])) return i;
+  }
+  return -1;
+}
+
+
+
+Anciennes 
+
+// RECUPERATION DE L'INDICE (mot indéxé)
+int indice(str mot){
+  idx i = 0;
+  for (i = 0; mots[i]; i++){
+    // avant:
+    if (pareil(mot, mots[i])) return i;
+  }
+  return -1;
+}
+
+// AJOUT d'UN NOUVEAU MOT
+void ajoute_mot(idx x, str mot, idx ref){
+  mots[x] = mot;    
+  refs[x][0] = ref; 
+  ++ref_libre[x];   
+  ++mot_libre ;    
+}
+
+// AJOUT d'UNE REF (si mot déja indexé)
+void ajoute_ref(idx x, idx ref){
+  idx i = 0;
+  int n = 0;
+  for (i = 0 ; refs[x][i] ; i++){
+    if (refs[x][i] == ref) n = 1;
+  }
+
+  if (!n){
+    idx r = ref_libre[x];  
+    refs[x][r] = ref;   
+    ++ref_libre[x];      
+  }
+}
+
+// AFFICHAGE DES VALEURS DE L'INDEX
+void dump(idx k){
+  idx x , z;
+  for (x = 0 ; x < k ; ++x){
+    if (mots[x]){
+      printf("%s :", mots[x]);
+      for (z = 0 ; refs[x][z] ; ++z){
+        printf(" %i", refs[x][z]);
+      }
+      printf("\n");
+    }
+  }
+}
+
+
+
+NOUVELLES 
+// RECUPERATION DE L'INDICE (mot indéxé)
+int indice(str mot){               
+  idx i = 0;
+  for (i = 0; mots[i].mot; i++){
+    // après:
+    if (pareil(mot, mots[i].mot)) return i;
+  }
+  return -1;
+}
+
+// RECUPERATION DE L'INDICE (mot indéxé)
+void ajoute_mot(idx x, str mot, idx ref){
+  mots[x].mot = mot;     
+  mots[x].refs[0] = ref;   
+  ++mots[x].ref_libre; 
+  ++mot_libre ;   
+}
+
+// RECUPERATION DE L'INDICE (mot indéxé)
+void ajoute_ref(idx x, idx ref){
+  idx i = 0;
+  int n = 0;
+  for (i = 0 ; mots[x].refs[i] ; i++){
+    if (mots[x].refs[i] == ref) n = 1;
+  }
+
+  if (!n){
+    idx r = mots[x].ref_libre;     
+    mots[x].refs[r] = ref;   
+    ++mots[x].ref_libre;    
+  }
+}
+
+// AFFICHAGE DES VALEURS DE L'INDEX
+void dump(idx k){
+  idx x , z;
+  for (x = 0 ; x < k ; ++x)
+      printf("%s :", mots[x].mot);
+      for (z = 0 ; mots[x].refs[z] ; ++z){
+        printf(" %i", mots[x].refs[z]);
+      }
+      printf("\n");
+  }
+}
+
+
+exo 4
+// COMPARAISON DE DEUX CHAINES
+bool pareil(str x, str y) { return strcasecmp(x,y) ? False : True ; }
+
+// FOCNTION DE TRI DE DEUX MOTS
+int compare(ndex * E1, ndex * E2) { return strcasecmp(E1 -> mot, E2 -> mot); }
+
+// FOCNTION DE TRI DE DEUX MOTS
+int compare(void const *E1, void const *E2){
+
+  ndex const * pE1 = E1;
+  ndex const * pE2 = E2;
+
+  return strcmp(pE1 -> mot, pE2 -> mot);
+}
+
+exo 5
+
+// definition de nil
+#define nil NULL
+
+// Definition du type node et list
+typedef struct node { void * car ; struct node * cdr ; } node , *list;
+
+
+ancienne ajoute mot
+// AJOUT d'UN NOUVEAU MOT
+void ajoute_mot(idx x, str mot, idx ref){
+  mots[x].mot = mot;      // ajout du nouveau mot dans l'index
+  mots[x].refs[0] = ref;   // ajout de sa reference
+  ++mots[x].ref_libre;     // incrémentation de la ref libre pour ce mot
+  ++mot_libre ;       // incrémentation de l'emplacement d'un nouveau mot
+}   
+
+nouvelle ajoute mot
+
+// AJOUT d'UN NOUVEAU MOT
+void ajoute_mot(idx x, str mot, idx ref){
+  mots[x].mot = mot;              // ajout du nouveau mot dans l'index
+  mots[x].refs = cons(&numLignes[ref], nil);  // ajout de sa reference
+  ++mot_libre ;                   // incrémentation de l'emplacement d'un nouveau mot
+}   
+
+ancienne ajoute)ref// AJOUT d'UNE REF (si mot déja indexé)
+void ajoute_ref(idx x, idx ref){
+  idx i = 0;
+  int n = 0;
+  for (i = 0 ; mots[x].refs[i] ; i++){
+    if (mots[x].refs[i] == ref) n = 1;
+  }
+
+  if (!n){
+    idx r = mots[x].ref_libre;            // recupération de l'indice de l'emplacement de nouvelle ref
+    mots[x].refs[r] = ref;                // ajout de la nouvelle ref
+    ++mots[x].ref_libre;                  // incrémentation de la ref_libre pour ce mot
+  }
+}  
+
+nouvelle ajoute ref
+// AJOUT d'UNE REF (si mot déja indexé)
+void ajoute_ref(idx x, idx ref){
+  // verification de la présence de la ref dans la liste refs
+  int n = in(&ref , mots[x].refs, INT);
+  if (!n){
+    mots[x].refs = cons(&numLignes[ref], mots[x].refs);       // ajout de la nouvelle ref
+  }
+}   
+
+
+Exo 6
+
+// Indication de typage à donner aux fonctions de traitement de liste
+typedef enum Type {INT , MOTS} Type;
+
+
+
+list stoplist = nil;                // --> liste elastique contenant les mot a exclure
+
+
+
+// LECTURE D'UNE STOPLIST
+int lire_stoplist(char * liste){
+  int n = 0;                      // un compteur de mots
+  // ouverture du flux
+  FILE * fichier = fopen(liste, "r");
+  if (! fichier) usage(" stoplist illisible");
+
+  idx i = 0;
+  char lu = '\0';
+  while (i < max_mots && lu != EOF){
+    char sas[taille_mot];                          // sas de reception du mot
+    lu = fscanf(fichier, "%s ", sas);
+    if (lu != EOF){
+      stop[i++] = strdup(sas);
+      }
+      n ++;
+    }
+  fclose(fichier);
+  return n-1;
+}
+
+
+// EXCLUSION D'UN MOT si présent dans la stoplist
+int exclure(str mot){                // modification du type
+
+  // exclusion des mots de moins de deux lettres
+  if (strlen(mot) < 2) return 1;
+  if (pareil(option, "-g")){         // detection de l'option -g
+    if (in(mot , stoplist, STR))        // si on utilise une goliste
+      return -1;                        // on ne garde que les mots qui sont dedans
+    else 
+      return 1;
+  } else {                              // si on utilise une stoplist
+    if (in(mot , stoplist, STR))        // on exclue les mots en faisant partie
+      return 1;
+    else 
+      return -1;
+  }
+}
+
+
+
+
+exo 7
+
+# definition de variables 
+CC = gcc
+CFLAGS = -Wall
+
+EXEC = cx17.7
+SRC = cx17.7.c 
+
+LIB = cx18.5.lib.c
+LIBNAME = lib18.a
+
+OBJ = cx18.5.lib.o
+
+# regle all
+all : $(EXEC)
+
+
+# creation de l'executable
+# 	gcc -Wall cx18.5.o lib18.a -o cx17.7
+$(EXEC) : $(SRC) $(LIBNAME)
+	$(CC) $(CFLsAGS) $(SRC) $(LIBNAME)  -o $(EXEC)
+
+# Generation de la librairie
+# 	ar -r lib18.a cx18.5.lib.o
+$(LIBNAME) : $(OBJ)
+	ar -r $(LIBNAME) $(OBJ)
+ 
+# Generafion du fichier objets de la librairie
+$(OBJ) :  $(LIB) 
+	$(CC) -o $(OBJ) -c $(LIB) 
+
+
+
+exo 8 
+    Si il n’est pas possible de lancer le script à cause de l’emplacement de la bibliothèque,  il faudra le lancer avec la commande suivante
+
+LD_LIBRARY_PATH=. cx17.8 <text à indexer>                     # utilisation par défaut
+LD_LIBRARY_PATH=. cx17.8 -s <text à indexer> <stoplist>       # indication d'une stoplist 
+LD_LIBRARY_PATH=. cx17.8 -g <text à indexer> <golist>         # indication d'une golist
+
+
+
+# definition de variables 
+CC = gcc
+CFLAGS = -Wall
+
+EXEC = cx17.8
+SRC = cx17.8.c
+
+LIB = cx18.5.lib.c
+LIBNAME = lib18.so
+LDFLAGS = -fpic -shared
+
+
+# regle all
+all : $(EXEC)
+
+
+
+# creation de l'executable
+# 	gcc -Wall cx17.8.c lib18.so  -o cx17.8
+$(EXEC) : $(SRC) $(LIBNAME)
+	$(CC) $(CFLAGS) $(SRC) $(LIBNAME)  -o $(EXEC)
+
+
+# Generation de la librairie
+# 	gcc -Wall -fpic -shared cx18.5.lib.c -o lib18.so
+$(LIBNAME) : $(LIB)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(LIB) -o $(LIBNAME)
+ 
+
+# au lancement 
+# LD_LIBRARY_PATH=. cx17.8 indexe-moi.texte 

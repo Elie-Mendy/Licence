@@ -1,18 +1,28 @@
+/*
+  NOM: MENDY
+  Prenom : Elie
+  n°etudiant : 19004664
+
+  EXERCICE cx17.8
+*/
+
+
+
+
+/*______________________________________________________________________________
+
+                    INCLUDES - TYPEDEFS - DEFINES 
+______________________________________________________________________________*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-
-
 
 #define max_mots 10000                              // nombre maximum d'éléments dans la table de mots
 #define max_lignes 4096                             // nombre maximim de ligne pour un texte a indexer
 #define max_refs 4096                                 // nombre maximum de ref par mots
 #define maximum 4096                                // nombre maximal de caractères composant un mot
 #define taille_mot 2048  
-
-
-
 
 typedef unsigned idx ;                              // definition du type idx
 typedef char * str;                                 // definirion du type str
@@ -30,11 +40,6 @@ typedef enum Type {INT , STR} Type;
 // definition d'un nouveau type pour emuler un index
 typedef struct { str mot ; list refs ; } ndex ;
 
-
-
-
-
-
 // allocation d'espace pour:
 ndex mots[max_mots];                // --> la structure contenant les mots indexé et leurs references associées
 char ligne[maximum];                // --> la ligne de texte a indexer
@@ -50,12 +55,16 @@ const str split_chars =  " ().&%,;:!?/*~_-+[]{}=<>@`\"\'0123456789$€“”«»
 // option que le programme acceptera
 char option[3];
 
-#include "fonctions.h"                              // Header des fonctions du programme
+// Header des fonctions du programme
+#include "fonctions.h"                              
 
 
 
 
+/*______________________________________________________________________________
 
+                                INDEXATION 
+______________________________________________________________________________*/
 
 int main(int k, char  *argv[]) {
   // options acceptées par le programme
@@ -88,17 +97,14 @@ int main(int k, char  *argv[]) {
     stoplist = arrayToList(stop, n, STR);
   }
 
-
   // ouverture du flux
   FILE * fichier = fopen(argv[indexFichier], "r");
   if ( ! fichier) usage(" fichier illisible");
-
 
   // boucle d'indexation de chaque ligne
   idx i = 0;                                // i represente le numéro de ligne
   while (fgets(ligne, maximum, fichier))
     indexe(ligne, ++i);
-
 
   // fermeture du flux
   fclose(fichier);
@@ -106,12 +112,20 @@ int main(int k, char  *argv[]) {
   qsort(mots, mot_libre, sizeof(ndex), compare);
 
   dump (mot_libre);
-
   return 0;
 }
 
 
-// LECTURE D'UNE STOPLIST
+
+
+/*______________________________________________________________________________
+
+                          DEFINITION FONCTIONS 
+______________________________________________________________________________*/
+
+/*  fonction: lire_stoplist()
+    objectif: enregistrement des mots d'un fichier dans la table 'stop'
+    parametres: une string (le nom de la stoplist ou golist)*/
 int lire_stoplist(str liste){
   int n = 0;                      // un compteur de mots
   // ouverture du flux
@@ -132,7 +146,12 @@ int lire_stoplist(str liste){
   return n-1;
 }
 
-// INDEXATION D'UNE LIGNE DE TEXTE
+
+/*  fonction: indexe()
+    objectif: indexe une ligne de texte
+    parametres: 
+      - une string (la ligne)
+      - un idx (la référence de la ligne à indexer)*/
 void indexe(str ligne, idx ref){
   // notation du numéro de ligne
   numLignes[ref] = ref;
@@ -151,9 +170,14 @@ void indexe(str ligne, idx ref){
   }
 }
 
-// EXCLUSION D'UN MOT si présent dans la stoplist
-int exclure(str mot){                // modification du type
 
+/*  fonction: exclure()
+    objectif: 
+      - verifie la presence d'un mot dans la stoplist/golist
+      - indiquer si ce mot est a exclure
+    parametres: 
+      - une string (le mot a controler)*/
+int exclure(str mot){                
   // exclusion des mots de moins de deux lettres
   if (strlen(mot) < 2) return 1;
   if (pareil(option, "-g")){         // detection de l'option -g
@@ -169,8 +193,11 @@ int exclure(str mot){                // modification du type
   }
 }
 
-// RECUPERATION DE L'INDICE d'un mot dans une table donnée
-int indice(str mot){                // modification du type
+
+/*  fonction: indice()
+    objectif: recupere l'indice d'un mot s'il est dans l'index
+    parametres: une string (le mot a controler)*/
+int indice(str mot){                
   idx i = 0;
   for (i = 0; mots[i].mot; i++){
     if (pareil(mot, mots[i].mot)) return i;
@@ -178,14 +205,25 @@ int indice(str mot){                // modification du type
   return -1;
 }
 
-// AJOUT d'UN NOUVEAU MOT
+
+/*  fonction: ajoute_mot()
+    objectif: ajoute un nouveau mot dans l'indexe
+    parametres: 
+      - un idx (l'indice du mot dans l'index)
+      - une string (le mot a controler)
+      - un idx (la référence de la ligne sur lequel il apparait)*/
 void ajoute_mot(idx x, str mot, idx ref){
-  mots[x].mot = mot;              // ajout du nouveau mot dans l'index
+  mots[x].mot = mot;                          // ajout du nouveau mot dans l'index
   mots[x].refs = cons(&numLignes[ref], nil);  // ajout de sa reference
-  ++mot_libre ;                   // incrémentation de l'emplacement d'un nouveau mot
+  ++mot_libre ;                               // incrémentation de l'emplacement d'un nouveau mot
 }
 
-// AJOUT d'UNE REF (si mot déja indexé)
+
+/*  fonction: ajoute_ref()
+    objectif: ajoute une nouvelle ref dans la liste des ref d'un mot
+    parametres: 
+      - un idx (l'indice du mot dans l'index)
+      - un idx (la référence de la ligne sur lequel il apparait)*/
 void ajoute_ref(idx x, idx ref){
   // verification de la présence de la ref dans la liste refs
   int n = in(&ref , mots[x].refs, INT);
@@ -195,28 +233,38 @@ void ajoute_ref(idx x, idx ref){
   }
 }
 
-// COMPARAISON DE DEUX CHAINES
+
+/*  fonction: pareil()
+    objectif: compare deux mots
+    parametres: 
+      - une string (le premier mot)
+      - une string (le deuxieme mot)*/
 bool pareil(str x, str y) { return strcasecmp(x,y) ? False : True ; }
 
 
-// FOCNTION DE TRI DE DEUX STR
+/*  fonction: compare()
+    objectif: renvoie l'ordre de trie de deux mots 
+    parametres: 
+      - l'adresse de la premiere structure
+      - l'adresse de la deuxieme structure*/
 int compare(void const *E1, void const *E2){
-
   ndex const * pE1 = E1;
   ndex const * pE2 = E2;
-
   return strcmp(pE1 -> mot, pE2 -> mot);
 }
 
 
-// AFFICHAGE DES VALEURS DE L'INDEX
+/*  fonction: dump()
+    objectif: affichage formaté des valeurs de l'index 
+    parametres: 
+      - un idx (l'index de fin de l'index)*/
 void dump(idx k){
   idx x;
   for (x = 0 ; x < k ; ++x){
-    printf("%s :", mots[x].mot);
+    printf("___________________________");
+    printf("\n%s :\n", mots[x].mot);
     // affichage des references
     putlist(mots[x].refs, INT);
     printf("\n");
   }
 }
-

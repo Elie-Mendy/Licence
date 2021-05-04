@@ -4,14 +4,47 @@
 import sys, os
 
 # cx17 : TEST DE REGRESSION
-# argv[1] = minor.bugfix version number
-prog = 'cx17.' + sys.argv[1]
-compile = f'gcc -Wall {prog}.c -o {prog}'
 
-# si la compilation echoue -> fin du programme
-if os.system(compile) != 0 : exit
+def alertErrorSaisie():
+    print("veuillez indiquer:")
+    print("\tun numero de script a tester")
+    exit()
 
 
-# lantement du test
-run = f'{prog} indexe-moi.texte > {prog}.test'
-os.system(run)
+# controle du nombre d'arguments
+if len(sys.argv) < 2:
+    alertErrorSaisie()
+
+# lecture de la ldc des options
+numScript = sys.argv[1]
+#si une option est lancée
+if len(sys.argv) in range(3,6):
+    option = sys.argv[2]
+
+    if option == "-s" or option == "-g" :
+
+        # controle du nombre d'arguments
+        if len(sys.argv) < 5:
+            alertErrorSaisie()
+        
+        prog = 'cx17.' + numScript
+        fichier = sys.argv[3]
+        stop_golist = sys.argv[4]
+        
+        #lancement selon une option
+        if option == "-s":
+            run = f'LD_LIBRARY_PATH=. {prog} {option} {fichier} {stop_golist} > resultats_tests/{prog}-{fichier}_stopTest'
+        else:
+            run = f'LD_LIBRARY_PATH=. {prog} {option} {fichier} {stop_golist} > resultats_tests/{prog}-{fichier}_goTest'
+        print(run)
+        os.system(run)
+
+
+#lancement par défaut sur le texte le plus simple
+else:
+    prog = 'cx17.' + numScript
+    run = f'LD_LIBRARY_PATH=. {prog} le_dormeur_du_val > resultats_tests/{prog}_test'
+    print(run)
+    os.system(run)
+
+    
