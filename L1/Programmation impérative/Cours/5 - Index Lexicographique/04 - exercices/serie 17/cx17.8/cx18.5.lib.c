@@ -17,15 +17,15 @@ void usage(char * message){ fprintf(stderr, "Usage : %s\n", message), exit(1) ;}
 
 /*  fonction: pareil()
     objectif: compare deux mots
-    parametres: 
+    parametres:
       - une string (le premier mot)
       - une string (le deuxieme mot)*/
 bool pareil(str x, str y) { return strcasecmp(x,y) ? False : True ; }
 
 
 /*  fonction: cons()
-    objectif: construit un doublet 
-    parametres: 
+    objectif: construit un doublet
+    parametres:
       - l'adresse du car
       - l'adresse de la list cdr*/
 list cons(void * car, list cdr){
@@ -40,29 +40,32 @@ list cons(void * car, list cdr){
 
 
 /*  fonction: in()
-    objectif: verifie la présence d'un element dans une liste 
-    parametres: 
+    objectif: verifie la présence d'un element dans une liste
+    parametres:
       - l'adresse de l'element à identifier
       - la liste a parcourir
       - le type de l'element*/
 int in(void * elt  ,list L, Type t){
   if (t == INT){
     int * P = malloc(sizeof(int));  // allocation d'un pointeur
+    int * C = malloc(sizeof(int));  // allocation d'un pointeur qui prendra le car
     P = elt;
     while(L){
-      if (L -> car == P) return 1;
+      C = L -> car;
+      if (*C == *P) return 1;
       L = L->cdr;
     }
-    return 0;
   } else {
-    str P = malloc(sizeof(char));  // allocation d'un pointeur
+    char * P = malloc(sizeof(char));  // allocation d'un pointeur
+    char * C = malloc(sizeof(char));  // allocation d'un pointeur qui prendra le car
     P = elt;
     while(L){
-      if (pareil(L -> car , P)) return 1;
+      C = L -> car;
+      if (! strcasecmp(C, P)) return 1;
       L = L->cdr;
     }
-    return 0;
   }
+  return 0;
 }
 
 
@@ -80,8 +83,8 @@ int length(list L){
 
 
 /*  fonction: putlist()
-  objectif: affiche le contenu d'une liste verifie 
-  parametres: 
+  objectif: affiche le contenu d'une liste verifie
+  parametres:
     - la liste a parcourir
     - le type des élements qu'elle contient*/
 void putlist(list L, Type t){
@@ -128,8 +131,8 @@ void putlist(list L, Type t){
 
 
 /*  fonction: arrayToList()
-  objectif: affiche le contenu d'une liste verifie 
-  parametres: 
+  objectif: affiche le contenu d'une liste verifie
+  parametres:
     - l'adresse du tableau à parcourir
     - la liste a parcourir
     - le type des élements du tableau*/
@@ -158,5 +161,3 @@ list arrayToList(void * tab , int taille, Type t){
     }
     return L;
 }
-
-

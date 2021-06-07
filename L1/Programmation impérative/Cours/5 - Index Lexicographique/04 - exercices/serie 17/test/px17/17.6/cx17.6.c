@@ -11,7 +11,7 @@
 
 /*______________________________________________________________________________
 
-                    INCLUDES - TYPEDEFS - DEFINES 
+                    INCLUDES - TYPEDEFS - DEFINES
 ______________________________________________________________________________*/
 
 #include <stdio.h>
@@ -22,7 +22,7 @@ ______________________________________________________________________________*/
 #define max_lignes 4096                             // nombre maximim de ligne pour un texte a indexer
 #define max_refs 4096                                 // nombre maximum de ref par mots
 #define maximum 4096                                // nombre maximal de caractères composant un mot
-#define taille_mot 2048                 
+#define taille_mot 2048
 
 typedef unsigned idx ;                              // definition du type idx
 typedef char * str;                                 // definirion du type str
@@ -56,25 +56,25 @@ const str split_chars =  " ().&%,;:!?/*~_-+[]{}=<>@`\"\'0123456789$€“”«»
 char option[3];
 
 // headers des fonctions
-#include "fonctions.h"                            
+#include "fonctions.h"
 
 
 
 
 /*______________________________________________________________________________
 
-                                INDEXATION 
+                                INDEXATION
 ______________________________________________________________________________*/
 
 int main(int k, char  *argv[]) {
   // options acceptées par le programme
-  
+
   int indexFichier = 1; // indice par défaut fichier à indexer sur la lcd
 
   // test du nombre d'arguments
   if (k < 2) usage(" veuillez indiquer le nom du fichier a lire");
 
-  // detection de l'option -s 
+  // detection de l'option -s
   if (pareil(argv[1], "-s") || pareil(argv[1], "-g")) {
     // capture de l'option
     strcpy(option, argv[1]);
@@ -123,7 +123,7 @@ int main(int k, char  *argv[]) {
 
 /*______________________________________________________________________________
 
-                          DEFINITION FONCTIONS 
+                          DEFINITION FONCTIONS
 ______________________________________________________________________________*/
 
 /*  fonction: usage()
@@ -159,7 +159,7 @@ int lire_stoplist(str fichierStoplist) {
 
 /*  fonction: indexe()
     objectif: indexe une ligne de texte
-    parametres: 
+    parametres:
       - une string (la ligne)
       - un idx (la référence de la ligne à indexer)*/
 void indexe(str ligne, idx ref) {
@@ -181,23 +181,23 @@ void indexe(str ligne, idx ref) {
 
 
 /*  fonction: exclure()
-    objectif: 
+    objectif:
       - verifie la presence d'un mot dans la stoplist/golist
       - indiquer si ce mot est a exclure
-    parametres: 
+    parametres:
       - une string (le mot a controler)*/
-int exclure(str mot){                
+int exclure(str mot){
   // exclusion des mots de moins de deux lettres
   if (strlen(mot) < 2) return 1;
   if (pareil(option, "-g")){         // detection de l'option -g
     if (in(mot , stoplist, STR))        // si on utilise une goliste
       return -1;                        // on ne garde que les mots qui sont dedans
-    else 
+    else
       return 1;
   } else {                              // si on utilise une stoplist
     if (in(mot , stoplist, STR))        // on exclue les mots en faisant partie
       return 1;
-    else 
+    else
       return -1;
   }
 }
@@ -206,7 +206,7 @@ int exclure(str mot){
 /*  fonction: indice()
     objectif: recupere l'indice d'un mot s'il est dans l'index
     parametres: une string (le mot a controler)*/
-int indice(str mot){                
+int indice(str mot){
   idx i = 0;
   for (i = 0; mots[i].mot; i++){
     if (pareil(mot, mots[i].mot)) return i;
@@ -217,7 +217,7 @@ int indice(str mot){
 
 /*  fonction: ajoute_mot()
     objectif: ajoute un nouveau mot dans l'indexe
-    parametres: 
+    parametres:
       - un idx (l'indice du mot dans l'index)
       - une string (le mot a controler)
       - un idx (la référence de la ligne sur lequel il apparait)*/
@@ -230,7 +230,7 @@ void ajoute_mot(idx x, str mot, idx ref){
 
 /*  fonction: ajoute_ref()
     objectif: ajoute une nouvelle ref dans la liste des ref d'un mot
-    parametres: 
+    parametres:
       - un idx (l'indice du mot dans l'index)
       - un idx (la référence de la ligne sur lequel il apparait)*/
 void ajoute_ref(idx x, idx ref){
@@ -238,21 +238,21 @@ void ajoute_ref(idx x, idx ref){
   int n = in(&ref , mots[x].refs, INT);
   // si c'est une nouvelle ref, on l'ajoute
   if (!n){
-    mots[x].refs = cons(&numLignes[ref], mots[x].refs);       
+    mots[x].refs = cons(&numLignes[ref], mots[x].refs);
   }
 }
 
 /*  fonction: pareil()
     objectif: compare deux mots
-    parametres: 
+    parametres:
       - une string (le premier mot)
       - une string (le deuxieme mot)*/
 bool pareil(str x, str y) { return strcasecmp(x,y) ? False : True ; }
 
 
 /*  fonction: compare()
-    objectif: renvoie l'ordre de trie de deux mots 
-    parametres: 
+    objectif: renvoie l'ordre de trie de deux mots
+    parametres:
       - l'adresse de la premiere structure
       - l'adresse de la deuxieme structure*/
 int compare(void const *E1, void const *E2){
@@ -263,8 +263,8 @@ int compare(void const *E1, void const *E2){
 
 
 /*  fonction: dump()
-    objectif: affichage formaté des valeurs de l'index 
-    parametres: 
+    objectif: affichage formaté des valeurs de l'index
+    parametres:
       - un idx (l'index de fin de l'index)*/
 void dump(idx k){
   idx x;
@@ -280,12 +280,12 @@ void dump(idx k){
 
 /*______________________________________________________________________________
 
-                    FONCTIONS DE GESTION DES LISTES 
+                    FONCTIONS DE GESTION DES LISTES
 ______________________________________________________________________________*/
 
 /*  fonction: cons()
-    objectif: construit un doublet 
-    parametres: 
+    objectif: construit un doublet
+    parametres:
       - l'adresse du car
       - l'adresse de la list cdr*/
 list cons(void * car, list cdr){
@@ -300,29 +300,32 @@ list cons(void * car, list cdr){
 
 
 /*  fonction: in()
-    objectif: verifie la présence d'un element dans une liste 
-    parametres: 
+    objectif: verifie la présence d'un element dans une liste
+    parametres:
       - l'adresse de l'element à identifier
       - la liste a parcourir
       - le type de l'element*/
 int in(void * elt  ,list L, Type t){
   if (t == INT){
     int * P = malloc(sizeof(int));  // allocation d'un pointeur
+    int * C = malloc(sizeof(int));  // allocation d'un pointeur qui prendra le car
     P = elt;
     while(L){
-      if (L -> car == P) return 1;
+      C = L -> car;
+      if (*C == *P) return 1;
       L = L->cdr;
     }
-    return 0;
   } else {
-    str P = malloc(sizeof(char));  // allocation d'un pointeur
+    char * P = malloc(sizeof(char));  // allocation d'un pointeur
+    char * C = malloc(sizeof(char));  // allocation d'un pointeur qui prendra le car
     P = elt;
     while(L){
-      if (pareil(L -> car , P)) return 1;
+      C = L -> car;
+      if (! strcasecmp(C, P)) return 1;
       L = L->cdr;
     }
-    return 0;
   }
+  return 0;
 }
 
 /*  fonction: length()
@@ -341,8 +344,8 @@ int length(list L){
 
 
   /*  fonction: putlist()
-    objectif: affiche le contenu d'une liste verifie 
-    parametres: 
+    objectif: affiche le contenu d'une liste verifie
+    parametres:
       - la liste a parcourir
       - le type des élements qu'elle contient*/
   void putlist(list L, Type t){
@@ -389,8 +392,8 @@ int length(list L){
 
 
 /*  fonction: arrayToList()
-  objectif: affiche le contenu d'une liste verifie 
-  parametres: 
+  objectif: affiche le contenu d'une liste verifie
+  parametres:
     - l'adresse du tableau à parcourir
     - la liste a parcourir
     - le type des élements du tableau*/
@@ -420,5 +423,3 @@ list arrayToList(void * tab , int taille, Type t){
   }
   return L;
 }
-
-

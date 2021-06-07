@@ -138,25 +138,31 @@ void putlist(list L, Type t){
 }
 
 
-// FONCTION 'IN'
-// vérifie la présence d'une ref dans une liste
-// affichage des valeurs de la liste
+/*  fonction: in()
+    objectif: verifie la présence d'un element dans une liste
+    parametres:
+      - l'adresse de l'element à identifier
+      - la liste a parcourir
+      - le type de l'element*/
 int in(void * elt  ,list L, Type t){
   if (t == INT){
     int * P = malloc(sizeof(int));  // allocation d'un pointeur
+    int * C = malloc(sizeof(int));  // allocation d'un pointeur qui prendra le car
     P = elt;
     while(L){
-      if (L -> car == P) return 1;
+      C = L -> car;
+      if (*C == *P) return 1;
       L = L->cdr;
     }
-    return 0;
   } else {
-    str P = malloc(sizeof(char));  // allocation d'un pointeur
+    char * P = malloc(sizeof(char));  // allocation d'un pointeur
+    char * C = malloc(sizeof(char));  // allocation d'un pointeur qui prendra le car
     P = elt;
     while(L){
-      if (pareil(L -> car , P)) return 1;
+      C = L -> car;
+      if (! strcasecmp(C, P)) return 1;
       L = L->cdr;
     }
-    return 0;
   }
+  return 0;
 }
