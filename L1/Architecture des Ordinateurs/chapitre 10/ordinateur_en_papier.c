@@ -26,13 +26,17 @@ ______________________________________________________________________________*/
 #include <stdlib.h>
 #include <string.h> 
 
-//#define DEBUG
+#define DEBUG                                // debug général
+//#define DEBUG_n2                             // debug plus pointu
+//#define STEPPER                              // possibilitée d'executer chaques instruction via la touche 'enter'
 #define AUTO
+#define EXO
 #define TAILLE_MEMOIRE 256                   // nombre d'adresses disponible en memoire
 #define TAILLE_ADRESSE 3                     // taille de la chaine representative d'une adresse 
 #define TAILLE_BOOTSTRAP 32                  // combre d'instruction que contient le bootstrap
 #define TAILLE_MAX_PROGRAMME 200             // combre de lignes maximum que peut contenir le programme - mode automatique
-#define FIRST_INSTRUCTION 28                 // adresse de la première instruction (en hexadécimal) - mode automatique
+#define FIRST_INSTRUCTION "28"                 // adresse de la première instruction (en hexadécimal) - mode automatique
+#define FIRST_INSTRUCTION_EXO_10_6 "50"                 // adresse de la première instruction (en hexadécimal) - mode automatique
 
 typedef char Hexa ;                          // definition du type Hexadecimal 
 typedef char * str ;                         // definition du type str 
@@ -79,6 +83,10 @@ ______________________________________________________________________________*/
     // test du nombre d'arguments
     if (k < 2) usage("veuillez indiquer le nom du programme a lire");
 
+    printf("\n\n____________________________________________________________________\n");
+    printf(" Emulateur de l'Ordinateur En Papier \n");
+    printf("____________________________________________________________________\n\n"); 
+
     // initialisation de la mémoire 
     initialiserRegistres();
     chargerBootstrap();
@@ -91,9 +99,19 @@ ______________________________________________________________________________*/
     //afficherMemoire(250);
     
     do{
+      #ifdef DEBUG 
+        printf("____________________________________________________________________\n");
+        printf("Etat des Registres:\n");
+        printf("- PC=%s \t AD=%s \t OP=%s / %i\n" , PC, AD, OP , hexaToInt(OP));
+        printf("- RS=%s \t RM=%s \t  A=%s\n" , RS, RM , A);
+        printf("- UAL=%i \t IN=%s \t OUT=%s\n" , UAL, IN , OUT);
+        printf("____________________________________________________________________\n\n\n");  
+      #endif 
       phase1();         // recherche d'instruction
       executer(hexaToInt(OP));  
-
+      #ifdef STEPPER
+      stepper();
+      #endif
     } while (strcasecmp(PC , "00"));  // fin du programme quand on jump sur 00
     return 0;
   }
@@ -121,6 +139,16 @@ ______________________________________________________________________________*/
     objectif: impression de messages d'erreur (sur flux stderr)
     parametres: une string (le messages à renvoyer)*/
 void usage(str message) { fprintf(stderr, "Usage : %s\n", message), exit(1) ;}
+
+
+/*  fonction: stepper()
+    objectif: permettre a l'utilisateur d'utiliser la touche 'enter
+              pour passer une instruction */
+void stepper() {
+  printf("('Enter' pour passer à l'instruction suivante)");
+  char c;
+  while((c =getchar()) == '\0');
+}
 
 
 
@@ -169,7 +197,9 @@ void initialiserRegistres(){
 
   // Program Counter
   #ifdef AUTO
-    strcpy(PC,"28");
+    strcpy(PC,FIRST_INSTRUCTION);
+  #elif EXO
+    strcpy(PC,FIRST_INSTRUCTION_EXO_10_6);
   #else
     strcpy(PC,"00");
   #endif
@@ -243,18 +273,26 @@ void chargerBootstrap(){
       - un entier (l'adresse de la première instruction du programme')*/
 void chargerProgramme(int t) {
   #ifdef DEBUG 
-    printf("- charger programme"); 
+    printf("- chargement du programme\n"); 
   #endif 
-  int adresse = hexaToInt(RS) + 40;
+  //int adresse = hexaToInt(RS) + 40;
+  #ifdef EXO
+    int adresse = hexaToInt(FIRST_INSTRUCTION_EXO_10_6);
+  #else
+    int adresse = hexaToInt(FIRST_INSTRUCTION);
+  #endif
   for (int i = 0; i < t ; i ++){
     memoire[adresse + i] = strdup(prog[i]);
   }
-  // ecriture de la taille de la mémoire
-  memoire[32] = strdup("28");
+  // ecriture de l'emplacement de la première instruction
+  #ifdef EXO
+    memoire[32] = strdup(FIRST_INSTRUCTION_EXO_10_6);
+  #else
+    memoire[32] = strdup(FIRST_INSTRUCTION);
+  #endif
   // ecriture de la taille de la mémoire
   Hexa taille[TAILLE_ADRESSE];
   intToStr(taille, t);
-  printf("taille : %s\n\n", taille);
   strcpy(memoire[34], taille); 
 }
 
@@ -268,13 +306,8 @@ void chargerProgramme(int t) {
       - un entier (le code associé a une fonction)*/
 void executer(int code) {
   #ifdef DEBUG 
-    printf("- exec code -> %i \n", code); 
+    printf("==> phase 2 : exec code -> %i \n", hexaToInt(OP)); 
   #endif 
-
-  //phase1();         // recherche d'instruction
-  #ifdef DEBUG
-    printf("\n\nRegistres PC=%s / OP=%s --> %i\n" , PC, OP , hexaToInt(OP));
-  #endif
   switch (code)
   {
     //
@@ -425,7 +458,7 @@ ______________________________________________________________________________*/
     parametres: 
       - un entier (le microcode)*/
 void transfert(int code){ 
-  #ifdef DEBUG 
+  #ifdef DEBUG_n2 
     printf("- transfert -> %i \n", code);   
   #endif                
   
@@ -484,7 +517,7 @@ void transfert(int code){
       - un entier (le calcul demandé)*/
 void prepaCalcul(int code){  
   #ifdef DEBUG 
-    printf("- preparation calcul --> %i \n", code); 
+    printf("- preparation calcul:  %i \n", code); 
   #endif 
                
   UAL = code;
@@ -498,7 +531,7 @@ void prepaCalcul(int code){
     retour: 
       - un entier */
 int hexaToInt(Hexa h[TAILLE_ADRESSE] ){ 
-  #ifdef DEBUG 
+  #ifdef DEBUG_n2 
     int i = strtol(h, NULL, 16);
     printf("   - convertion hexa: %s  --> ToInt : %i\n", h, i);
   #endif 
@@ -523,7 +556,7 @@ void intToHexa(Hexa * registre , int code ){
 
   // attribution de la nouvelle valeur au registre
   strcpy(registre, value);
-  #ifdef DEBUG 
+  #ifdef DEBUG_n2 
     printf("   - convertion int: %i  --> ToHexa : %s\n", code, registre); 
   #endif 
   
@@ -536,7 +569,7 @@ void intToHexa(Hexa * registre , int code ){
       - un entier (l'operande a traduire)*/
 void intToStr(Hexa * registre , int code ){ 
   sprintf(registre, "%d", code);
-  #ifdef DEBUG 
+  #ifdef DEBUG_n2 
     printf("   - convertion int: %i  --> ToStr : %s\n", code, registre);
   #endif
 }
@@ -605,7 +638,7 @@ void calcul(){
       - un hexa (l'adresse a decoder)*/
 void lireMemoire(){ 
   strcpy(RM, memoire[hexaToInt(RS)]);
-  #ifdef DEBUG 
+  #ifdef DEBUG_n2 
     printf("- lecture de la memoire memoire[%s]=%s\n",RS,RM);
   #endif
   
@@ -620,7 +653,7 @@ void lireMemoire(){
       - un hexa (l'adresse a decoder)*/
 void ecrire(){   
   int idx = hexaToInt(RS);
-  #ifdef DEBUG 
+  #ifdef DEBUG_n2 
     printf("- ecriture valeur: %s dans la case mémoire %i\n",RM, idx);
   #endif
   
@@ -631,10 +664,10 @@ void ecrire(){
     objectif: 
       - saisir une donnée dans IN*/
 void saisir(){  
-  #ifdef DEBUG 
+  #ifdef DEBUG_n2 
     printf("- saisie d'une valeur \n"); 
   #endif
-  printf(" ---- Veuillez saisir une donnée ============================== : ");
+  printf("\n\tVeuillez saisir une donnée  : ");
   lire(IN, TAILLE_ADRESSE);
 };
 
@@ -672,8 +705,8 @@ ______________________________________________________________________________*/
       - rechercher une instruction
       - la stoquer dans OP*/
 void phase1(){   
-  #ifdef DEBUG 
-    printf("=> phase 1 \n");
+  #ifdef DEBUG
+    printf("==> phase 1 \n");
   #endif
   transfert(1);     // 1 
   lireMemoire();    // 13
@@ -686,7 +719,7 @@ void phase1(){
       - increpenter PC*/
 void phase3(){ 
   #ifdef DEBUG 
-    printf("=> phase 3 \n");
+    printf("\n==> phase 3 \n");
   #endif  
   incrementerPC();  // 15
 };
@@ -695,7 +728,7 @@ void phase3(){
     objectif: 
       - increpenter PC*/
 void incrementerPC(){ 
-  #ifdef DEBUG 
+  #ifdef DEBUG_n2
     printf("    - incrémentation de PC\n");
   #endif  
   int pc = hexaToInt(PC);
@@ -722,7 +755,7 @@ ______________________________________________________________________________*/
 */
 void addValeur(){  
   #ifdef DEBUG 
-    printf("\n\n==> ADD # \n");
+    printf("\n\t[ ADD # ]\n");
   #endif 
   // phase 2
   prepaCalcul(10);   // 10
@@ -739,7 +772,7 @@ void addValeur(){
 */
 void addValeurP(){   
   #ifdef DEBUG 
-    printf("\n\n==> ADD α \n");
+    printf("\n\t[ ADD α ]\n");
   #endif 
   // phase 2
   prepaCalcul(10);  // 10
@@ -759,7 +792,7 @@ void addValeurP(){
 */
 void addValeurPP(){ 
   #ifdef DEBUG 
-    printf("\n\n==> ADD * α \n");
+    printf("\n\t[ ADD * α ]\n");
   #endif   
   // phase 2
   prepaCalcul(10);   // 10
@@ -786,7 +819,7 @@ void addValeurPP(){
 */
 void subValeur(){ 
   #ifdef DEBUG 
-    printf("\n\n==> SUB # \n");
+    printf("\n\t[ SUB # ]\n");
   #endif  
   // phase 2
   prepaCalcul(11);   // 11
@@ -803,7 +836,7 @@ void subValeur(){
 */
 void subValeurP(){ 
   #ifdef DEBUG 
-    printf("\n\n==> SUB α \n");
+    printf("\n\t[ SUB α ]\n");
   #endif  
   // phase 2
   prepaCalcul(11);   // 11
@@ -823,7 +856,7 @@ void subValeurP(){
 */
 void subValeurPP(){ 
   #ifdef DEBUG 
-    printf("\n\n==> SUB * α \n");
+    printf("\n\t[ SUB * α ]\n");
   #endif  
   // phase 2
   prepaCalcul(11);   // 11
@@ -850,7 +883,7 @@ void subValeurPP(){
 */
 void nand(){ 
   #ifdef DEBUG 
-    printf("\n\n==> NAND # \n"); 
+    printf("\n\t[ NAND # ]\n"); 
   #endif   
   // phase 2
   prepaCalcul(17);   // 17
@@ -867,7 +900,7 @@ void nand(){
 */
 void nandP(){
   #ifdef DEBUG 
-    printf("\n\n==> NAND α \n"); 
+    printf("\n\t[ NAND α ]\n"); 
   #endif 
   // phase 2
   prepaCalcul(17);   // 17
@@ -887,7 +920,7 @@ void nandP(){
 */
 void nandPP(){ 
   #ifdef DEBUG 
-    printf("\n\n==> NAND * α \n"); 
+    printf("\n\t[ NAND * α ]\n"); 
   #endif 
   // phase 2
   prepaCalcul(17);   // 17
@@ -914,7 +947,7 @@ void nandPP(){
 */
 void load(){ 
   #ifdef DEBUG 
-    printf("\n\n==> LOAD # \n"); 
+    printf("\n\t[ LOAD # ]\n"); 
   #endif  
   // phase 2
   transfert(1);      // 1
@@ -930,7 +963,7 @@ void load(){
 */
 void loadP(){ 
   #ifdef DEBUG 
-    printf("\n\n==> LOAD α \n"); 
+    printf("\n\t[ LOAD α ]\n"); 
   #endif  
   // phase 2
   transfert(1);      // 1
@@ -949,7 +982,7 @@ void loadP(){
 */
 void loadPP(){  
   #ifdef DEBUG 
-    printf("\n\n==> LOAD * α \n"); 
+    printf("\n\t[ LOAD * α ]\n"); 
   #endif 
   // phase 2
   transfert(1);      // 1
@@ -972,7 +1005,7 @@ void loadPP(){
 */
 void storeP(){   
   #ifdef DEBUG 
-    printf("\n\n==> STORE α \n"); 
+    printf("\n\t[ STORE α ]\n"); 
   #endif 
   // phase 2
   transfert(1);      // 1
@@ -992,7 +1025,7 @@ void storeP(){
 */
 void storePP(){   
   #ifdef DEBUG 
-    printf("\n\n==> STORE * α \n"); 
+    printf("\n\t[ STORE * α ]\n"); 
   #endif 
   // phase 2
   transfert(1);      // 1
@@ -1017,7 +1050,7 @@ void storePP(){
 */
 void inP(){  
   #ifdef DEBUG 
-    printf("\n\n==> IN α \n"); 
+    printf("\n\t[ IN α ]\n"); 
   #endif  
   // phase 2
   transfert(1);      // 1
@@ -1037,7 +1070,7 @@ void inP(){
 */
 void inPP(){   
   #ifdef DEBUG 
-    printf("\n\n==> IN * α \n"); 
+    printf("\n\t[ IN * α ]\n"); 
   #endif 
   // phase 2
   transfert(1);      // 1
@@ -1060,7 +1093,7 @@ void inPP(){
 */
 void outP(){ 
   #ifdef DEBUG 
-    printf("\n\n==> OUT α \n"); 
+    printf("\n\t[ OUT α ]\n"); 
   #endif 
   // phase 2
   transfert(1);      // 1
@@ -1069,7 +1102,7 @@ void outP(){
   transfert(7);      // 7
   lireMemoire();     // 13
   transfert(9);      // 9
-  printf("--> Affichage OUT:  %s\n", OUT);
+  printf("\n\n\t\t Affichage OUT:  %s\n", OUT);
   // phase 3
   phase3();
 };
@@ -1080,7 +1113,7 @@ void outP(){
 */
 void outPP(){   
   #ifdef DEBUG 
-    printf("\n\n==> OUT * α \n"); 
+    printf("\n\t[ OUT * α ]\n"); 
   #endif 
   // phase 2
   transfert(1);      // 1
@@ -1105,7 +1138,7 @@ void outPP(){
 */
 void jump(){
   #ifdef DEBUG 
-    printf("\n\n==> JUMP α \n"); 
+    printf("\n\t[ JUMP α ]\n"); 
   #endif    
   // phase 2
   transfert(1);      // 1
@@ -1121,7 +1154,7 @@ void jump(){
 */
 void brn(){   
   #ifdef DEBUG 
-    printf("\n\n==> si A < 0 : BRN α \n"); 
+    printf("\n\t[ si A < 0 : BRN α ]\n"); 
   #endif 
   // condition
   if (hexaToInt(A) < 0) {
@@ -1141,7 +1174,7 @@ void brn(){
 */
 void brz(){   
   #ifdef DEBUG 
-    printf("\n\n==> si A = 0 : BRZ α \n"); 
+    printf("\n\t[ si A = 0 : BRZ α ]\n"); 
   #endif 
   // condition
   if (hexaToInt(A) == 0) {

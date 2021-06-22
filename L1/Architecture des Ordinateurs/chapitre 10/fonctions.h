@@ -12,6 +12,12 @@ ______________________________________________________________________________*/
 void usage(str message);
 
 
+/*  fonction: stepper()
+    objectif: permettre a l'utilisateur d'utiliser la touche 'enter
+              pour passer une instruction */
+void stepper() ;
+
+
 /*  fonction: chargerBootstrap()   
     objectif: 
       - li le fichier "bootstrap"

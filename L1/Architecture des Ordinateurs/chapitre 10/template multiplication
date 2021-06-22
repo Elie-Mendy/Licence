@@ -33,10 +33,10 @@ Adresse     Adresse     code    mnémonique              commentaire
 66          42          48      STORE α 62              écraser la valeur de NB2 par sa nouvelle valeur
 67          43          62
 
-68          44          10      JUMP 34                 brancher sur XX (nouveau tour de boucle)
+68          44          10      JUMP 34                 brancher sur 34 (nouveau tour de boucle)
 69          45          34 
 
 70          46          41      OUT α 60                afficher le résultat
 71          47          60
 72          48          10      JUMP 00                 sortir du programme
-73          49          00
+73          49          6E
