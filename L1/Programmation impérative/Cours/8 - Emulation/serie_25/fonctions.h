@@ -60,7 +60,7 @@ int lireProgramme(str programme);
       - sans passer par le bootstrap manuel
     parametres: 
       - un entier (la taille  du programme )*/
-void chargerProgramme(int taille);
+void chargerProgramme(int adresse, char * fileName);
 
 
 /*  fonction: executer()
@@ -69,7 +69,7 @@ void chargerProgramme(int taille);
       - appel la fonction associé (voir page 224)
     parametres: 
       - un entier (le code associé a une fonction)*/
-void executer(int code);
+int executer(int code);
 
 /*______________________________________________________________________________
 
