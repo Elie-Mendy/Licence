@@ -33,6 +33,7 @@ void chargerBootstrap();
 void afficherMemoire();
 
 
+void afficherRegistre();
 /*  fonction: afficherMemoire()   
     objectif: 
       - afficher le programme
@@ -104,7 +105,7 @@ void prepaCalcul(int code);
       - un hexa (l'operande a traduire)
     retour: 
       - un entier */
-int hexaToInt(Hexa h[TAILLE_ADRESSE]);
+int hexaToInt(Hexa h[TAILLE_DATA]);
 
 
 /*  fonction: intTostr()

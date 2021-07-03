@@ -17,11 +17,9 @@
 #define AUTO                                 // chargement automatique du programme en mémoire
 #define EXO                                  // contexte de l'exercice 10.6 
 #define TAILLE_MEMOIRE 256                   // nombre d'adresses disponible en memoire
-#define TAILLE_ADRESSE 3                     // taille de la chaine representative d'une adresse 
+#define TAILLE_DATA 3                     // taille de la chaine representative d'une adresse 
 #define TAILLE_BOOTSTRAP 32                  // combre d'instruction que contient le bootstrap
 #define TAILLE_MAX_PROGRAMME 200             // combre de lignes maximum que peut contenir le programme - mode automatique
-#define FIRST_INSTRUCTION "28"                 // adresse de la première instruction (en hexadécimal) - mode automatique
-#define FIRST_INSTRUCTION_EXO_10_6 "50"                 // adresse de la première instruction (en hexadécimal) - mode automatique
 
 typedef char Hexa ;                          // definition du type Hexadecimal 
 typedef char * str ;                         // definition du type str 
@@ -31,21 +29,11 @@ typedef unsigned idx;                        // definition du type str
 Hexa * memoire[TAILLE_MEMOIRE];       // --> la barette memoire (ressource de l'ordinateur)
 
 // -les registres
-Hexa RS[TAILLE_ADRESSE];                     // --> registre de Selection
-Hexa RM[TAILLE_ADRESSE];                     // --> registre de Mot
+Hexa PC[TAILLE_DATA];                     // --> registre Program Counter
+Hexa A[TAILLE_DATA];                      // --> registre Accumulateur
 
-Hexa IN[TAILLE_ADRESSE];                     // --> peripherique Entrée
-Hexa OUT[TAILLE_ADRESSE];                    // --> peripherique Sortie (affichage)
 
-Hexa PC[TAILLE_ADRESSE];                     // --> registre Program Counter
 
-Hexa OP[TAILLE_ADRESSE];                     // --> registre de Registre Instruction (code opératoire)
-Hexa AD[TAILLE_ADRESSE];                     // --> registre de Registre Instruction (adresse de la donnée à traiter)
-
-Hexa A[TAILLE_ADRESSE];                      // --> registre Accumulateur
-
-// - l'unité de calcul        
-int UAL;                    // --> registre d'indication du calcul a effectuer
 
 #include "fonctions.h"                                 
 
@@ -63,49 +51,69 @@ int main(int k, char  *argv[]) {
   printf(" Emulateur de l'Ordinateur En Papier \n");
   printf("____________________________________________________________________\n\n"); 
 
-  // initialisation de la mémoire 
+  // initialisation des registres A et PC
   initialiserRegistres();
+
+  // chargement du bootstrap 
   chargerBootstrap();
-  //afficherMemoire(55);
-
-  // chargement du programme
-  int taille = lireProgramme(argv[1]);
-  //afficherProgramme();
-  chargerProgramme(taille);
+  
   //afficherMemoire(250);
+
+  //ZONE TEST ET DEBUG
+  /*
+  int a = strtol(A, NULL, 10);
+  printf("a = %i    ", a);
+  int b = strtol(memoire[hexaToInt(memoire[hexaToInt(PC)])], NULL, 10);
+
+  printf("b = %i\n", b); 
+
+  sprintf(A,"%ld\n",  (strtol(A, NULL, 10) + strtol(memoire[hexaToInt(memoire[hexaToInt(PC)])], NULL, 10)));
+  */
   
-
-  
-  #ifdef EXO
-    Hexa fin[TAILLE_ADRESSE] = "6E";
-  #else
-    Hexa fin[TAILLE_ADRESSE] = "00";
-  #endif 
-
-
+  int opCode = hexaToInt(memoire[hexaToInt(PC)]);
+  executer(opCode); 
+  afficherRegistre();
+  /*
   do{
-    #ifdef DEBUG 
-      printf("____________________________________________________________________\n"); 
-    #endif 
-    phase1();         // recherche d'instruction
-    executer(hexaToInt(OP));  
-    #ifdef DEBUG 
-      printf("____________________________________________________________________\n");
-      printf("Etat des Registres:\n");
-      printf("- PC=%s \t A=%s\n" , PC, A);
-      printf("____________________________________________________________________\n\n\n");  
-    #endif 
-    #ifdef STEPPER
-    stepper();
-    #endif
-  } while (strcasecmp(PC , fin));  // fin du programme quand on jump sur 00
-  return 0;
+      int opCode = hexaToInt(memoire[hexaToInt(PC)]);
+      executer(opCode); 
+      afficherRegistre(); 
+      #ifdef STEPPER
+      stepper();
+      #endif
+    } while (strcasecmp(PC , "00"));  // fin du programme quand on jump sur 00
+  */  
+    return 0;
 }
 
 
 
 
 void usage(str message) { fprintf(stderr, "Usage : %s\n", message), exit(1) ;}
+
+/*  fonction: chargerBootstrap()   
+    objectif: 
+      - li le fichier "bootstrap"
+      - le charge en memoire
+*/
+void chargerBootstrap(){  
+  // ouverture du flux
+  FILE * fichier = fopen("bootstrap", "r");
+  if (! fichier) usage("bootstrap illisible");
+
+  idx i = 0;
+  char lu = '\0';
+  while (i < TAILLE_MEMOIRE && lu != EOF){
+    char sas[TAILLE_DATA];               // sas de reception du mot
+    lu = fscanf(fichier, "%s ", sas);
+    if (lu != EOF){
+      memoire[i++] = strdup(sas);
+      }
+    }
+
+  // fermeture du flux
+  fclose(fichier);
+};
 
 
 void stepper() {
@@ -117,104 +125,82 @@ void stepper() {
 
 
 void afficherMemoire(int adresse) {
-  #ifdef DEBUG 
-    printf("- affichage de la memoire \n");  
-  #endif 
   for (int i = 0; i < adresse && i < TAILLE_MEMOIRE ; i++) {
     printf("adresse %i\t--> b16: %x:\t%s\n", i, i, memoire[i]);
   }
 }
 
-
-
-void initialiserRegistres(){
-  #ifdef DEBUG 
-    printf("- initialisation des registres  \n"); 
-  #endif 
- 
-  // registre memoire
-  strcpy(RS,"00");
-  strcpy(RM,"15");
-
-  // Entrées / sorties
-  strcpy(IN,"00");
-  strcpy(OUT,"00");
-
-  // Program Counter
-  #ifdef EXO
-    strcpy(PC,FIRST_INSTRUCTION_EXO_10_6);
-  #else
-    strcpy(PC,FIRST_INSTRUCTION);
-  #endif
-  // Registre Instruction
-  strcpy(OP,"00");
-  strcpy(AD,"00");
-
-  // unité de calcul
-  strcpy(A,"10");
-  UAL = 0;
+void afficherRegistre() {
+  printf("____________________________________________________________________\n");
+  printf("Etat des Registres:\n");
+  printf("- PC=%s \t - A=%s \n" , PC, A);
+  printf("____________________________________________________________________\n\n\n");  
 }
 
 
-int lireProgramme(str programme) {
-  // ouverture du flux
-  FILE * fichier = fopen(programme, "r");
-  if (! fichier) usage(" stoplist illisible");
 
-  int i = 0;
-  char lu = '\0';
-  while (i < TAILLE_MAX_PROGRAMME && lu != EOF){
-    char sas[TAILLE_ADRESSE];              // sas de reception du mot
-    lu = fscanf(fichier, "%s ", sas);
-    if (lu != EOF){
-      prog[i++] = strdup(sas);
-      }
-    }
-  fclose(fichier);
-  return i -1;
+void initialiserRegistres(){
+  // Program Counter
+  strcpy(PC,"14");
+
+  // unité de calcul
+  strcpy(A,"10");
+}
+
+int hexaToInt(Hexa h[TAILLE_DATA] ){ 
+  #ifdef DEBUG_n2 
+    int i = strtol(h, NULL, 16);
+    printf("   - convertion hexa: %s  --> ToInt : %i\n", h, i);
+  #endif 
+  
+  return strtol(h, NULL, 16);   
+}
+
+void intToHexa(Hexa * registre , int code ){ 
+  Hexa value[TAILLE_DATA];
+  sprintf(value, "%x", code);
+  
+  // gestion des valeurs < 10
+  if (strlen(value) < 2) {
+    value[1] = value[0];
+    value[0] = '0';
+  }
+
+  // attribution de la nouvelle valeur au registre
+  strcpy(registre, value);
+  #ifdef DEBUG_n2 
+    printf("   - convertion int: %i  --> ToHexa : %s\n", code, registre); 
+  #endif 
+  
 }
 
 
 void executer(int code) {
-  #ifdef DEBUG 
-    printf("==> phase 2 : exec code -> %i \n", hexaToInt(OP)); 
-  #endif 
   switch (code)
   {
     //
     // ARITHMETIQUE
     //
     // ADD #  20
-    case 32:  
-      addValeur();
-      break;
+    case 32: sprintf(A,"%ld\n",  (strtol(A, NULL, 10) + strtol(memoire[hexaToInt(PC)], NULL, 10 ))); break;
 
     // ADD α  60
-    case 96:
-      addValeurP();
-      break;
+    case 96: sprintf(A,"%ld\n",  (strtol(A, NULL, 10) + strtol(memoire[hexaToInt(memoire[hexaToInt(PC)])], NULL, 10))); break;
 
     // ADD *α E0
-    case 224:
-      addValeurPP();
-      break;
+    case 224: sprintf(A,"%ld\n",  (strtol(A, NULL, 10) + strtol(memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])], NULL, 10))); break;
     
-      // SUB #  21
-    case 33:  
-      subValeur();
-      break;
+    // SUB #  21
+    case 33: sprintf(A,"%ld\n",  (strtol(A, NULL, 10) - strtol(memoire[hexaToInt(PC)], NULL, 10 ))); break;
 
     // SUB α  61
-    case 97:
-      subValeurP();
-      break;
+    case 97: sprintf(A,"%ld\n",  (strtol(A, NULL, 10) - strtol(memoire[hexaToInt(memoire[hexaToInt(PC)])], NULL, 10))); break;
 
     // SUB *α E1
-    case 225:
-      subValeurPP();
-      break;
-    
-
+    case 225: sprintf(A,"%ld\n",  (strtol(A, NULL, 10) - strtol(memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])], NULL, 10))); break;
+  }
+}
+/*
     //
     // LOGIQUE
     //
@@ -311,7 +297,7 @@ void executer(int code) {
       exit(1);
       break;
   }
-}
+}*/
 
 
 //TODO - simplifier chargement du bootstrap et du programme par un paramettre a entrer 
