@@ -26,7 +26,7 @@ ______________________________________________________________________________*/
 #include <stdlib.h>
 #include <string.h> 
 
-#define DEBUG                                // debug général
+//#define DEBUG                                // debug général
 //#define DEBUG_n2                             // debug plus pointu
 //#define STEPPER                              // possibilitée d'executer chaques instruction via la touche 'enter'
 #define AUTO                                 // chargement automatique du programme en mémoire
@@ -443,7 +443,6 @@ void executer(int code) {
       break;
 
     default:
-      printf("/!\\ CODE OP %i INNEXISTANT /!\\", code);
       exit(1);
       break;
   }
@@ -592,8 +591,6 @@ void intToStr(Hexa * registre , int code ){
       - un entier (le calcul demandé)*/
 void calcul(){   
   // recuperation des operandes 
-  //int a = hexaToInt(A);    
-  //int rm = hexaToInt(RM);
   int a = strtol(A, NULL, 10);   
   int rm = strtol(RM, NULL, 10); 
   
