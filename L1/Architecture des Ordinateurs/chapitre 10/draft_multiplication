@@ -1,0 +1,42 @@
+Adresse     Adresse     code    mnémonique              commentaire
+(base 10)   (hexa)
+40          28          00      LOAD # 00               charger 00 dans l'accumulateur 
+41          29          00      
+42          2A          48      STORE α 60              ecrire zero dans le résultat (adresse 60)
+43          2B          60
+
+44          2C          49      IN α 61                 entrer NB1
+45          2D          61
+46          2E          40      LOAD α 61               charger NB1 dans l'accumulateur
+47          2F          61
+48          30          12      BRZ α 46                si NB1 = 0, on sort en affichant le résultat (ici zéro)
+49          31          46                                          (correspond à une multiplication par zero)
+
+50          32          49      IN α 62                 entrer NB2
+51          33          62
+52          34          40      LOAD α 62               charger NB2 dans l'accumulateur
+53          35          62
+54          36          12      BRZ α 46                si NB2 = 0, on sort en affichant le résultat
+55          37          46
+
+56          38          40      LOAD α 60               charger le résultat dans l'accumulateur
+57          39          60
+58          3A          60      ADD α 61                ajouter NB au résultat
+59          3B          61
+60          3C          48      STORE α 60              écraser la valeur du résultat par sa nouvelle valeur
+61          3D          60
+
+62          3E          40      LOAD α 62               charger NB2 dans l'accumulateur
+63          3F          62
+64          40          21      SUB# 01                 décrémenter NB2
+65          41          01
+66          42          48      STORE α 62              écraser la valeur de NB2 par sa nouvelle valeur
+67          43          62
+
+68          44          10      JUMP 34                 brancher sur 34 (nouveau tour de boucle)
+69          45          34 
+
+70          46          41      OUT α 60                afficher le résultat
+71          47          60
+72          48          10      JUMP 00                 sortir du programme
+73          49          6E
