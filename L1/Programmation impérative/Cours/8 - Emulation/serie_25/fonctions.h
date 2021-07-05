@@ -1,102 +1,55 @@
-
-
-
 /*______________________________________________________________________________
 
-                    DEFINITION FONCTIONS - OUTILS DU MAIN 
+        DEFINITION FONCTIONS DE L'EMULATEUR : ORDINATEUR EN PAPIER
 ______________________________________________________________________________*/
 
 /*  fonction: usage()
     objectif: impression de messages d'erreur (sur flux stderr)
     parametres: une string (le messages à renvoyer)*/
-void usage(str message);
-
+void usage(str message) { fprintf(stderr, "Usage : %s\n", message), exit(1) ;}
 
 /*  fonction: stepper()
     objectif: permettre a l'utilisateur d'utiliser la touche 'enter
               pour passer une instruction */
-void stepper() ;
-
-
-/*  fonction: chargerBootstrap()   
-    objectif: 
-      - li le fichier "bootstrap"
-      - le charge en memoire
-*/
-void chargerBootstrap();
-
-
-/*  fonction: afficherMemoire()   
-    objectif: 
-      - afficher la memoire 
-*/
-void afficherMemoire();
-
-
-void afficherRegistre();
-/*  fonction: afficherMemoire()   
-    objectif: 
-      - afficher le programme
-*/
-void afficherProgramme();
+void stepper() {
+  char c = 0;
+  while((c =getchar()) != '\n') ;
+}
 
 /*  fonction: initialiserRegistres()
     objectif: attribuer une valeur initiale aux différents registres */
-void initialiserRegistres();
-
-
-/*  fonction: lireProgramme()
-    objectif: 
-      - prend le nom d'un programme à lire 
-      - stoque les instructions du programme dans le vecteur 'programme'
-    parametres: 
-      - une string (le nom du programme à lire)*/
-int lireProgramme(str programme);
-
+void initialiserRegistres(int adresse){
+  // Program Counter
+  sprintf(PC , "%x", adresse );
+  // unité de calcul
+  strcpy(A,"00");
+}
 
 /*  fonction: chargerProgramme()
     objectif: 
       - ecrit le programme dans la mémoire 
       - sans passer par le bootstrap manuel
     parametres: 
-      - un entier (la taille  du programme )*/
-void chargerProgramme(int adresse, char * fileName);
+      - un entier 
+        (l'adresse de la premiere instruction du programme en memoire)
+      - le nom du programme a charger*/
+void chargerProgramme(int adresse, char * fileName){  
+  // ouverture du flux
+  FILE * fichier = fopen(fileName, "r");
+  if (! fichier) usage("programme illisible");
 
-
-/*  fonction: executer()
-    objectif: 
-      - prend en compte le microcode entré en parametre 
-      - appel la fonction associé (voir page 224)
-    parametres: 
-      - un entier (le code associé a une fonction)*/
-int executer(int code);
-
-/*______________________________________________________________________________
-
-                        DEFINITION FONCTIONS - MICROCODES 
-______________________________________________________________________________*/
-
-
-
-
-/*  fonction: transfert()
-    objectif: 
-      - prend en compte le microcode entré en parametre 
-      - effectur le transfert mémoire associé (voir page 227)
-    parametres: 
-      - un entier (le microcode)*/
-void transfert(int code);
-
-
-/*  fonction: prepaCalcul()
-    objectif: 
-      - prend en compte le microcode entré en parametre 
-      - préparer le calcul associé (voir page 227)
-        (sauvegarde le microcode du calcul dans UAL)
-    parametres: 
-      - un entier (le calcul demandé)*/
-void prepaCalcul(int code);
-
+  unsigned i = adresse;
+  char lu = '\0';
+  while (i < TAILLE_MEMOIRE && lu != EOF){
+    char sas[TAILLE_DATA];               // sas de reception du mot
+    lu = fscanf(fichier, "%s ", sas);
+    if (lu != EOF){
+      memoire[i++] = strdup(sas);
+      }
+    }
+  // fermeture du flux
+  fclose(fichier);
+};
 
 /*  fonction: hexaToInt()
     objectif: 
@@ -105,15 +58,9 @@ void prepaCalcul(int code);
       - un hexa (l'operande a traduire)
     retour: 
       - un entier */
-int hexaToInt(Hexa h[TAILLE_DATA]);
-
-
-/*  fonction: intTostr()
-    objectif: 
-      - traduit un int en str
-    parametres: 
-      - un entier (l'operande a traduire)*/
-void intToStr(Hexa * registre , int code );
+int hexaToInt(Hexa h[TAILLE_DATA] ){ 
+  return strtol(h, NULL, 16);   
+}
 
 /*  fonction: intToHexa()
     objectif: 
@@ -122,233 +69,108 @@ void intToStr(Hexa * registre , int code );
       - un entier (l'operande a traduire)
     retour: 
       - un hexadecimal */
-void intToHexa(Hexa * registre , int code );
+void intToHexa(Hexa * registre , int code ){ 
+  Hexa value[TAILLE_DATA];
+  sprintf(value, "%x", code);
+  // gestion des valeurs < 10
+  if (strlen(value) < 2) {
+    value[1] = value[0]; value[0] = '0';
+  }
+  // attribution de la nouvelle valeur au registre
+  strcpy(registre, value);
+}
 
-/*  fonction: calcul()
+
+/*  fonction: executer()
     objectif: 
-      - traduit les deux operandes en entiers 
-      - effectue le calcul associé (voir page 227)
-        (sauvegarde le resultat du calcul dans A)
+      - prend en compte l'op-code entré en parametre 
+      - execute l'instruction associé (voir page 111)
     parametres: 
-      - un entier (le calcul demandé)*/
-void calcul();
-
-
-/*  fonction: lireMemoire()
-    objectif: 
-      - decoder l'adresse contenu dans RS
-      - reporter le contenu de la mémoire dans RM
-    parametres: 
-      - un hexa (l'adresse a decoder)*/
-void lireMemoire();
-
-
-/*  fonction: ecrire()
-    objectif: 
-      - decoder l'adresse contenu dans RS
-      - reporter le contenu de la mémoire dans RM
-    parametres: 
-      - un hexa (l'adresse a decoder)*/
-void ecrire();
-
-/*  fonction: saisir()
-    objectif: 
-      - saisir une donnée dans IN*/
-void saisir();
-
-
-/*  fonction: saisir()
-    objectif: 
-      - supprime le saut de ligne en fin de saisie user 
-    retour
-      - 0 si il est impossible de lire la saisie
-      - 1 si la saisie est reussi et lu*/ 
-int lire(char * mot, int taille);
-
-
-
-
-/*______________________________________________________________________________
-
-                        DEFINITION FONCTIONS - CYCLE 
-______________________________________________________________________________*/
-
-
-/*  fonction: phase1()
-    objectif: 
-      - rechercher une instruction
-      - la stoquer dans OP*/
-void phase1();
-
-/*  fonction: phase3()
-    objectif: 
-      - increpenter PC*/
-void phase3();
+      - un entier (le code associé a une fonction)*/
+int executer(int code) {
+  switch (code){
+  //
+  // ARITHMETIQUE
+  //
+  // ADD #  20
+  case 32: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) + strtol(memoire[hexaToInt(PC)], NULL, 10 ))); strcpy(lib, "ADD #"); break;
+  // ADD α  60
+  case 96: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) + strtol(memoire[hexaToInt(memoire[hexaToInt(PC)])], NULL, 10))); strcpy(lib, "ADD α "); break;
+  // ADD *α E0
+  case 224: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) + strtol(memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])], NULL, 10))); strcpy(lib, "ADD *α"); break;
+  // SUB #  21
+  case 33: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) - strtol(memoire[hexaToInt(PC)], NULL, 10 ))); strcpy(lib, "SUB #"); break;
+  // SUB α  61
+  case 97: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) - strtol(memoire[hexaToInt(memoire[hexaToInt(PC)])], NULL, 10))); strcpy(lib, "SUB α");break;
+  // SUB *α E1
+  case 225: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) - strtol(memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])], NULL, 10))); strcpy(lib, "SUB *α");break;
+  //
+  // LOGIQUE
+  //
+  // NAND #  22
+  case 34: sprintf(A,"%'.02ld",  ~(strtol(A, NULL, 10) & strtol(memoire[hexaToInt(PC)], NULL, 10 ))); strcpy(lib, "NAND #");break;
+  // NAND α  62
+  case 98: sprintf(A,"%'.02ld",  ~(strtol(A, NULL, 10) & strtol(memoire[hexaToInt(memoire[hexaToInt(PC)])], NULL, 10 ))); strcpy(lib, "NAND α");break;
+  // NAND *α E2
+  case 226: sprintf(A,"%'.02ld",  ~(strtol(A, NULL, 10) & strtol(memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])], NULL, 10 ))); strcpy(lib, "NAND *α");break;
+  //
+  //  TRANSFERTS
+  //
+  // LOAD #  00
+  case 0: strcpy(A, memoire[hexaToInt(PC)]); strcpy(lib, "LOAD #");break;
+  // LOAD α  40
+  case 64: strcpy(A, memoire[hexaToInt(memoire[hexaToInt(PC)])]); strcpy(lib, "LOAD α"); break; 
+  // LOAD *α C0
+  case 192: strcpy(A, memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])]); strcpy(lib, "LOAD *α"); break;
+  // STORE α  48
+  case 72: strcpy(memoire[hexaToInt(memoire[hexaToInt(PC)])], A); strcpy(lib, "STORE α"); break;
+  // STORE *α C8
+  case 200: strcpy(memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])], A); strcpy(lib, "STORE *α"); break;
+  //
+  // ENTREE / SORTIES
+  //
+  // IN α  49
+  case 73: printf("\n\nveuillez entrer une donnée: ") ; scanf("%s", memoire[hexaToInt(memoire[hexaToInt(PC)])]) ; strcpy(lib, "IN α "); break;
+  // IN *α C9
+  case 201: printf("\n\nveuillez entrer une donnée: ") ; scanf("%s", memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])]) ; strcpy(lib, "IN *α"); break;
+  // OUT α 41
+  case 65: printf("\n\nValeur de sortie : %s\n", memoire[hexaToInt(memoire[hexaToInt(PC)])]); strcpy(lib, "OUT α "); break;
+  // OUT *α C1
+  case 193: printf("\n\nValeur de sortie : %s\n", memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])]); strcpy(lib, "OUT *α"); break;
+  // 
+  // BRANCHEMENT INCONDITIONNEL
+  //
+  // JUMP α 10
+  case 16: strcpy(PC, memoire[hexaToInt(PC)]); return 0; strcpy(lib, "JUMP α"); break;
+  // 
+  // BRANCHEMENT CONDITIONNEL
+  //
+  // BRN α 11
+  case 17: if (hexaToInt(A) < 0) { strcpy(PC, memoire[hexaToInt(PC)]) ; return 0;} ; strcpy(lib, "BRN α"); break;
+  // BRZ α 12
+  case 18: if (hexaToInt(A) == 0) { strcpy(PC, memoire[hexaToInt(PC)]) ; return 0;} ; strcpy(lib, "BRZ α "); break;
+  default:
+    printf("/!\\ CODE OP %i INNEXISTANT /!\\\n", code);
+    exit(1);
+    break;
+  }
+  return 1; 
+}
 
 /*  fonction: incrementerPC()
     objectif: 
-      - increpenter PC*/
-void incrementerPC();
-/*______________________________________________________________________________
+      - increpenter la valeur contenu dans le regitre PC*/
+void incrementerPC(){ 
+  int pc = hexaToInt(PC);
+  pc ++;
+  intToHexa(PC , pc);
+};
 
-                        DEFINITION FONCTIONS - OPERATIONS 
-______________________________________________________________________________*/
 
-
-// _____________ ARITHMETIQUE ________________ 
-
-//
-// additions 
-//
-
-/*  fonction: addValeur()   20
-    description: 
-      ADD# -->  A ← A+V
+/*  fonction: afficherRegistre()   
+    objectif: 
+      - afficher l'etat des registres à chaque execution
 */
-void addValeur();
-
-/*  fonction: addValeur()   60
-    description: 
-      ADDα -->  A ← A + (α)
-*/
-void addValeurP();
-
-/*  fonction: addValeur()   E0
-    description: 
-      ADD*α -->  A ← A + *(α)
-*/
-void addValeurPP();
-
-//
-// soustractions 
-//
-
-/*  fonction: subValeur()   21
-    description: 
-      SUB# -->  A ← A-V
-*/
-void subValeur();
-
-/*  fonction: subValeurP()   61
-    description: 
-      SUBα -->  A ← A - (α)
-*/
-void subValeurP();
-
-/*  fonction: subValeurPP()   E1
-    description: 
-      SUB*α -->  A ← A - *(α)
-*/
-void subValeurPP();
-
-
-
-// LOGIQUES
-
-/*  fonction: nand()   22
-    description: 
-      NAND# -->  A ← ¬[A&V]
-*/
-void nand();
-
-/*  fonction: nandP()   62
-    description: 
-      NANDα -->  A ← ¬[A&(α)]
-*/
-void nandP();
-
-/*  fonction: nandPP()   E2
-    description: 
-      NAND*α -->  A ← ¬[A& ∗(α)]
-*/
-void nandPP();
-
-
-// TRANSFERTS
-
-
-/*  fonction: load()   00
-    description: 
-      LOAD# -->  A ← V
-*/
-void load();
-
-/*  fonction: loadP()   40
-    description: 
-      LOADα -->  A ← (α)
-*/
-void loadP();
-
-/*  fonction: loadPP()   C0
-    description: 
-      LOAD*α -->  A ← ∗(α)
-*/
-void loadPP();
-
-
-/*  fonction: storeP()   48
-    description: 
-      STOREα -->  (α) ← A
-*/
-void storeP();
-
-/*  fonction: storePP()   C8
-    description: 
-      LOAD*α -->  A ← ∗(α)
-*/
-void storePP();
-
-
-// ENTREES / SORTIES 
-
-/*  fonction: inP()   49
-    description: 
-      INα -->  (α) ← Entrée
-*/
-void inP();
-
-/*  fonction: inPP()   C9
-    description: 
-      IN*α -->  ∗(α) ← Entrée
-*/
-void inPP();
-
-/*  fonction: outP()   41
-    description: 
-      OUTα -->  Sortie ← (α)
-*/
-void outP();
-
-/*  fonction: outPP()   C1
-    description: 
-      OUT*α -->  Sortie ← ∗(α)
-*/
-void outPP();
-
-// BRANCHEMENT INCONDITIONNEL (saut de la phase 3)
-
-/*  fonction: jump()   10
-    description: 
-      JUMP α -->  PC ← α
-*/
-void jump();
-
-// BRANCHEMENT CONDITIONNEL (saut de la phase 3)
-
-/*  fonction: brn()   11
-    description: 
-      BRN α -->  si A < 0 alors PC ← α
-*/
-void brn();
-
-
-/*  fonction: brz()   12
-    description: 
-      BRN α -->  si A < 0 alors PC ← α
-*/
-void brz();
-
-
-
-
-
+void afficherRegistre() {
+  printf("\nPC: %s \t | A: %s \t| %s %s \t    ? " , PC, A, lib , memoire[hexaToInt(PC)]); 
+}
