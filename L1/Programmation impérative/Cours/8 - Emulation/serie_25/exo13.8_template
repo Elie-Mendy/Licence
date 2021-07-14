@@ -1,0 +1,24 @@
+Adresse     Adresse     code        mnémonique      
+(base 10)   (hexa) 
+48           30           10           JUMP 3A
+49           31           3A  
+50           32           00           LOAD 31
+51           33           31 
+52           34           40           LOAD @ 32
+53           35           32 
+54           36           60           ADD @ 33
+55           37           33  
+56           38           48           STORE @ 32
+57           39           32 
+58           3A           49           IN @ 33
+59           3B           33 
+60           3C           40           LOAD @ 33
+61           3D           33
+62           3E           22           NAND FF 
+63           3F           FF 
+64           40           12           BRZ 34
+65           41           34
+66           42           41           OUT @ 32
+67           43           32 
+68           44           10           JUMP 44
+69           45           44

@@ -40,7 +40,7 @@ int main(int k, char  *argv[]) {
 
   // chargement du bootstrap 
   int adresse  = 0; 
-  chargerProgramme(adresse, "bootstrap");
+  chargerProgramme(adresse, "bootstrap_loader");
 
   // saisie de l'adresse de la premiere instruction
   printf("veuillez entrer l'adresse de la première instruction du programme : ");
@@ -61,8 +61,12 @@ int main(int k, char  *argv[]) {
 
     // execution de l'opération
     incrementerPC();
-    needIncrement = executer(opCode); 
+    needIncrement = executer(opCode);
+
+    // affichage en console
+    #ifndef NO_DEBUG
     afficherRegistre(); 
+    #endif
 
     // appuyer sur 'Enter' pour validation 
     #ifdef STEPPER

@@ -17,13 +17,14 @@ typedef char Hexa ;                          // definition du type Hexadecimal
 typedef char * str ;                         // definition du type str 
 
 // Allocation d'espace pour la mémoire et les registres 
-Hexa * memoire[TAILLE_MEMOIRE];           // --> la barette memoire (ressource de l'ordinateur)
-Hexa PC[TAILLE_DATA];                     // --> registre Program Counter
-Hexa A[TAILLE_DATA];                      // --> registre Accumulateur
-Hexa lib[1024];                           // --> le mnémonique de l'opération en cours 
+long int memoire[TAILLE_MEMOIRE];        // --> la barette memoire (ressource de l'ordinateur)
+long int PC;                             // --> registre Program Counter
+long int A;                                       // --> registre Accumulateur
+char lib[1024];                              // --> le mnémonique de l'opération en cours 
 
 // inclusion des headers
 #include "fonctions.h"        
+
 
 /*______________________________________________________________________________
 
@@ -40,7 +41,7 @@ int main(int k, char  *argv[]) {
 
   // chargement du bootstrap 
   int adresse  = 0; 
-  chargerProgramme(adresse, "bootstrap");
+  chargerProgramme(adresse, "bootstrap_loader");
 
   // saisie de l'adresse de la premiere instruction
   printf("veuillez entrer l'adresse de la première instruction du programme : ");
@@ -57,12 +58,16 @@ int main(int k, char  *argv[]) {
   int needIncrement = 1;
   do{
     // lecture du code opération 
-    int opCode = hexaToInt(memoire[hexaToInt(PC)]);
+    int opCode = memoire[PC];
 
     // execution de l'opération
     incrementerPC();
-    needIncrement = executer(opCode); 
+    needIncrement = executer(opCode);
+
+    // affichage en console
+    #ifndef NO_DEBUG
     afficherRegistre(); 
+    #endif
 
     // appuyer sur 'Enter' pour validation 
     #ifdef STEPPER
@@ -71,11 +76,10 @@ int main(int k, char  *argv[]) {
 
     if (needIncrement == 1) incrementerPC();
 
-  } while (strcasecmp(PC , "00"));  // fin du programme quand on jump sur 00
+  } while (PC);  // fin du programme quand on jump sur 00
   
-  puts("");
+  puts(""); 
   return 0;
 }
-
 
 

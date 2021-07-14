@@ -1,0 +1,83 @@
+Adresse     Adresse     code    mnémonique              commentaire
+(base 10)   (hexa)
+// ecriture de resultat
+40          28          00      LOAD # 00               charger 00 dans l'accumulateur 
+41          29          00      
+42          2A          48      STORE α 60              ecrire zero dans le résultat (adresse 60)
+43          2B          60
+
+// ecriture de nb1
+44          2C          49      IN α 61                 entrer NB1 (adresse 61)
+45          2D          61
+
+
+// sortie si numerateur = 0
+46          2E          40      LOAD α 61               charger NB1 dans l'accumulateur
+47          2F          61
+48          30          12      BRZ α 50                si NB1 = 0, on sort en affichant le résultat (ici zéro)
+49          31          50                                          (correspond à un numérateur à zero)
+
+// ecriture de nb2
+50          32          49      IN α 62                 entrer NB2
+51          33          62
+
+// sortie si denom = 0
+52          34          40      LOAD α 62               charger NB2 dans l'accumulateur
+53          35          62
+54          36          12      BRZ α 50                si NB2 = 0, on sort en affichant le résultat
+55          37          50
+
+
+// ecriture de b (NB2-NB1)
+56          38          40      LOAD α 61               charger NB1 dans l'accumulateur
+57          39          61
+58          3A          61      SUB α 62                décrémenter NB2
+59          3B          62
+60          3C          48      STORE α 63              ecrire b en copie (adresse 60)
+61          3D          63
+
+
+
+
+
+
+
+
+// tant que Copie de b  > 0
+
+// sortie si denom = 0
+62          3E          40      LOAD α 63               charger B dans l'accumulateur
+63          3F          63
+64          40          11      BRN α 50                si B = 0, on sort en affichant le résultat
+65          41          50
+
+// incrémentation de resultat
+66          42          40      LOAD α 60               charger resultat dans l'accumulateur
+67          43          60
+68          44          20      ADD # 01                incrémenter le résultat
+69          45          01
+70          46          48      STORE α 60              écraser la valeur du résultat par sa nouvelle valeur
+71          47          60
+
+// soustraction de NB1 à B
+72          48          40      LOAD α 63               charger B dans l'accumulateur
+73          49          63
+74          4A          61      SUB α 62                soustraire NB2
+75          4B          62
+76          4C          48      STORE α 63              écraser la valeur de B par sa nouvelle valeur
+77          4D          63
+
+// nouveau tour de boucle
+78          4E          10      JUMP 3E                 brancher sur 40 (nouveau tour de boucle)
+79          4F          3E 
+
+
+
+
+// affichage du résultat 
+80          50          41      OUT α 60                afficher le résultat
+81          51          60
+
+// sortie 
+82          52          10      JUMP 00                 sortir du programme
+83          53          00
