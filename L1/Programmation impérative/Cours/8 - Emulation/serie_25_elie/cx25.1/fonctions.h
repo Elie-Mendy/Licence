@@ -16,6 +16,22 @@ void stepper() {
   while((c =getchar()) != '\n') ;
 }
 
+/*  fonction: lireSaisieUtilisateur()
+    objectif: capturer une saisie utilisateur sans le '\n'  */
+int lireSaisieUtilisateur(char * mot, int taille){
+  if (fgets(mot, taille, stdin)){
+    char * caractere = strchr(mot,'\n');
+    if (caractere)
+      *caractere = '\0';
+
+    while(getchar() != '\n' && getchar() != EOF);
+    return 1;
+  }
+  while(getchar() != '\n' && getchar() != EOF);
+  return 0; // si impossible delire la saisie
+}
+
+
 /*  fonction: initialiserRegistres()
     objectif: attribuer une valeur initiale aux différents registres */
 void initialiserRegistres(int adresse){
@@ -143,3 +159,37 @@ void incrementerPC(){
 void afficherRegistre() {
   printf("\nPC: %lx \t | A: %li \t| %s %lx \t    ? " , PC, A, lib , memoire[PC]); 
 }
+
+/*  fonction: executerIstruction()
+*/
+void executerIstruction(int ctrlBreakpoint) {
+
+    // si un breakPoint est reperé un sort
+    if (ctrlBreakpoint()) return ;
+
+      // lecture du code opération 
+    int opCode = memoire[PC];
+
+    // execution de l'opération
+    incrementerPC();
+    needIncrement = executer(opCode);
+
+    // affichage en console
+    #ifndef NO_DEBUG
+    afficherRegistre(); 
+    #endif
+
+    // appuyer sur 'Enter' pour validation 
+    #ifdef STEPPER
+    stepper();
+    #endif
+
+    if (needIncrement == 1) incrementerPC();
+}
+
+// TODO developper les fonctions suivantes 
+//lire 
+//addBreackpoint
+//removeBreackpoint
+//ctrlBreakpoint
+//afficherHelp
