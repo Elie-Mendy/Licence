@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h> 
+
 /*______________________________________________________________________________
 
         DEFINITION FONCTIONS DE L'EMULATEUR : ORDINATEUR EN PAPIER
@@ -16,20 +20,7 @@ void stepper() {
   while((c =getchar()) != '\n') ;
 }
 
-/*  fonction: lireSaisieUtilisateur()
-    objectif: capturer une saisie utilisateur sans le '\n'  */
-int lireSaisieUtilisateur(char * mot, int taille){
-  if (fgets(mot, taille, stdin)){
-    char * caractere = strchr(mot,'\n');
-    if (caractere)
-      *caractere = '\0';
 
-    while(getchar() != '\n' && getchar() != EOF);
-    return 1;
-  }
-  while(getchar() != '\n' && getchar() != EOF);
-  return 0; // si impossible delire la saisie
-}
 
 
 /*  fonction: initialiserRegistres()
@@ -157,18 +148,94 @@ void incrementerPC(){
       - afficher l'etat des registres à chaque execution
 */
 void afficherRegistre() {
-  printf("\nPC: %lx \t | A: %li \t| %s %lx \t    ? " , PC, A, lib , memoire[PC]); 
+  printf("\nPC: %lx \t | A: %li \t| %s %lx \t    \n" , PC, A, lib , memoire[PC]); 
 }
+
+
+//TODO remoce cette fonction 
+void afficherSaisie() {
+  for (int i = 0 ; i < 3; i++)
+    printf("lcd[%i] = %s\n", i, ldc[i]);
+}
+//TODO remoce cette fonction 
+void afficherBreackpoints() {
+  puts("");
+  for (int i = 0 ; breakpoints[i] && i <  NB_BREAKPOINTS ; i++)
+    printf("break[%i] = %s\n", i, breakpoints[i]);
+  puts("");
+}
+
+
+/*  fonction: lireSaisieUtilisateur()
+    objectif: enregistrer la saisie utilisateur dans un vecteur de mots
+*/
+void parserSaisieUtilisateur(char * mot){
+  
+  // si ce n'est pas la chaine vide
+  int i = 0;
+  while (i < 4  && mot){  
+    ldc[i++] =  strdup(mot);  
+    mot = strtok(NULL, " \n"); // continuer sur le mot suivant
+  }
+}
+
+/*  fonction: addBreackpoint()
+    objectif: ajouter un code opératoire a la liste des breackpoints
+*/
+void addBreackpoint(char * mot){
+  int i = 0;
+
+  while (breakpoints[i++]) {
+    if (!strcmp(breakpoints[i - 1] , mot)) {
+      printf("vous avez déjà ajouté ce breakpoint\n") ; 
+      return;
+    }
+  }
+  breakpoints[i - 1] = strdup(mot);
+
+}
+
+/*  fonction: removeBreackpoint()
+    objectif: retirer un code opératoire de la liste des breakpoint
+*/
+void removeBreackpoint(char * mot){
+  int i = 0;
+  while (breakpoints[i]) {
+    printf("test : %i\n", !strcmp(breakpoints[i] , mot));
+    if (! strcmp(breakpoints[i++] , mot)) breakpoints[i - 1] = NULL;
+  } 
+  
+}
+
+int ctrlBreakpoint(long int instruction) {
+  char convertedOpCode[33];
+  sprintf(convertedOpCode, "%lx", instruction);
+
+  for (int i = 0 ; i < NB_BREAKPOINTS ; i ++) 
+    if (breakpoints[i] && ! strcmp(breakpoints[i] , convertedOpCode)) {
+      return 1;
+    }
+  return 0;
+}
+
+
+
+
 
 /*  fonction: executerIstruction()
 */
-void executerIstruction(int ctrlBreakpoint) {
+void executerIstruction(int checkBreakpoints) {
+
+    // lecture du code opération 
+    int opCode = memoire[PC];
 
     // si un breakPoint est reperé un sort
-    if (ctrlBreakpoint()) return ;
-
-      // lecture du code opération 
-    int opCode = memoire[PC];
+    if (checkBreakpoints && ctrlBreakpoint(opCode)) {
+      printf("Un breakpoint a été rencontré\n");
+      run = 0;
+      prompt = 1;
+      return;
+    }
 
     // execution de l'opération
     incrementerPC();
@@ -187,9 +254,14 @@ void executerIstruction(int ctrlBreakpoint) {
     if (needIncrement == 1) incrementerPC();
 }
 
+void afficherHelp() {
+  FILE * help = fopen("help.txt", "r");
+  if (! help) usage("erreur de lecture du fichier 'help.txt'");
+
+  int c = 0;
+  while((c = fgetc(help)) != EOF) fputc(c , stdout);
+}
+
 // TODO developper les fonctions suivantes 
-//lire 
-//addBreackpoint
-//removeBreackpoint
-//ctrlBreakpoint
 //afficherHelp
+// Wording pour le breakpoint (add remove et ctrl)
