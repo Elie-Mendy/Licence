@@ -22,8 +22,8 @@ long int PC;                             // --> registre Program Counter
 long int A;                                       // --> registre Accumulateur
 char lib[1024];                              // --> le mnémonique de l'opération en cours 
 
-// inclusion des headers
-#include "fonctions.h"        
+// inclusion des  fonctions
+#include "fonctions.c"        
 
 
 /*______________________________________________________________________________

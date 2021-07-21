@@ -9,6 +9,10 @@ ______________________________________________________________________________*/
 void usage(str message) { fprintf(stderr, "Usage : %s\n", message), exit(1) ;}
 
 
+void viderBuffer(){
+  while(getchar() != '\n');
+} 
+
 /*  fonction: initialiserRegistres()
     objectif: attribuer une valeur initiale aux différents registres */
 void initialiserRegistres(int adresse){
@@ -94,9 +98,9 @@ int executer(int code) {
   // ENTREE / SORTIES
   //
   // IN α  49
-  case 73: printf("\n\nveuillez entrer une donnée: ") ; scanf("%li", &memoire[memoire[PC]]); strcpy(lib, "IN α "); break;
+  case 73: printf("\n\nveuillez entrer une donnée: ") ; scanf("%li", &memoire[memoire[PC]]); viderBuffer(); strcpy(lib, "IN α "); break;
   // IN *α C9
-  case 201: printf("\n\nveuillez entrer une donnée: ") ; scanf("%li", &memoire[memoire[memoire[PC]]]) ; strcpy(lib, "IN *α"); break;
+  case 201: printf("\n\nveuillez entrer une donnée: ") ; scanf("%li", &memoire[memoire[memoire[PC]]]) ; viderBuffer(); strcpy(lib, "IN *α"); break;
   // OUT α 41
   case 65: printf("\n\nValeur de sortie : %li\n", memoire[memoire[PC]]); strcpy(lib, "OUT α "); break;
   // OUT *α C1

@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h> 
-
 /*______________________________________________________________________________
 
         DEFINITION FONCTIONS DE L'EMULATEUR : ORDINATEUR EN PAPIER
@@ -12,16 +8,11 @@ ______________________________________________________________________________*/
     parametres: une string (le messages à renvoyer)*/
 void usage(str message) { fprintf(stderr, "Usage : %s\n", message), exit(1) ;}
 
-/*  fonction: stepper()
-    objectif: permettre a l'utilisateur d'utiliser la touche 'Enter'
-              pour passer une instruction */
-void stepper() {
-  char c = 0;
-  while((c =getchar()) != '\n') ;
-}
-
-
-
+/*  fonction: viderBuffer()
+    objectif: vide le buffer après une saisie utilisateur*/
+void viderBuffer(){
+  while(getchar() != '\n');
+} 
 
 /*  fonction: initialiserRegistres()
     objectif: attribuer une valeur initiale aux différents registres */
@@ -35,7 +26,6 @@ void initialiserRegistres(int adresse){
 /*  fonction: chargerProgramme()
     objectif: 
       - ecrit le programme dans la mémoire 
-      - sans passer par le bootstrap manuel
     parametres: 
       - un entier 
         (l'adresse de la premiere instruction du programme en memoire)
@@ -108,9 +98,9 @@ int executer(int code) {
   // ENTREE / SORTIES
   //
   // IN α  49
-  case 73: printf("\n\nveuillez entrer une donnée: ") ; scanf("%li", &memoire[memoire[PC]]); strcpy(lib, "IN α "); break;
+  case 73: printf("\n\nveuillez entrer une donnée: ") ; scanf("%li", &memoire[memoire[PC]]); viderBuffer(); strcpy(lib, "IN α "); break;
   // IN *α C9
-  case 201: printf("\n\nveuillez entrer une donnée: ") ; scanf("%li", &memoire[memoire[memoire[PC]]]) ; strcpy(lib, "IN *α"); break;
+  case 201: printf("\n\nveuillez entrer une donnée: ") ; scanf("%li", &memoire[memoire[memoire[PC]]]) ; viderBuffer(); strcpy(lib, "IN *α"); break;
   // OUT α 41
   case 65: printf("\n\nValeur de sortie : %li\n", memoire[memoire[PC]]); strcpy(lib, "OUT α "); break;
   // OUT *α C1
@@ -135,13 +125,6 @@ int executer(int code) {
   return 1; 
 }
 
-/*  fonction: incrementerPC()
-    objectif: 
-      - increpenter la valeur contenu dans le regitre PC*/
-void incrementerPC(){ 
-  PC ++ ;
-};
-
 
 /*  fonction: afficherRegistre()   
     objectif: 
@@ -151,23 +134,20 @@ void afficherRegistre() {
   printf("\nPC: %lx \t | A: %li \t| %s %lx \t    \n" , PC, A, lib , memoire[PC]); 
 }
 
-
-//TODO remoce cette fonction 
-void afficherSaisie() {
-  for (int i = 0 ; i < 3; i++)
-    printf("lcd[%i] = %s\n", i, ldc[i]);
-}
-//TODO remoce cette fonction 
+/*  fonction: afficherRegistre()   
+    objectif: 
+      - afficher la liste des breackpoints ajoutés
+*/
 void afficherBreackpoints() {
-  puts("");
-  for (int i = 0 ; breakpoints[i] && i <  NB_BREAKPOINTS ; i++)
-    printf("break[%i] = %s\n", i, breakpoints[i]);
+  puts("\n\tListe des breakpoints :");
+  for (int i = 0 ; breakpoints[i]  && i <  NB_BREAKPOINTS ; i++) 
+    if (strcmp(breakpoints[i], "")) printf("\tbreak[%i]: %s\n", i, breakpoints[i]);
   puts("");
 }
 
-
-/*  fonction: lireSaisieUtilisateur()
+/*  fonction: parserSaisieUtilisateur()
     objectif: enregistrer la saisie utilisateur dans un vecteur de mots
+    parametres : une chaine (la ligne a parser)
 */
 void parserSaisieUtilisateur(char * mot){
   
@@ -181,13 +161,14 @@ void parserSaisieUtilisateur(char * mot){
 
 /*  fonction: addBreackpoint()
     objectif: ajouter un code opératoire a la liste des breackpoints
+    parametres : une chaine (l'instruction a ajouter)
 */
 void addBreackpoint(char * mot){
   int i = 0;
 
   while (breakpoints[i++]) {
     if (!strcmp(breakpoints[i - 1] , mot)) {
-      printf("vous avez déjà ajouté ce breakpoint\n") ; 
+      printf("\n\tVous avez déjà ajouté ce breakpoint\n\n") ; 
       return;
     }
   }
@@ -197,32 +178,36 @@ void addBreackpoint(char * mot){
 
 /*  fonction: removeBreackpoint()
     objectif: retirer un code opératoire de la liste des breakpoint
+    parametres : une chaine (l'instruction a retirer)
 */
 void removeBreackpoint(char * mot){
   int i = 0;
   while (breakpoints[i]) {
-    printf("test : %i\n", !strcmp(breakpoints[i] , mot));
-    if (! strcmp(breakpoints[i++] , mot)) breakpoints[i - 1] = NULL;
+    if (! strcmp(breakpoints[i++] , mot)) breakpoints[i - 1] = "";
   } 
   
 }
 
+/*  fonction: removeBreackpoint()
+    objectif: controle la presence d'une instruction dans la liste des breakpoint
+    parametres : un entier (l'instruction a controler)
+*/
 int ctrlBreakpoint(long int instruction) {
   char convertedOpCode[33];
   sprintf(convertedOpCode, "%lx", instruction);
 
   for (int i = 0 ; i < NB_BREAKPOINTS ; i ++) 
     if (breakpoints[i] && ! strcmp(breakpoints[i] , convertedOpCode)) {
+      printf("\n\tUn breakpoint a été rencontré\n");
+      printf("\tbreak[%i]: %s\n\n", i, breakpoints[i]);
       return 1;
     }
   return 0;
 }
 
-
-
-
-
 /*  fonction: executerIstruction()
+    objectif: encapsuler l'execution d'une instruction 
+    parametres : un entier (indique si l'on prend en compte les breackpoint)
 */
 void executerIstruction(int checkBreakpoints) {
 
@@ -231,27 +216,19 @@ void executerIstruction(int checkBreakpoints) {
 
     // si un breakPoint est reperé un sort
     if (checkBreakpoints && ctrlBreakpoint(opCode)) {
-      printf("Un breakpoint a été rencontré\n");
       run = 0;
       prompt = 1;
       return;
     }
 
     // execution de l'opération
-    incrementerPC();
+    PC++;
     needIncrement = executer(opCode);
 
     // affichage en console
-    #ifndef NO_DEBUG
     afficherRegistre(); 
-    #endif
 
-    // appuyer sur 'Enter' pour validation 
-    #ifdef STEPPER
-    stepper();
-    #endif
-
-    if (needIncrement == 1) incrementerPC();
+    if (needIncrement == 1) PC++;
 }
 
 void afficherHelp() {
@@ -263,5 +240,4 @@ void afficherHelp() {
 }
 
 // TODO developper les fonctions suivantes 
-//afficherHelp
 // Wording pour le breakpoint (add remove et ctrl)
