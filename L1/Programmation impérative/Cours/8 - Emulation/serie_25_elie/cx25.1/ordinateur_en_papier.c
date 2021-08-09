@@ -87,10 +87,11 @@ int main(int k, char  *argv[]) {
       else if (strcasecmp(ldc[0], "run") == 0) { run = 1 ; prompt = 0 ; } 
       else if (strcasecmp(ldc[0], "continue") == 0) { executerIstruction(0) ; run = 1 ; prompt = 0 ;   continue; } 
       else if (strcasecmp(ldc[0], "finish") == 0) { finish = 1 ; prompt = 0 ;}   
-      else if (ldc[0] && strcasecmp(ldc[0], "break") == 0) addBreackpoint(ldc[1]);  
-      else if (ldc[0] && strcasecmp(ldc[0], "disable") == 0) removeBreackpoint(ldc[1]) ;  
+      else if (ldc[0] && strcasecmp(ldc[0], "break") == 0 && ldc[1]) addBreackpoint(ldc[1]);  
+      else if (ldc[0] && strcasecmp(ldc[0], "disable" ) == 0 && ldc[1]) removeBreackpoint(ldc[1]) ;  
       else if (ldc[0] && strcasecmp(ldc[0], "breaklist") == 0) afficherBreackpoints(ldc[1]) ;
-      else if (ldc[0] && strcasecmp(ldc[0], "print") == 0) printf("Valeur de la case %s (en hexadecimal) : %lx \n", ldc[1], memoire[strtol(ldc[1], NULL, 16)]) ; 
+      else if (ldc[0] && strcasecmp(ldc[0], "disable" ) == 0 && ldc[1]) removeBreackpoint(ldc[1]) ;  
+      else if (ldc[0] && strcasecmp(ldc[0], "print") == 0 && ldc[1]) printf("Valeur de la case %s (en hexadecimal) : %lx \n", ldc[1], memoire[strtol(ldc[1], NULL, 16)]) ; 
       else if (ldc[0] && strcasecmp(ldc[0], "help") == 0) afficherHelp();
       else if (ldc[0] && strcasecmp(ldc[0], "quit") == 0) { printf("arrer de l'emulateur\n") ; exit(1); }
       else { printf("Cette commande n'est pas reconnue ... \n"); continue ;}
