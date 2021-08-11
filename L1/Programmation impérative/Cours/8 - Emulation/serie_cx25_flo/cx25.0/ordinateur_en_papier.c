@@ -246,3 +246,33 @@ void incrementerPC(){
 void afficherRegistre() {
   printf("\nPC: %s \t | A: %s \t| %s %s \t    ? " , PC, A, mnemonique , memoire[hexaToInt(PC)]); 
 }
+
+//EXO 25.6
+//TODO simplifier l'initialisation des registres --> declaration direct 
+//TODO faire une fonction d'affichage des mnémoniques.
+//TODO encapsuler l'execution d'une opération dans une fonction (recherche d'op code + incremente PC en debut fonction et dans chaque case appropriés) 
+//TODO comprimer la fonction executer
+//TODO supprimer fonction afficher Registre () --> integrer ça dans l'affichage + changer mecanisme ifDEF NO_DEBUG --> LOGS
+//TODO changer nom fonction et variables 
+//TODO changer style commentaires de fonctions 
+//TODO changer default case executer (wording)
+//TODO changer tailles de structures 
+//TODO refactoring code 
+//TODO gestion de vidage du buffer après chaque saisie pour le cas d'un debug
+
+
+//EXO 25.1
+//TODO ajouter une fonction Stepper à la boucle --> fonctionnalité d'attente de la touche enter
+
+//Exo 25.2
+//TODO recuperation de la saisie (structure ldc + lecture)
+//TODO interpretation de la saisie (parsing)
+//TODO execution commande selon saisie (Switch case cmd)
+//TODO cmd next
+//TODO cmd run
+//TODO cmd print
+//TODO cmd display
+//TODO cmd quit
+
+
+
