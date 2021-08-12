@@ -10,13 +10,13 @@ typedef char * str ;
 
 // inclusion des headers
 void usage(str message);
-void initialiserRegistres(int adresse);
 void loadProgram(int adresse, char * fileName);
 int hexaToInt(Hexa h[3] );
 void intToHexa(Hexa * registre , int code );
-int executer(int code) ;
+void executer(int code) ;
 void incrementerPC();
 void afficherRegistre();   
+void runInstruction();
 
 
 // Allocation d'espace pour la mémoire et les registres 
@@ -42,36 +42,21 @@ int main(int k, char  *argv[]) {
 
   // chargement du bootstrap en memoire
   loadProgram(0, "bootstrap_loader");
-
+  strcpy(A,"00");
   // chargement du programme utilisateur en memoire
   int adresse  = 0; 
   printf("veuillez entrer l'adresse de la première instruction du programme : ");
   scanf("%x", &adresse);  
+  sprintf(PC , "%x", adresse );
 
   // chargement du programme
   loadProgram(adresse, argv[1]);
 
-  // initialisation de PC et A
-  initialiserRegistres(adresse);
 
   
-  // boucle d'execution du programme
-  int needIncrement = 1;
-  
+  // boucle d'execution du programme=
   do{
-    // lecture du code opération 
-    int opCode = hexaToInt(memoire[hexaToInt(PC)]);
-
-    // execution de l'opération
-    incrementerPC();
-    needIncrement = executer(opCode);
-
-    // affichage en console
-    #ifndef NO_DEBUG
-    afficherRegistre(); 
-    #endif
-
-    if (needIncrement == 1) incrementerPC();
+    runInstruction();
 
   } while (strcasecmp(PC , "00"));  // fin du programme quand on jump sur 00
   
@@ -91,14 +76,6 @@ ______________________________________________________________________________*/
     parametres: une string (le messages à renvoyer)*/
 void usage(str message) { fprintf(stderr, "Usage : %s\n", message), exit(1) ;}
 
-/*  fonction: initialiserRegistres()
-    objectif: attribuer une valeur initiale aux différents registres */
-void initialiserRegistres(int adresse){
-  // Program Counter
-  sprintf(PC , "%x", adresse );
-  // unité de calcul
-  strcpy(A,"00");
-}
 
 /*  fonction: loadProgram()
     objectif: 
@@ -159,74 +136,73 @@ void intToHexa(Hexa * registre , int code ){
       - execute l'instruction associé (voir page 111)
     parametres: 
       - un entier (le code associé a une fonction)*/
-int executer(int code) {
+void executer(int code) {
   switch (code){
   //
   // ARITHMETIQUE
   //
   // ADD #  20
-  case 32: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) + strtol(memoire[hexaToInt(PC)], NULL, 10 ))); strcpy(mnemonique, "ADD #"); break;
+  case 32: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) + strtol(memoire[hexaToInt(PC)], NULL, 10 ))); strcpy(mnemonique, "ADD #"); incrementerPC(); break;
   // ADD α  60
-  case 96: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) + strtol(memoire[hexaToInt(memoire[hexaToInt(PC)])], NULL, 10))); strcpy(mnemonique, "ADD α "); break;
+  case 96: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) + strtol(memoire[hexaToInt(memoire[hexaToInt(PC)])], NULL, 10))); strcpy(mnemonique, "ADD α "); incrementerPC(); break;
   // ADD *α E0
-  case 224: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) + strtol(memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])], NULL, 10))); strcpy(mnemonique, "ADD *α"); break;
+  case 224: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) + strtol(memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])], NULL, 10))); strcpy(mnemonique, "ADD *α"); incrementerPC(); break;
   // SUB #  21
-  case 33: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) - strtol(memoire[hexaToInt(PC)], NULL, 10 ))); strcpy(mnemonique, "SUB #"); break;
+  case 33: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) - strtol(memoire[hexaToInt(PC)], NULL, 10 ))); strcpy(mnemonique, "SUB #"); incrementerPC(); break;
   // SUB α  61
-  case 97: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) - strtol(memoire[hexaToInt(memoire[hexaToInt(PC)])], NULL, 10))); strcpy(mnemonique, "SUB α");break;
+  case 97: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) - strtol(memoire[hexaToInt(memoire[hexaToInt(PC)])], NULL, 10))); strcpy(mnemonique, "SUB α"); incrementerPC(); break;
   // SUB *α E1
-  case 225: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) - strtol(memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])], NULL, 10))); strcpy(mnemonique, "SUB *α");break;
+  case 225: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) - strtol(memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])], NULL, 10))); strcpy(mnemonique, "SUB *α"); incrementerPC(); break;
   //
   // LOGIQUE
   //
   // NAND #  22
-  case 34: sprintf(A,"%'.02ld",  ~(strtol(A, NULL, 10) & strtol(memoire[hexaToInt(PC)], NULL, 10 ))); strcpy(mnemonique, "NAND #");break;
+  case 34: sprintf(A,"%'.02ld",  ~(strtol(A, NULL, 10) & strtol(memoire[hexaToInt(PC)], NULL, 10 ))); strcpy(mnemonique, "NAND #"); incrementerPC(); break;
   // NAND α  62
-  case 98: sprintf(A,"%'.02ld",  ~(strtol(A, NULL, 10) & strtol(memoire[hexaToInt(memoire[hexaToInt(PC)])], NULL, 10 ))); strcpy(mnemonique, "NAND α");break;
+  case 98: sprintf(A,"%'.02ld",  ~(strtol(A, NULL, 10) & strtol(memoire[hexaToInt(memoire[hexaToInt(PC)])], NULL, 10 ))); strcpy(mnemonique, "NAND α"); incrementerPC(); break;
   // NAND *α E2
-  case 226: sprintf(A,"%'.02ld",  ~(strtol(A, NULL, 10) & strtol(memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])], NULL, 10 ))); strcpy(mnemonique, "NAND *α");break;
+  case 226: sprintf(A,"%'.02ld",  ~(strtol(A, NULL, 10) & strtol(memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])], NULL, 10 ))); strcpy(mnemonique, "NAND *α"); incrementerPC(); break;
   //
   //  TRANSFERTS
   //
   // LOAD #  00
-  case 0: strcpy(A, memoire[hexaToInt(PC)]); strcpy(mnemonique, "LOAD #");break;
+  case 0: strcpy(A, memoire[hexaToInt(PC)]); strcpy(mnemonique, "LOAD #"); incrementerPC(); break;
   // LOAD α  40
-  case 64: strcpy(A, memoire[hexaToInt(memoire[hexaToInt(PC)])]); strcpy(mnemonique, "LOAD α"); break; 
+  case 64: strcpy(A, memoire[hexaToInt(memoire[hexaToInt(PC)])]); strcpy(mnemonique, "LOAD α"); incrementerPC(); break; 
   // LOAD *α C0
-  case 192: strcpy(A, memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])]); strcpy(mnemonique, "LOAD *α"); break;
+  case 192: strcpy(A, memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])]); strcpy(mnemonique, "LOAD *α"); incrementerPC(); break;
   // STORE α  48
-  case 72: strcpy(memoire[hexaToInt(memoire[hexaToInt(PC)])], A); strcpy(mnemonique, "STORE α"); break;
+  case 72: strcpy(memoire[hexaToInt(memoire[hexaToInt(PC)])], A); strcpy(mnemonique, "STORE α"); incrementerPC(); break;
   // STORE *α C8
-  case 200: strcpy(memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])], A); strcpy(mnemonique, "STORE *α"); break;
+  case 200: strcpy(memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])], A); strcpy(mnemonique, "STORE *α"); incrementerPC(); break;
   //
   // ENTREE / SORTIES
   //
   // IN α  49
-  case 73: printf("\n\nveuillez entrer une donnée: ") ; scanf("%s", memoire[hexaToInt(memoire[hexaToInt(PC)])]) ; strcpy(mnemonique, "IN α "); break;
+  case 73: printf("\n\nveuillez entrer une donnée: ") ; scanf("%s", memoire[hexaToInt(memoire[hexaToInt(PC)])]) ; strcpy(mnemonique, "IN α "); incrementerPC(); break;
   // IN *α C9
-  case 201: printf("\n\nveuillez entrer une donnée: ") ; scanf("%s", memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])]) ; strcpy(mnemonique, "IN *α"); break;
+  case 201: printf("\n\nveuillez entrer une donnée: ") ; scanf("%s", memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])]) ; strcpy(mnemonique, "IN *α"); incrementerPC(); break;
   // OUT α 41
-  case 65: printf("\n\nValeur de sortie : %s\n", memoire[hexaToInt(memoire[hexaToInt(PC)])]); strcpy(mnemonique, "OUT α "); break;
+  case 65: printf("\n\nValeur de sortie : %s\n", memoire[hexaToInt(memoire[hexaToInt(PC)])]); strcpy(mnemonique, "OUT α "); incrementerPC(); break;
   // OUT *α C1
-  case 193: printf("\n\nValeur de sortie : %s\n", memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])]); strcpy(mnemonique, "OUT *α"); break;
+  case 193: printf("\n\nValeur de sortie : %s\n", memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])]); strcpy(mnemonique, "OUT *α"); incrementerPC(); break;
   // 
   // BRANCHEMENT INCONDITIONNEL
   //
   // JUMP α 10
-  case 16: strcpy(PC, memoire[hexaToInt(PC)]); return 0; strcpy(mnemonique, "JUMP α"); break;
+  case 16: strcpy(PC, memoire[hexaToInt(PC)]); strcpy(mnemonique, "JUMP α");  break;
   // 
   // BRANCHEMENT CONDITIONNEL
   //
   // BRN α 11
-  case 17: if (hexaToInt(A) < 0) { strcpy(PC, memoire[hexaToInt(PC)]) ; return 0;} ; strcpy(mnemonique, "BRN α"); break;
+  case 17: if (hexaToInt(A) < 0) { strcpy(PC, memoire[hexaToInt(PC)]); break; } ; strcpy(mnemonique, "BRN α"); incrementerPC(); break;
   // BRZ α 12
-  case 18: if (hexaToInt(A) == 0) { strcpy(PC, memoire[hexaToInt(PC)]) ; return 0;} ; strcpy(mnemonique, "BRZ α "); break;
+  case 18: if (hexaToInt(A) == 0) { strcpy(PC, memoire[hexaToInt(PC)]); break; } ; strcpy(mnemonique, "BRZ α "); incrementerPC(); break;
   default:
-    printf("/!\\ CODE OP %i INNEXISTANT /!\\\n", code);
-    exit(1);
+    printf("code : %i", code);//DEBUG
+    usage("Erreur: un microcode erronné a été evalué");
     break;
-  }
-  return 1; 
+  } 
 }
 
 /*  fonction: incrementerPC()
@@ -247,8 +223,23 @@ void afficherRegistre() {
   printf("\nPC: %s \t | A: %s \t| %s %s \t    ? " , PC, A, mnemonique , memoire[hexaToInt(PC)]); 
 }
 
+
+
+void runInstruction() {
+  // lecture du code opération 
+  int opCode = hexaToInt(memoire[hexaToInt(PC)]);
+
+  // execution de l'opération
+  incrementerPC();
+  executer(opCode);
+
+  // affichage en console
+  #ifndef NO_DEBUG
+  afficherRegistre(); 
+  #endif
+}
+
 //EXO 25.6
-//TODO simplifier l'initialisation des registres --> declaration direct 
 //TODO faire une fonction d'affichage des mnémoniques.
 //TODO encapsuler l'execution d'une opération dans une fonction (recherche d'op code + incremente PC en debut fonction et dans chaque case appropriés) 
 //TODO comprimer la fonction executer
@@ -257,9 +248,8 @@ void afficherRegistre() {
 //TODO changer style commentaires de fonctions 
 //TODO changer default case executer (wording)
 //TODO changer tailles de structures 
-//TODO refactoring code 
 //TODO gestion de vidage du buffer après chaque saisie pour le cas d'un debug
-
+//TODO refactoring code 
 
 //EXO 25.1
 //TODO ajouter une fonction Stepper à la boucle --> fonctionnalité d'attente de la touche enter
