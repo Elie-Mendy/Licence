@@ -31,6 +31,7 @@ Hexa A[3];
 Hexa PC[3];         
 Hexa * memoire[256];         
   
+
 int main(int argc, char  *argv[]) {
   // test du nombre d'arguments
   if (argc < 2) usage("Erreur : manque un argument sur la ldc");
@@ -52,7 +53,7 @@ int main(int argc, char  *argv[]) {
   loadProgram(location, argv[1]);
 
   // message pour l'utilisateur 
-  printf("(Press 'Enter' pour passer à l'instruction suivante) \n");
+  printf("(Appuyez sur la touche 'Entrée' pour passer à l'instruction suivante) \n");
   // execution du programme 
   do{
     runInstruction();
@@ -64,19 +65,19 @@ int main(int argc, char  *argv[]) {
   return 0;
 }
 
-/*  fonction: usage()
-    objectif: impression de messages d'erreur (sur flux stderr)
-    parametres: une string (le messages à renvoyer)*/
+/*
+Nom         : usage
+Objectif    : renvoyer un message d'erreur en conosle et quitter proprement le programme
+Param(s)    : le message a afficher
+*/
 void usage(str message) { fprintf(stderr, "Usage : %s\n", message), exit(1) ;}
 
-/*  fonction: loadProgram()
-    objectif: 
-      - ecrit le programme dans la mémoire 
-      - sans passer par le bootstrap manuel
-    parametres: 
-      - un entier 
-        (l'adresse de la premiere instruction du programme en memoire)
-      - le nom du programme a charger*/
+/*
+Nom         : loadProgram
+Objectif    : charger un programme donné dans la memoire de l'ordinateur en papier
+Param(s)    : - l'adresse de debut de hargement (adresse ehxadecimale)
+              - le nom du fichier a charger
+*/
 void loadProgram(int location, char * nomFichier){  
   FILE * fichier = fopen(nomFichier, "r");
   if (! fichier) usage("Erreur : le programme est illisible ou inexistant");
@@ -92,24 +93,22 @@ void loadProgram(int location, char * nomFichier){
   fclose(fichier);
 };
 
-/*  fonction: hexaToInt()
-    objectif: 
-      - traduit un hexadecimal en int
-    parametres: 
-      - un hexa (l'operande a traduire)
-    retour: 
-      - un entier */
+/*
+Nom         : hexaToInt
+Objectif    : traduit un hexadecimal en int
+Param(s)    : - l'operande a traduire
+Retour      : - l'operande traduis
+*/
 int hexaToInt(Hexa h[3] ){ 
   return strtol(h, NULL, 16);   
 }
 
-/*  fonction: intToHexa()
-    objectif: 
-      - traduit un hexadecimal en int
-    parametres: 
-      - un entier (l'operande a traduire)
-    retour: 
-      - un hexadecimal */
+/*
+Nom         : intToHexa
+Objectif    : traduit un int en Hexa
+Param(s)    : - l'operande a traduire
+Retour      : - l'operande traduis
+*/
 void intToHexa(Hexa * registre , int code ){ 
   Hexa value[3];
   sprintf(value, "%x", code);
@@ -121,12 +120,11 @@ void intToHexa(Hexa * registre , int code ){
   strcpy(registre, value);
 }
 
-/*  fonction: instruction()
-    objectif: 
-      - prend en compte l'op-code entré en parametre 
-      - execute l'instruction associé (voir page 111)
-    parametres: 
-      - un entier (le code associé a une fonction)*/
+/*
+Nom         : instruction
+Objectif    : execute une instruction donnée
+Param(s)    : le code de l'instruction
+*/
 void instruction(int code) {
   switch (code){
   // branchements           [JUMP, BRN@ , BRZ@]
@@ -172,20 +170,32 @@ void instruction(int code) {
   } 
 }
 
-/*  fonction: incrementerPC()
-    objectif: 
-      - increpenter la valeur contenu dans le regitre PC*/
+/*
+Nom         : incrementerPC
+Objectif    : incrementer la valeur contenu dans le regitre PC
+*/
 void incrementerPC(){ 
   int pc = hexaToInt(PC);
   pc ++;
   intToHexa(PC , pc);
 };
 
+/*
+Nom         : stepper
+Objectif    : fait attendre l'appui sur la touche "Entrée"
+*/
 void stepper() {
   char c;
   while((c =getchar()) == '\0');
 }
 
+/*
+Nom         : runInstruction
+Objectif    : lance un cycle complet 
+              - recherche code 
+              - execution instruction
+              - incrementation de PC)
+*/
 void runInstruction() {
   // récuperation du code de l'opération 
   int code = hexaToInt(memoire[hexaToInt(PC)]);
