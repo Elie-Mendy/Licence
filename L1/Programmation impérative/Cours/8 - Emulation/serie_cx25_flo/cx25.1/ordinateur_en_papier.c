@@ -61,11 +61,6 @@ int main(int argc, char  *argv[]) {
 
 
 
-/*______________________________________________________________________________
-
-        DEFINITION FONCTIONS DE L'EMULATEUR : ORDINATEUR EN PAPIER
-______________________________________________________________________________*/
-
 /*  fonction: usage()
     objectif: impression de messages d'erreur (sur flux stderr)
     parametres: une string (le messages à renvoyer)*/
@@ -224,6 +219,7 @@ void runInstruction() {
 /* cx25.01
 //TODO ajouter une fonction Stepper à la boucle --> fonctionnalité d'attente de la touche enter
 //TODO ajouter l'affichage des registres dans fonction runInstruction
+//TODO gestion de vidage du buffer après chaque saisie pour le cas d'un debug
 */
 
 
@@ -232,7 +228,6 @@ void runInstruction() {
 //TODO refactoring code  (flo)
 
 //EXO 25.1
-//TODO gestion de vidage du buffer après chaque saisie pour le cas d'un debug
 //TODO changer style commentaires de fonctions (flo)
 //TODO refactoring code  (flo)
 
@@ -245,6 +240,8 @@ void runInstruction() {
 //TODO cmd print
 //TODO cmd display
 //TODO cmd quit
+//TODO changer style commentaires de fonctions (flo)
+//TODO refactoring code  (flo)
 
 
 

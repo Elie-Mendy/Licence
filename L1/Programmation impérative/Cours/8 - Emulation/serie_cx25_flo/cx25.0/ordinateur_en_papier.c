@@ -59,11 +59,6 @@ int main(int argc, char  *argv[]) {
 
 
 
-/*______________________________________________________________________________
-
-        DEFINITION FONCTIONS DE L'EMULATEUR : ORDINATEUR EN PAPIER
-______________________________________________________________________________*/
-
 /*  fonction: usage()
     objectif: impression de messages d'erreur (sur flux stderr)
     parametres: une string (le messages à renvoyer)*/
