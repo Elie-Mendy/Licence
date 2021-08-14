@@ -141,8 +141,8 @@ void instruction(int code) {
   
   // entrée / sorties       [ IN @, IN *@, OUT @,OUT*@]
   //                        [ 73  , 201  ,  65  , 193 ]
-  case 73: printf("\n\n ==> Entrez une donnée: ") ; scanf("%s", memoire[hexaToInt(memoire[hexaToInt(PC)])]) ; incrementerPC(); break;
-  case 201: printf("\n\n ==> Entrez une donnée: ") ; scanf("%s", memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])]) ; incrementerPC(); break;
+  case 73: printf("\n\n ==> Entrez une donnée: ") ; scanf("%s", memoire[hexaToInt(memoire[hexaToInt(PC)])]) ; while(getchar() != '\n'); incrementerPC(); break;
+  case 201: printf("\n\n ==> Entrez une donnée: ") ; scanf("%s", memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])]) ; while(getchar() != '\n');incrementerPC(); break;
   case 65: printf("\n\nSortie : %s\n", memoire[hexaToInt(memoire[hexaToInt(PC)])]); incrementerPC(); break;
   case 193: printf("\n\nSortie : %s\n", memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])]); incrementerPC(); break;
   
@@ -221,8 +221,9 @@ void runInstruction() {
 //TODO changer default case instruction (wording)
 //TODO supress mnemonique
 */
-/* cx25.0
-
+/* cx25.01
+//TODO ajouter une fonction Stepper à la boucle --> fonctionnalité d'attente de la touche enter
+//TODO ajouter l'affichage des registres dans fonction runInstruction
 */
 
 
@@ -231,9 +232,6 @@ void runInstruction() {
 //TODO refactoring code  (flo)
 
 //EXO 25.1
-// TODO ajouter l'affichage des registres dans fonction runInstruction
-
-//TODO ajouter une fonction Stepper à la boucle --> fonctionnalité d'attente de la touche enter
 //TODO gestion de vidage du buffer après chaque saisie pour le cas d'un debug
 //TODO changer style commentaires de fonctions (flo)
 //TODO refactoring code  (flo)
