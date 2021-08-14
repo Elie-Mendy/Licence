@@ -10,81 +10,55 @@ typedef char * str ;
 
 // inclusion des headers
 void usage(str message);
-void initialiserRegistres(int adresse);
 void loadProgram(int adresse, char * fileName);
 int hexaToInt(Hexa h[3] );
 void intToHexa(Hexa * registre , int code );
-int executer(int code) ;
-void incrementerPC();
-void afficherRegistre();   
+void instruction(int code) ;
+void incrementerPC(); 
+void runInstruction();
 void stepper();
 
-
-// Allocation d'espace pour la mémoire et les registres 
-Hexa * memoire[256];            // --> la barette memoire (ressource de l'ordinateur)
-Hexa PC[3];                     // --> registre Program Counter
-Hexa A[3];                      // --> registre Accumulateur
-Hexa mnemonique[1024];                 // --> le mnémonique de l'opération en cours 
-
+// Ressources de l'ordinateur
+Hexa A[3];                 
+Hexa PC[3];         
+Hexa * memoire[256];         
    
 
-/*______________________________________________________________________________
 
-                    EMULATION DE L'ORDINATEUR EN PAPIER (main) 
-______________________________________________________________________________*/
-
-int main(int k, char  *argv[]) {
+int main(int argc, char  *argv[]) {
   // test du nombre d'arguments
-  if (k < 2) usage("veuillez indiquer le nom du programme a lire");
+  if (argc < 2) usage("Erreur : manque un argument sur la ldc");
 
-  printf("\n\n____________________________________________________________________\n");
-  printf(" Emulateur de l'Ordinateur En Papier \n");
-  printf("____________________________________________________________________\n\n"); 
+  printf("         ORDINATEUR EN PAPIER  - serie 25 \n");
 
-  // chargement du bootstrap en memoire
+  // chargement du bootstrap
   loadProgram(0, "bootstrap_loader");
+  strcpy(A,"00");
 
-  // chargement du programme utilisateur en memoire
-  int adresse  = 0; 
-  printf("veuillez entrer l'adresse de la première instruction du programme : ");
-  scanf("%x", &adresse);  
+  // saisie utilisateur de l'adresse
+  // de la première instruction du programme
+  printf("\nEntrez l'adresse de la première instruction du programme : ");
+  int location  = 0; 
+  scanf("%x", &location);  
+  sprintf(PC , "%x", location );
 
   // chargement du programme
-  loadProgram(adresse, argv[1]);
+  loadProgram(location, argv[1]);
 
-  // initialisation de PC et A
-  initialiserRegistres(adresse);
+  // message pour l'utilisateur 
+  printf("(Press 'Enter' pour passer à l'instruction suivante) \n");
 
-  
-  // boucle d'execution du programme
-  int needIncrement = 1;
-  
+  // execution du programme 
   do{
-    // lecture du code opération 
-    int opCode = hexaToInt(memoire[hexaToInt(PC)]);
-
-    // execution de l'opération
-    incrementerPC();
-    needIncrement = executer(opCode);
-
-    // affichage en console
-    #ifndef NO_DEBUG
-    afficherRegistre(); 
-    #endif
-
-    // appuyer sur 'Enter' pour validation 
-    #ifdef STEPPER
-    char c = 0;
-    while((c =getchar()) != '\n') ;
-    #endif
-
-    if (needIncrement == 1) incrementerPC();
-
-  } while (strcasecmp(PC , "00"));  // fin du programme quand on jump sur 00
+    runInstruction();
+  } while (strcasecmp(PC , "00"));  
+  // pour mettre fin a l'execution du programme 
+  //on prendra la valeur de PC à 00 programme quand on jump sur 00
   
-  puts("");
+  printf("\n\n Merci d'avoir utilisé mon programme \n");
   return 0;
 }
+
 
 
 /*______________________________________________________________________________
@@ -97,14 +71,6 @@ ______________________________________________________________________________*/
     parametres: une string (le messages à renvoyer)*/
 void usage(str message) { fprintf(stderr, "Usage : %s\n", message), exit(1) ;}
 
-/*  fonction: initialiserRegistres()
-    objectif: attribuer une valeur initiale aux différents registres */
-void initialiserRegistres(int adresse){
-  // Program Counter
-  sprintf(PC , "%x", adresse );
-  // unité de calcul
-  strcpy(A,"00");
-}
 
 /*  fonction: loadProgram()
     objectif: 
@@ -114,15 +80,15 @@ void initialiserRegistres(int adresse){
       - un entier 
         (l'adresse de la premiere instruction du programme en memoire)
       - le nom du programme a charger*/
-void loadProgram(int adresse, char * fileName){  
-  FILE * fichier = fopen(fileName, "r");
+void loadProgram(int location, char * nomFichier){  
+  FILE * fichier = fopen(nomFichier, "r");
   if (! fichier) usage("Erreur : le programme est illisible ou inexistant");
-  int i = adresse;
-  char lu = '\0';
-  while (lu != EOF && i < 256){
+  int i = location;
+  char caractere = '\0';
+  while (caractere != EOF && i < 256){
     char data[3];               
-    lu = fscanf(fichier, "%s ", data);
-    if (lu != EOF){
+    caractere = fscanf(fichier, "%s ", data);
+    if (caractere != EOF){
       memoire[i++] = strdup(data);
       }
     }
@@ -159,80 +125,55 @@ void intToHexa(Hexa * registre , int code ){
 }
 
 
-/*  fonction: executer()
+/*  fonction: instruction()
     objectif: 
       - prend en compte l'op-code entré en parametre 
       - execute l'instruction associé (voir page 111)
     parametres: 
       - un entier (le code associé a une fonction)*/
-int executer(int code) {
+void instruction(int code) {
   switch (code){
-  //
-  // ARITHMETIQUE
-  //
-  // ADD #  20
-  case 32: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) + strtol(memoire[hexaToInt(PC)], NULL, 10 ))); strcpy(mnemonique, "ADD #"); break;
-  // ADD α  60
-  case 96: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) + strtol(memoire[hexaToInt(memoire[hexaToInt(PC)])], NULL, 10))); strcpy(mnemonique, "ADD α "); break;
-  // ADD *α E0
-  case 224: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) + strtol(memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])], NULL, 10))); strcpy(mnemonique, "ADD *α"); break;
-  // SUB #  21
-  case 33: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) - strtol(memoire[hexaToInt(PC)], NULL, 10 ))); strcpy(mnemonique, "SUB #"); break;
-  // SUB α  61
-  case 97: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) - strtol(memoire[hexaToInt(memoire[hexaToInt(PC)])], NULL, 10))); strcpy(mnemonique, "SUB α");break;
-  // SUB *α E1
-  case 225: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) - strtol(memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])], NULL, 10))); strcpy(mnemonique, "SUB *α");break;
-  //
-  // LOGIQUE
-  //
-  // NAND #  22
-  case 34: sprintf(A,"%'.02ld",  ~(strtol(A, NULL, 10) & strtol(memoire[hexaToInt(PC)], NULL, 10 ))); strcpy(mnemonique, "NAND #");break;
-  // NAND α  62
-  case 98: sprintf(A,"%'.02ld",  ~(strtol(A, NULL, 10) & strtol(memoire[hexaToInt(memoire[hexaToInt(PC)])], NULL, 10 ))); strcpy(mnemonique, "NAND α");break;
-  // NAND *α E2
-  case 226: sprintf(A,"%'.02ld",  ~(strtol(A, NULL, 10) & strtol(memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])], NULL, 10 ))); strcpy(mnemonique, "NAND *α");break;
-  //
-  //  TRANSFERTS
-  //
-  // LOAD #  00
-  case 0: strcpy(A, memoire[hexaToInt(PC)]); strcpy(mnemonique, "LOAD #");break;
-  // LOAD α  40
-  case 64: strcpy(A, memoire[hexaToInt(memoire[hexaToInt(PC)])]); strcpy(mnemonique, "LOAD α"); break; 
-  // LOAD *α C0
-  case 192: strcpy(A, memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])]); strcpy(mnemonique, "LOAD *α"); break;
-  // STORE α  48
-  case 72: strcpy(memoire[hexaToInt(memoire[hexaToInt(PC)])], A); strcpy(mnemonique, "STORE α"); break;
-  // STORE *α C8
-  case 200: strcpy(memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])], A); strcpy(mnemonique, "STORE *α"); break;
-  //
-  // ENTREE / SORTIES
-  //
-  // IN α  49
-  case 73: printf("\n\nveuillez entrer une donnée: ") ; scanf("%s", memoire[hexaToInt(memoire[hexaToInt(PC)])]) ; strcpy(mnemonique, "IN α "); break;
-  // IN *α C9
-  case 201: printf("\n\nveuillez entrer une donnée: ") ; scanf("%s", memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])]) ; strcpy(mnemonique, "IN *α"); break;
-  // OUT α 41
-  case 65: printf("\n\nValeur de sortie : %s\n", memoire[hexaToInt(memoire[hexaToInt(PC)])]); strcpy(mnemonique, "OUT α "); break;
-  // OUT *α C1
-  case 193: printf("\n\nValeur de sortie : %s\n", memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])]); strcpy(mnemonique, "OUT *α"); break;
-  // 
-  // BRANCHEMENT INCONDITIONNEL
-  //
-  // JUMP α 10
-  case 16: strcpy(PC, memoire[hexaToInt(PC)]); return 0; strcpy(mnemonique, "JUMP α"); break;
-  // 
-  // BRANCHEMENT CONDITIONNEL
-  //
-  // BRN α 11
-  case 17: if (hexaToInt(A) < 0) { strcpy(PC, memoire[hexaToInt(PC)]) ; return 0;} ; strcpy(mnemonique, "BRN α"); break;
-  // BRZ α 12
-  case 18: if (hexaToInt(A) == 0) { strcpy(PC, memoire[hexaToInt(PC)]) ; return 0;} ; strcpy(mnemonique, "BRZ α "); break;
+  // branchements           [JUMP, BRN@ , BRZ@]
+  //                        [ 17 ,  18  ,  19 ]
+  case 16: strcpy(PC, memoire[hexaToInt(PC)]);  break;
+  case 17: if (hexaToInt(A) < 0) { strcpy(PC, memoire[hexaToInt(PC)]); break; } ; incrementerPC(); break;
+  case 18: if (hexaToInt(A) == 0) { strcpy(PC, memoire[hexaToInt(PC)]); break; } ; incrementerPC(); break;
+  
+  // entrée / sorties       [ IN @, IN *@, OUT @,OUT*@]
+  //                        [ 73  , 201  ,  65  , 193 ]
+  case 73: printf("\n\n ==> Entrez une donnée: ") ; scanf("%s", memoire[hexaToInt(memoire[hexaToInt(PC)])]) ; incrementerPC(); break;
+  case 201: printf("\n\n ==> Entrez une donnée: ") ; scanf("%s", memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])]) ; incrementerPC(); break;
+  case 65: printf("\n\nSortie : %s\n", memoire[hexaToInt(memoire[hexaToInt(PC)])]); incrementerPC(); break;
+  case 193: printf("\n\nSortie : %s\n", memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])]); incrementerPC(); break;
+  
+  // transfert de données   [LOAD,LOAD@,LOAD*@,STORE@,STORE*@]
+  //                        [ 00 ,  64 , 192  ,  72  ,  200  ]
+  case 0: strcpy(A, memoire[hexaToInt(PC)]); incrementerPC(); break;
+  case 64: strcpy(A, memoire[hexaToInt(memoire[hexaToInt(PC)])]); incrementerPC(); break; 
+  case 192: strcpy(A, memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])]);  incrementerPC(); break;
+  case 72: strcpy(memoire[hexaToInt(memoire[hexaToInt(PC)])], A); incrementerPC(); break;
+  case 200: strcpy(memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])], A); incrementerPC(); break;
+  
+  // calculs arithmétiques  [ADD,ADD@,ADD*@,SUB,SUB@,SUB*@]
+  //                        [ 32, 96 , 224 , 33, 97 , 225 ]
+  case 32: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) + strtol(memoire[hexaToInt(PC)], NULL, 10 ))); incrementerPC(); break;
+  case 96: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) + strtol(memoire[hexaToInt(memoire[hexaToInt(PC)])], NULL, 10))); incrementerPC(); break;
+  case 224: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) + strtol(memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])], NULL, 10))); incrementerPC(); break;
+  case 33: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) - strtol(memoire[hexaToInt(PC)], NULL, 10 ))); incrementerPC(); break;
+  case 97: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) - strtol(memoire[hexaToInt(memoire[hexaToInt(PC)])], NULL, 10))); incrementerPC(); break;
+  case 225: sprintf(A,"%'.02ld",  (strtol(A, NULL, 10) - strtol(memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])], NULL, 10))); incrementerPC(); break;
+  
+  // connecteurs logiques   [NAND,NAND@,NAND*@,]
+  //                        [ 34 , 98  , 226   ]
+  case 34: sprintf(A,"%'.02ld",  ~(strtol(A, NULL, 10) & strtol(memoire[hexaToInt(PC)], NULL, 10 ))); incrementerPC(); break;
+  case 98: sprintf(A,"%'.02ld",  ~(strtol(A, NULL, 10) & strtol(memoire[hexaToInt(memoire[hexaToInt(PC)])], NULL, 10 ))); incrementerPC(); break;
+  case 226: sprintf(A,"%'.02ld",  ~(strtol(A, NULL, 10) & strtol(memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])], NULL, 10 ))); incrementerPC(); break;
+  
+  // sortie si erreur de code operatoire
   default:
-    printf("/!\\ CODE OP %i INNEXISTANT /!\\\n", code);
-    exit(1);
+    usage("Erreur: un microcode erronné a été evalué");
     break;
-  }
-  return 1; 
+  } 
 }
 
 /*  fonction: incrementerPC()
@@ -245,10 +186,68 @@ void incrementerPC(){
 };
 
 
-/*  fonction: afficherRegistre()   
-    objectif: 
-      - afficher l'etat des registres à chaque execution
-*/
-void afficherRegistre() {
-  printf("\nPC: %s \t | A: %s \t| %s %s \t    ? " , PC, A, mnemonique , memoire[hexaToInt(PC)]); 
+
+void stepper() {
+  char c;
+  while((c =getchar()) == '\0');
 }
+
+
+void runInstruction() {
+  // récuperation du code de l'opération 
+  int code = hexaToInt(memoire[hexaToInt(PC)]);
+
+  // execution de l'opération
+  incrementerPC();
+  instruction(code);
+
+  // affichage des valeurs de PC et A
+  printf("\nPC: %s \t\t A: %s  " , PC, A); 
+
+  // attente de la asisie de la touche [Enter]
+  stepper();
+
+  // vidage du buffer 
+}
+
+
+
+//DONE
+/* cx25.0
+//TODO encapsuler l'execution d'une opération dans une fonction (recherche d'op code + incremente PC en debut fonction et dans chaque case appropriés) 
+//TODO comprimer la fonction instruction
+//TODO suppress affichage registre dans cx25.0
+//TODO changer nom fonction et variables 
+//TODO changer default case instruction (wording)
+//TODO supress mnemonique
+*/
+/* cx25.0
+
+*/
+
+
+//EXO 25.0
+//TODO changer style commentaires de fonctions (flo)
+//TODO refactoring code  (flo)
+
+//EXO 25.1
+// TODO ajouter l'affichage des registres dans fonction runInstruction
+
+//TODO ajouter une fonction Stepper à la boucle --> fonctionnalité d'attente de la touche enter
+//TODO gestion de vidage du buffer après chaque saisie pour le cas d'un debug
+//TODO changer style commentaires de fonctions (flo)
+//TODO refactoring code  (flo)
+
+//Exo 25.2
+//TODO recuperation de la saisie (structure ldc + lecture)
+//TODO interpretation de la saisie (parsing)
+//TODO execution commande selon saisie (Switch case cmd)
+//TODO cmd next
+//TODO cmd run
+//TODO cmd print
+//TODO cmd display
+//TODO cmd quit
+
+
+
+
