@@ -210,17 +210,12 @@ void incrementerPC(){
 void runInstruction() {
   // récuperation du code de l'opération 
   int code = hexaToInt(memoire[hexaToInt(PC)]);
-
   // execution de l'opération
   incrementerPC();
   instruction(code);
-
   // affichage des valeurs de PC et A
   if(!runMode) printf("\n\tPC: %s \t\t A: %s  \n\n" , PC, A); 
   else printf("\tPC: %s \t\t A: %s\n" , PC, A); 
-
-  // attente de la asisie de la touche [Enter]
-  //stepper();
 }
 
 void runCommand() {

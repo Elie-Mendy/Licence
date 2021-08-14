@@ -22,9 +22,7 @@ void stepper();
 Hexa A[3];                 
 Hexa PC[3];         
 Hexa * memoire[256];         
-   
-
-
+  
 int main(int argc, char  *argv[]) {
   // test du nombre d'arguments
   if (argc < 2) usage("Erreur : manque un argument sur la ldc");
@@ -47,7 +45,6 @@ int main(int argc, char  *argv[]) {
 
   // message pour l'utilisateur 
   printf("(Press 'Enter' pour passer à l'instruction suivante) \n");
-
   // execution du programme 
   do{
     runInstruction();
@@ -59,13 +56,10 @@ int main(int argc, char  *argv[]) {
   return 0;
 }
 
-
-
 /*  fonction: usage()
     objectif: impression de messages d'erreur (sur flux stderr)
     parametres: une string (le messages à renvoyer)*/
 void usage(str message) { fprintf(stderr, "Usage : %s\n", message), exit(1) ;}
-
 
 /*  fonction: loadProgram()
     objectif: 
@@ -118,7 +112,6 @@ void intToHexa(Hexa * registre , int code ){
   // attribution de la nouvelle valeur au registre
   strcpy(registre, value);
 }
-
 
 /*  fonction: instruction()
     objectif: 
@@ -180,25 +173,19 @@ void incrementerPC(){
   intToHexa(PC , pc);
 };
 
-
-
 void stepper() {
   char c;
   while((c =getchar()) == '\0');
 }
 
-
 void runInstruction() {
   // récuperation du code de l'opération 
   int code = hexaToInt(memoire[hexaToInt(PC)]);
-
   // execution de l'opération
   incrementerPC();
   instruction(code);
-
   // affichage des valeurs de PC et A
   printf("PC: %s \t\t A: %s  " , PC, A); 
-
   // attente de la asisie de la touche [Enter]
   stepper();
 

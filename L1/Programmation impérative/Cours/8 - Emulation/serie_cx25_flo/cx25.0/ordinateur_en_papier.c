@@ -17,14 +17,10 @@ void instruction(int code) ;
 void incrementerPC(); 
 void runInstruction();
 
-
 // Ressources de l'ordinateur
 Hexa A[3];                 
 Hexa PC[3];         
 Hexa * memoire[256];         
-
-   
-
 
 int main(int argc, char  *argv[]) {
   // test du nombre d'arguments
@@ -57,13 +53,10 @@ int main(int argc, char  *argv[]) {
   return 0;
 }
 
-
-
 /*  fonction: usage()
     objectif: impression de messages d'erreur (sur flux stderr)
     parametres: une string (le messages à renvoyer)*/
 void usage(str message) { fprintf(stderr, "Usage : %s\n", message), exit(1) ;}
-
 
 /*  fonction: loadProgram()
     objectif: 
@@ -116,7 +109,6 @@ void intToHexa(Hexa * registre , int code ){
   // attribution de la nouvelle valeur au registre
   strcpy(registre, value);
 }
-
 
 /*  fonction: instruction()
     objectif: 
@@ -177,11 +169,6 @@ void incrementerPC(){
   pc ++;
   intToHexa(PC , pc);
 };
-
-
-
-
-
 
 void runInstruction() {
   // récuperation du code de l'opération 
