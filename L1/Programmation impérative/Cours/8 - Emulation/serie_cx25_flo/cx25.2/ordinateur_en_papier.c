@@ -237,7 +237,7 @@ Objectif    : lance la commande saisie par l'utilisateur
 */
 void runCommand() {
   if (strcasecmp(commande[0], "next") == 0) runInstruction();
-  else if (commande[0] && strcasecmp(commande[0], "print") == 0 && commande[1]) printf("memoire[%s] : %s \n", commande[1], memoire[hexaToInt(commande[1])] ) ; 
+  else if (commande[0] && strcasecmp(commande[0], "print") == 0 && commande[1]) printf("\n\tmemoire[%s] : %s \n\n", commande[1], memoire[hexaToInt(commande[1])] ) ; 
   else if (strcasecmp(commande[0], "run") == 0) runMode = 1; 
   else if (strcasecmp(commande[0], "quit") == 0) { printf("\n\n\tFin de l'execution du programme\n\n") ; exit(1); }
   else { printf("La commande n'est pas connue \n");}
