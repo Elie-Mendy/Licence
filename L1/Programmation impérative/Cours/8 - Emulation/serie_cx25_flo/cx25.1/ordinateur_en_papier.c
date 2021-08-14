@@ -38,8 +38,8 @@ int main(int argc, char  *argv[]) {
 
   printf("         ORDINATEUR EN PAPIER  - serie 25 \n");
 
-  // chargement du bootstrap
-  loadProgram(0, "bootstrap_loader");
+  // remplissage de la memoire de zero
+  for (int i = 0 ; i < 256 ; i++ ) memoire[i] = strdup("00");
   strcpy(A,"00");
 
   // saisie utilisateur de l'adresse
