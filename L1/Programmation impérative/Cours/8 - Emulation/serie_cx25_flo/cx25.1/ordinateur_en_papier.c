@@ -138,8 +138,8 @@ void instruction(int code) {
   //                        [ 73  , 201  ,  65  , 193 ]
   case 73: printf("\n\n ==> Entrez une donnée: ") ; scanf("%s", memoire[hexaToInt(memoire[hexaToInt(PC)])]) ; while(getchar() != '\n'); incrementerPC(); break;
   case 201: printf("\n\n ==> Entrez une donnée: ") ; scanf("%s", memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])]) ; while(getchar() != '\n');incrementerPC(); break;
-  case 65: printf("\n\nSortie : %s\n", memoire[hexaToInt(memoire[hexaToInt(PC)])]); incrementerPC(); break;
-  case 193: printf("\n\nSortie : %s\n", memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])]); incrementerPC(); break;
+  case 65: printf("\n\nSortie : %s\n\n", memoire[hexaToInt(memoire[hexaToInt(PC)])]); incrementerPC(); break;
+  case 193: printf("\n\nSortie : %s\n\n", memoire[hexaToInt(memoire[hexaToInt(memoire[hexaToInt(PC)])])]); incrementerPC(); break;
   
   // transfert de données   [LOAD,LOAD@,LOAD*@,STORE@,STORE*@]
   //                        [ 00 ,  64 , 192  ,  72  ,  200  ]
@@ -197,7 +197,7 @@ void runInstruction() {
   instruction(code);
 
   // affichage des valeurs de PC et A
-  printf("\nPC: %s \t\t A: %s  " , PC, A); 
+  printf("PC: %s \t\t A: %s  " , PC, A); 
 
   // attente de la asisie de la touche [Enter]
   stepper();
@@ -222,6 +222,16 @@ void runInstruction() {
 //TODO gestion de vidage du buffer après chaque saisie pour le cas d'un debug
 */
 
+/* cx25.02
+//TODO recuperation de la saisie (structure ldc + lecture)
+//TODO interpretation de la saisie (parsing)
+//TODO execution commande selon saisie (Switch case cmd)
+//TODO cmd next
+//TODO cmd run
+//TODO cmd print
+//TODO cmd quit
+*/
+
 
 //EXO 25.0
 //TODO changer style commentaires de fonctions (flo)
@@ -232,14 +242,6 @@ void runInstruction() {
 //TODO refactoring code  (flo)
 
 //Exo 25.2
-//TODO recuperation de la saisie (structure ldc + lecture)
-//TODO interpretation de la saisie (parsing)
-//TODO execution commande selon saisie (Switch case cmd)
-//TODO cmd next
-//TODO cmd run
-//TODO cmd print
-//TODO cmd display
-//TODO cmd quit
 //TODO changer style commentaires de fonctions (flo)
 //TODO refactoring code  (flo)
 
