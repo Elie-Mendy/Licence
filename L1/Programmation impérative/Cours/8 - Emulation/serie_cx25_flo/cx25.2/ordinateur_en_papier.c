@@ -10,7 +10,7 @@ typedef char * str ;
 
 // inclusion des headers
 void usage(str message);
-void loadProgram(int adresse, char * fileName);
+void loadProgram(int location, char * nomFichier);
 int hexaToInt(Hexa h[3] );
 void intToHexa(Hexa * registre , int code );
 void instruction(int code) ;
