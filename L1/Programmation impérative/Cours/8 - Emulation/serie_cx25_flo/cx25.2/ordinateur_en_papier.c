@@ -1,4 +1,12 @@
 
+//********************************************************************************
+// Nom ......... : cx25.2
+// Rôle ........ : Ordinateur en papier
+// Auteur ...... : Florine RAYNAL
+// Licence ..... : réalisé dans le cadre du cours de programmation impérative
+// Compilation.. : make (ou bien manuellement: gcc -Wall -g -std=gnu99 cx25.2.c -o cx25.2)
+// Usage........ : cx25.2 <nom fichier>
+//********************************************************************************
 
 #include <stdio.h>
 #include <stdlib.h>

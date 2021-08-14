@@ -1,4 +1,12 @@
 
+//********************************************************************************
+// Nom ......... : cx25.0
+// Rôle ........ : Ordinateur en papier
+// Auteur ...... : Florine RAYNAL
+// Licence ..... : réalisé dans le cadre du cours de programmation impérative
+// Compilation.. : make (ou bien manuellement: gcc -Wall -g -std=gnu99 cx25.0.c -o cx25.0)
+// Usage........ : cx25.0 <nom fichier>
+//********************************************************************************
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,6 +29,9 @@ void runInstruction();
 Hexa A[3];                 
 Hexa PC[3];         
 Hexa * memoire[256];         
+
+
+
 
 int main(int argc, char  *argv[]) {
   // test du nombre d'arguments
