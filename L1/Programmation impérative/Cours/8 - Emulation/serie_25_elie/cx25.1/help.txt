@@ -1,0 +1,35 @@
+
+
+
++-------------------+------------------------------------------------------+
+| Commande          |               effet                                  |   
++-------------------+------------------------------------------------------+
+| break <op-Code>   | ajoute une instruction à la liste des breakpoints    | 
+|                   |                                                      |
+| disable <op-Code> | retire une instruction de la liste des breakpoints   | 
+|                   |                                                      |
+| breaklist         | affiche la liste des breakpoints                     | 
+|                   |                                                      |
+| next              | execute une seule instruction                        | 
+|                   |                                                      |
+| run               | lance l'execution programme                          |  
+|                   | (jusqu'a la rencontre d'un breakpoint)               |
+|                   |                                                      |
+| continue          | après avoir rencontré un breakpoint permet           | 
+|                   | de reprendre l'execution du programme                |
+|                   |                                                      |
+| finish            | execute le programme jusqu'à la fin                  |
+|                   | (ignore les breakpoints                              |
+|                   |                                                      |
+| print <case>      | affiche la valeur d'une case mémoire                 |
+|                   |                                                      |
+| help              | affiche la liste des commandes disponibles           |
+|                   |                                                      |
+| quit              | quite le programme                                   |
++-------------------+------------------------------------------------------+
+
+
+
+
+
+

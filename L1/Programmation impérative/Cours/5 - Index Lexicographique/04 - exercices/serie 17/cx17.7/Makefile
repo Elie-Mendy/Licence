@@ -1,6 +1,6 @@
 # definition de variables 
 CC = gcc
-CFLAGS = -Wall
+CFLAGS = -Wall -std=gnu99
 
 EXEC = cx17.7
 SRC = cx17.7.c 

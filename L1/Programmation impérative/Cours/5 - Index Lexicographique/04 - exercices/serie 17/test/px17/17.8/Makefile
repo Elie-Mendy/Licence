@@ -1,6 +1,6 @@
 # definition de variables 
 CC = gcc
-CFLAGS = -Wall
+CFLAGS = -Wall -std=gnu99
 
 EXEC = cx17.8
 SRC = cx17.8.c
@@ -16,13 +16,11 @@ all : $(EXEC)
 
 
 # creation de l'executable
-# 	gcc -Wall cx17.8.c lib18.so  -o cx17.8
 $(EXEC) : $(SRC) $(LIBNAME)
 	$(CC) $(CFLAGS) $(SRC) $(LIBNAME)  -o $(EXEC)
 
 
 # Generation de la librairie
-# 	gcc -Wall -fpic -shared cx18.5.lib.c -o lib18.so
 $(LIBNAME) : $(LIB)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(LIB) -o $(LIBNAME)
  
