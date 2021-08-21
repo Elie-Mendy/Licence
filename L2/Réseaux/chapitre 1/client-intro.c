@@ -1,15 +1,15 @@
-/* client −intro.c
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <netinet/in.h>
-# include <stdio.h>
-# include <netdb.h>
-# include <unistd.h>
-# include <ctype.h>
-# include <stdlib. h>
-# include <signal.h>
-# include <string.h>
-# include <assert. h>
+/* client −intro.c */
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <stdio.h>
+#include <netdb.h>
+#include <unistd.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <string.h>
+#include <assert.h>
 
 /* try −− verifie qu'un appel systeme s'est bien passe */
 void try(int resultat, char *name)
@@ -42,9 +42,9 @@ int main(int ac, char *av[])
 	}
 
 	// fabriquer la socket et la connecter
-	try(sock = socket(info−> ai_family, info−> ai_socktype, info−> ai_protocol),
+	try(sock = socket(info-> ai_family, info-> ai_socktype, info-> ai_protocol),
 			"socket");
-	try(connect(sock, info−> ai_addr, info−> ai_addrlen), "connect");
+	try(connect(sock, info-> ai_addr, info-> ai_addrlen), "connect");
 	
 	// transferer
 	while ((t = read(0, buffer, sizeof buffer)) > 0)

@@ -1,14 +1,32 @@
-//include <sys/types.h>
-//include <sys/socket.h>
-//include <netinet/in.h>
-//include <stdio.h>
-//include <netdb.h>
-//include <unistd.h>
-//include <ctype.h>
-//include <stdlib. h>
-//include <signal.h>
-//include <string.h>
-//include <assert. h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <stdio.h>
+#include <netdb.h>
+#include <unistd.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <string.h>
+#include <assert.h>
+
+
+/* try −− verifie qu'un appel systeme s'est bien passe */
+void try(int resultat, char *name)
+{
+	if (resultat < 0)
+	{
+		perror(name);
+		exit(1);
+	}
+}
+
+/* traiter −− simple echo */
+char *traiter(char in[], int ln)
+{
+    in[ln] = 0;
+    return in;
+}
 
 int main(int ac, char *av[])
 {
@@ -34,9 +52,9 @@ int main(int ac, char *av[])
     }
 
     // fabriquer la socket et y obtenir une connexion (sur une autre socket)
-    try(guichet = socket(info−> ai_family, info−> ai_socktype, info−> ai_protocol),
+    try(guichet = socket(info-> ai_family, info-> ai_socktype, info-> ai_protocol),
         "socket");
-    try(bind(guichet, info−> ai_addr, info−> ai_addrlen), "bind");
+    try(bind(guichet, info-> ai_addr, info-> ai_addrlen), "bind");
     try(listen(guichet, 1), "listen ");
     try(data = accept(guichet, 0, 0), "accept");
     try(close(guichet), "close");
@@ -50,11 +68,4 @@ int main(int ac, char *av[])
 
     try(t, "read");
     exit(0);
-}
-
-/* traiter −− simple echo */
-char *traiter(char in[], int ln)
-{
-    in[ln] = 0;
-    return in;
 }
