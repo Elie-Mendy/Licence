@@ -8,8 +8,6 @@ Programme: mon-if.c:
 shell qui est complètement fonctionnelle.
 */
 
-
-
 // IMPORTS DE BIBLIOTEQUES
 #include <stdio.h>
 #include <string.h>
@@ -20,39 +18,35 @@ shell qui est complètement fonctionnelle.
 #include <assert.h>
 
 // TAILLES DES DONNEES
-enum {
-  MaxLigne = 1024, // longueur max d'une ligne de commandes
+enum
+{
+  MaxLigne = 1024,       // longueur max d'une ligne de commandes
   MaxMot = MaxLigne / 2, // nbre max de mot dans la ligne
-  MaxDirs = 100, // nbre max de repertoire dans PATH
-  MaxPathLength = 512, // longueur max d'un nom de fichier
+  MaxDirs = 100,         // nbre max de repertoire dans PATH
+  MaxPathLength = 512,   // longueur max d'un nom de fichier
 };
 
-
 // PROTOTYPE FONCTIONS INTERNES
-int decouper(char *, char*, char**, int);
-int moncd(int argc, char ** argv);
+int decouper(char *, char *, char **, int);
+int moncd(int argc, char **argv);
 void monexit();
-
 
 // DEFINITION DU PROMPT
 #define PROMPT "new shell - ?  "
 
-
-
-
 // MAIN
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
   // allocation des données
-  char ligne[MaxLigne];           // acceuil de la ldc
-  char * mot[MaxMot];             // acceuil de la ldc découpée
-  char pathname[MaxPathLength];   // acceuil du nom du repertoire
-  char * dirs[MaxDirs];           // acceuil des noms des repertoires de la variable $PATH
+  char ligne[MaxLigne];         // acceuil de la ldc
+  char *mot[MaxMot];            // acceuil de la ldc découpée
+  char pathname[MaxPathLength]; // acceuil du nom du repertoire
+  char *dirs[MaxDirs];          // acceuil des noms des repertoires de la variable $PATH
   int i;
   int tmp;
 
-
   /* DECOUPER UNE COPIE DE PATH EN REPOSITORY */
-  decouper(strdup(getenv("PATH")) , ":", dirs, MaxDirs);
+  decouper(strdup(getenv("PATH")), ":", dirs, MaxDirs);
 
   /* LIRE ET TRAITER CHAQUE LIGNE DE COMMANDE */
   // --> impression du prompt
@@ -60,52 +54,51 @@ int main(int argc, char *argv[]) {
   // --> lancement de la commande récupérée
   // --> attente du la fin du processus enfant
 
-
-
-
   // --> impression du prompt
-  for (printf(PROMPT) ; fgets(ligne, sizeof ligne, stdin) != 0 ; printf(PROMPT)) {
-
+  for (printf(PROMPT); fgets(ligne, sizeof ligne, stdin) != 0; printf(PROMPT))
+  {
 
     // --> découpage de la ldc (saisie sur stdin) + récupération nb mots
-    i = decouper (ligne , " \t\n", mot, MaxMot);
+    i = decouper(ligne, " \t\n", mot, MaxMot);
 
     // lancement de la commande récupérée
     //    * controle de ldc vide
     if (mot[0] == 0)
       continue;
 
-
     /* ============== COMMANDES INTERNES ============ */
     // changement de repertoire
-    if (! strcmp(mot[0] , "cd")) {
+    if (!strcmp(mot[0], "cd"))
+    {
       moncd(i - 1, mot);
       continue;
     }
 
     // sortie du programme par mot clé 'exit'
-    if (! strcmp(mot[0] , "exit"))
+    if (!strcmp(mot[0], "exit"))
       monexit();
     /*================================================*/
 
-
     //    * controle de l'erreur fork()
     tmp = fork();
-    if(tmp < 0) {
+    if (tmp < 0)
+    {
       perror("fork");
       continue;
     }
 
     //    * PARENT : attendre la fin de l'enfant
-    if (tmp != 0) {
-      while (wait(0) != tmp);
+    if (tmp != 0)
+    {
+      while (wait(0) != tmp)
+        ;
       continue;
     }
 
-
     //    * ENFANT : exec du programme
-    for (i = 0; dirs[i] != 0 ; i++) {
-      snprintf( pathname, sizeof pathname, "%s/%s", dirs[i], mot[0]);
+    for (i = 0; dirs[i] != 0; i++)
+    {
+      snprintf(pathname, sizeof pathname, "%s/%s", dirs[i], mot[0]);
       execv(pathname, mot);
     }
 
@@ -114,22 +107,22 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
 
-
   printf("Bye\n");
   return 0;
 }
 
-
-
 // FONCTION DECOUPER
-int decouper (char * ligne, char * separ, char * mot[], int maxmot) {
+int decouper(char *ligne, char *separ, char *mot[], int maxmot)
+{
   int i;
 
   mot[0] = strtok(ligne, separ);
-  for (i = 1; mot[i-1] != 0 ; i++ ) {
-    if (i == maxmot) {
+  for (i = 1; mot[i - 1] != 0; i++)
+  {
+    if (i == maxmot)
+    {
       fprintf(stderr, "Erreur dans la fonction découper : trop de mots\n");
-      mot[i-1] = 0;
+      mot[i - 1] = 0;
       break;
     }
 
@@ -138,40 +131,44 @@ int decouper (char * ligne, char * separ, char * mot[], int maxmot) {
   return i;
 }
 
-
-
 /* FONCTION moncd():
   --> ordonne le changement de repertoire courant
       (modification de la valeur de la variable d'environnement PATH)
 */
-int moncd(int argc, char ** ldc) {
-  char * dir;
+int moncd(int argc, char **ldc)
+{
+  char *dir;
   int t;
   // traiter les arguments
-  if ( argc < 2){     // si le nouveau chemin n'est pas donné
+  if (argc < 2)
+  { // si le nouveau chemin n'est pas donné
     dir = getenv("HOME");
-    if ( dir == 0)
+    if (dir == 0)
       dir = "/tmp";
-  } else if ( argc > 2){ // si trop d'arguments
-    fprintf ( stderr, "usage: %s [dir]\n", ldc[0]) ;
+  }
+  else if (argc > 2)
+  { // si trop d'arguments
+    fprintf(stderr, "usage: %s [dir]\n", ldc[0]);
     return 1;
-  } else
+  }
+  else
     dir = ldc[1];
 
-
   // faire le boulot
-  t = chdir(dir) ;
-  if ( t < 0){
-    perror(dir) ;
-  return 1;
+  t = chdir(dir);
+  if (t < 0)
+  {
+    perror(dir);
+    return 1;
   }
-return 0;
+  return 0;
 }
 
 /* FONCTION moncd():
   --> quitte le programme en affichant un message de sortie
 */
-void monexit() {
+void monexit()
+{
   printf("Bye\n");
   exit(0);
 }
