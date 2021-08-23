@@ -65,6 +65,7 @@ int main(int argc, char  *argv[]) {
             \t--> quit  : met fin a l'execution du programme\n\
             \t--> print : permet d'afficher la valeur d'une case memoire \n\t\t\t\t(exemple utilisation: 'print 1C')\n\n\n");
 
+
   // execution du programme 
   while(getchar() != '\n'); // vidage du buffer
   do{     

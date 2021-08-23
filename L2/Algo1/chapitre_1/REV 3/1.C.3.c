@@ -3,9 +3,8 @@
  * n°etudiant : 19004664
 
   Consigne :
-  Construire en C une liste L à quatre éléments, dans le code du programme, à
-  l’aide de cons. Testez car(L), car(cdr(L), car(cdr(cdr L)), car(cdr(cdr(cdr L))), en
-  affichant leur résultat.
+  Définir en C, à l’aide de #define, caar et cadr. Construisez une liste pour les
+  tester et afficher leur résultat.
  */
 
 //IMPORTS
@@ -14,8 +13,8 @@
 #include <string.h>
 
 // desambiguiser
-#define car(doublet) (doublet)->car // macro d'appel de car
-#define cdr(doublet) (doublet)->cdr // macro d'appel de car
+#define caar(doublet) car((list)car(doublet))
+#define cadr(doublet) car(cdr(doublet))
 
 // definition de nil
 #define nil NULL
@@ -36,21 +35,26 @@ typedef enum Type
 // prototype desfonctions
 void usage(char *);
 list cons(void *car, list cdr);
+void *car(list);
+void *cdr(list);
 
-int main(int argc, char const *argv[])
+int main(int argc, char *argv[])
 {
 	if (argc < 5)
 		usage("veuillez entrer 4 mots a inserrer sur la ldc");
 
-	list L = nil;
+	list L1 = nil;
+	list L2 = nil;
 
-	for (int i = 1; i < 5; i++)
-		L = cons(argv[i], L);
+	for (int i = 1; i < 3; i++)
+	{
+		L1 = cons(argv[i], L1);
+		L2 = cons(argv[i + 2], L1);
+	}
 
-	printf("%s\n", (char *)car(L));
-	printf("%s\n", (char *)car(cdr(L)));
-	printf("%s\n", (char *)car(cdr(cdr(L))));
-	printf("%s\n", (char *)car(cdr(cdr(cdr(L)))));
+	L1 = cons(L2, L1);
+	printf("%s\n", (char *)caar(L1));
+	printf("%s\n", (char *)cadr(L1));
 	return 0;
 
 	return 0;
@@ -63,11 +67,22 @@ list cons(void *car, list cdr)
 	if (!L)
 		usage("espace insufisant");
 
-	car(L) = car;
-	cdr(L) = cdr;
+	L-> car = car;
+	L-> cdr = cdr;
 
 	return L;
 }
+
+void *car(list L)
+{
+	return L->car;
+}
+
+void *cdr(list L)
+{
+	return L->cdr;
+}
+
 
 // IMPRESSION DE MESSAGE D'ERREUR (sur flux stderr)
 void usage(char *message) { fprintf(stderr, "Usage : %s\n", message), exit(1); }
